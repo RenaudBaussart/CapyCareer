@@ -1,78 +1,83 @@
--- table des roles pour les utilisateurs (ex: admin, recruteur, candidat)
-CREATE TABLE Roles(
-   name VARCHAR(50),
-   PRIMARY KEY(name)
-);
 
--- historique global des recherches effectuees sur le site
-CREATE TABLE Search_history(
-   PK_id INT AUTO_INCREMENT,
-   search_text VARCHAR(150) NOT NULL,
-   PRIMARY KEY(PK_id)
-);
+Table "Roles" {
+  "name" VARCHAR(50) [pk]
+}
 
--- liste globale des tags disponibles pour qualifier les offres
-CREATE TABLE Job_tags(
-   name VARCHAR(100),
-   PRIMARY KEY(name)
-);
+Table "Search_history" {
+  "PK_id" INT [pk, increment]
+  "search_text" VARCHAR(150) [not null]
+}
 
--- table principale des utilisateurs
-CREATE TABLE User_(
-   PK_id INT AUTO_INCREMENT,
-   email VARCHAR(100) NOT NULL,
-   username VARCHAR(50) NOT NULL,
-   hashed_password VARCHAR(255) NOT NULL,
-   creation_date DATE NOT NULL,
-   last_connection DATE NOT NULL,
-   firstname VARCHAR(50) NOT NULL,
-   lastname VARCHAR(50) NOT NULL,
-   biography TEXT,
-   have_profil_pic BOOLEAN NOT NULL DEFAULT FALSE,
-   profil_pic_link VARCHAR(500),
-   FK_role_id VARCHAR(50) NOT NULL,
-   PRIMARY KEY(PK_id),
-   UNIQUE(email),
-   FOREIGN KEY(FK_role_id) REFERENCES Roles(name)
-);
+Table "Job_tags" {
+  "name" VARCHAR(100) [pk]
+}
 
--- offres d'emploi postees par les recruteurs
-CREATE TABLE Job_Offers(
-   PK_id INT AUTO_INCREMENT,
-   name VARCHAR(150) NOT NULL,
-   description TEXT NOT NULL,
-   url VARCHAR(500) NOT NULL,
-   post_type VARCHAR(50),
-   FK_user_id INT, -- mis a null si le recruteur supprime son compte
-   PRIMARY KEY(PK_id),
-   FOREIGN KEY(FK_user_id) REFERENCES User_(PK_id) ON DELETE SET NULL
-);
+Table "User_" {
+  "PK_id" INT [pk, increment]
+  "email" VARCHAR(100) [not null]
+  "username" VARCHAR(50) [not null]
+  "hashed_password" VARCHAR(255) [not null]
+  "creation_date" DATE [not null]
+  "last_connection" DATE [not null]
+  "firstname" VARCHAR(50) [not null]
+  "lastname" VARCHAR(50) [not null]
+  "biography" TEXT
+  "profil_pic_link" VARCHAR(500)
+  "FK_role_id" VARCHAR(50) [not null]
 
--- table de jointure pour suivre les candidatures 
-CREATE TABLE Applied(
-   FK_user_id INT,
-   FK_job_offer_id INT,
-   PRIMARY KEY(FK_user_id, FK_job_offer_id),
-   -- si l'utilisateur ou l'offre disparait, la candidature est supprimee en cascade
-   FOREIGN KEY(FK_user_id) REFERENCES User_(PK_id) ON DELETE CASCADE,
-   FOREIGN KEY(FK_job_offer_id) REFERENCES Job_Offers(PK_id) ON DELETE CASCADE
-);
+  Indexes {
+    email [unique]
+  }
+}
 
--- table de jointure reliant les utilisateurs a leur historique de recherche
-CREATE TABLE searched(
-   FK_user_id INT,
-   PK_id_FK_history INT,
-   PRIMARY KEY(FK_user_id, PK_id_FK_history),
-   FOREIGN KEY(FK_user_id) REFERENCES User_(PK_id) ON DELETE CASCADE,
-   FOREIGN KEY(PK_id_FK_history) REFERENCES Search_history(PK_id) ON DELETE CASCADE
-);
+Table "Job_Offers" {
+  "PK_id" INT [pk, increment]
+  "name" VARCHAR(150) [not null]
+  "description" TEXT [not null]
+  "url" VARCHAR(500) [not null]
+  "post_type" VARCHAR(50)
+  "FK_user_id" INT
+}
 
--- table de jointure reliant les offres d'emploi a leurs mots-cles/tags
-CREATE TABLE defined(
-   job_offer_id INT,
-   name VARCHAR(100),
-   PRIMARY KEY(job_offer_id, name),
-   -- si l'offre ou le tag est supprime, l'association disparait en cascade
-   FOREIGN KEY(job_offer_id) REFERENCES Job_Offers(PK_id) ON DELETE CASCADE,
-   FOREIGN KEY(name) REFERENCES Job_tags(name) ON DELETE CASCADE
-);
+Table "Applied" {
+  "FK_user_id" INT
+  "FK_job_offer_id" INT
+
+  Indexes {
+    (FK_user_id, FK_job_offer_id) [pk]
+  }
+}
+
+Table "searched" {
+  "FK_user_id" INT
+  "PK_id_FK_history" INT
+
+  Indexes {
+    (FK_user_id, PK_id_FK_history) [pk]
+  }
+}
+
+Table "defined" {
+  "job_offer_id" INT
+  "job_tag_name" VARCHAR(100)
+
+  Indexes {
+    (job_offer_id, job_tag_name) [pk]
+  }
+}
+
+Ref:"Roles"."name" < "User_"."FK_role_id"
+
+Ref:"User_"."PK_id" < "Job_Offers"."FK_user_id" [delete: set null]
+
+Ref:"User_"."PK_id" < "Applied"."FK_user_id" [delete: cascade]
+
+Ref:"Job_Offers"."PK_id" < "Applied"."FK_job_offer_id" [delete: cascade]
+
+Ref:"User_"."PK_id" < "searched"."FK_user_id" [delete: cascade]
+
+Ref:"Search_history"."PK_id" < "searched"."PK_id_FK_history" [delete: cascade]
+
+Ref:"Job_Offers"."PK_id" < "defined"."job_offer_id" [delete: cascade]
+
+Ref:"Job_tags"."name" < "defined"."job_tag_name" [delete: cascade]
