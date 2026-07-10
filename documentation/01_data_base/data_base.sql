@@ -36,6 +36,7 @@ Table "Job_Offers" {
   "description" TEXT [not null]
   "url" VARCHAR(500) [not null]
   "post_type" VARCHAR(50)
+  "location" VARCHAR(150)
   "FK_user_id" INT
 }
 
