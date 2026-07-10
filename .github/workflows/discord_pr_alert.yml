@@ -11,6 +11,6 @@ jobs:
       - name: GitHub Actions Discord Webhook
         uses: Ilshidur/action-discord@master
         env:
-          DISCORD_PR_WEBHOOK_URL: ${{ secrets.DISCORD_PR_WEBHOOK_URL }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK_URL }}
         with:
           args: 'La PR "${{ github.event.pull_request.title }}" a été créée par ${{ github.actor }}. Vérifie ici : ${{ github.event.pull_request.html_url }}'
