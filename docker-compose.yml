@@ -1,0 +1,89 @@
+services: 
+
+# frontend
+  client: 
+    build:
+      context: ./client 
+      # Dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${CLIENT_PORT}:${CLIENT_PORT}" 
+      # "Port_Machine_Physique : Port_Conteneur" relie le port 5xxx du PC au port 5xxx du conteneur
+    volumes:
+      - ./client:/app 
+      # Synchronise le code source de du dossier physique ./client avec le dossier /app à l'intérieur du conteneur
+      - /app/node_modules 
+      # astuce de sécurité technique : empêche le volume précédent (notre PC) d'écraser le dossier node_modules généré par le système à l'intérieur du conteneur
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+      - SERVER_PORT=${SERVER_PORT}
+      # injecte une variable pour dire au code React à quelle adresse envoyer ses requêtes vers le backend
+    networks:
+      - app-network 
+      # Connecte ce conteneur au réseau virtuel privé que crée tout en bas
+
+  # backend
+  server: 
+    build:
+      context: ./server 
+      # Dockerfile: Dockerfile
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}" 
+      # Expose l'API sur le port 5xxx
+    volumes:
+      - ./server:/app 
+      # Synchronise le code source backend avec le dossier /app à l'intérieur du conteneur
+      - /app/node_modules 
+      # astuce de sécurité technique : empêche le volume précédent (notre PC) d'écraser le dossier node_modules généré par le système à l'intérieur du conteneur
+    environment: 
+      - OVH_DB_HOST=${OVH_DB_HOST} # adresse de la base de données distante chez OVH
+      - OVH_DB_USER=${OVH_DB_USER} # identifiant de connexion OVH
+      - OVH_DB_PASSWORD=${OVH_DB_PASSWORD} # mot de passe OVH
+      - OVH_DB_NAME=${OVH_DB_NAME} # nom exact de la base de données.
+      - OVH_DB_PORT=${OVH_DB_PORT} # port de connexion à la base de données
+      - WLD_API_KEY=${WLD_API_KEY} # clé secrète pour récupérer les offres WLD
+    networks:
+      - app-network 
+      # Connecte le backend au réseau virtuel privé.
+
+  # n8n
+  n8n: 
+    image: docker.n8n.io/n8nio/n8n 
+    # Utilise l'image officielle de n8n, un outil d'automatisation de flux de travail.
+    ports:
+      - "${N8N_APP_PORT}:${N8N_APP_PORT}" 
+      # Expose le port ${N8N_APP_PORT} pour accéder à l'interface web de n8n depuis le navigateur.
+    environment:
+    # Injecte des variables d'environnement pour configurer n8n.
+      - N8N_HOST=${N8N_APP_HOST} # Permet à n8n d'écouter sur toutes les interfaces réseau du conteneur.
+      - N8N_PORT=${N8N_APP_PORT} # Indique à n8n d'utiliser le port 5678 pour son interface web.
+      - N8N_PROTOCOL=${N8N_APP_PROTOCOL} # Spécifie que n8n utilisera le protocole HTTP pour les communications.
+      - NODE_ENV=${N8N_APP_NODE_ENV} # Indique que n8n fonctionne en mode production, optimisant ainsi les performances et la sécurité.
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE} # Active l'authentification de base pour sécuriser l'accès à l'interface web de n8n.
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER} # Définit le nom d'utilisateur pour l'authentification de base, garantissant que seuls les utilisateurs autorisés peuvent accéder à n8n.
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD} # Définit le mot de passe pour l'authentification de base, renforçant ainsi la sécurité de l'accès à n8n.
+    restart: always
+    # Assure que le conteneur n8n redémarre automatiquement en cas de plantage ou d'arrêt, garantissant ainsi une disponibilité continue.
+    depends_on:
+      - server
+      # Assure que le conteneur n8n ne démarre qu'après le démarrage du conteneur backend, garantissant que les services nécessaires sont disponibles.
+
+    volumes:
+      - n8n_data:/home/node/.n8n 
+      # C'est crucial : n8n sauvegarde tes workflows dans /home/node/.n8n. En liant cela au volume "n8n_data", on s'assure que si le conteneur plante ou est éteint, tes flux d'automatisation ne sont pas perdus.
+    networks:
+      - app-network 
+      # Connecte n8n au réseau.
+
+# Déclaration des volumes
+volumes: 
+  n8n_data: 
+  # Crée un volume nommé "n8n_data" pour stocker les données persistantes de n8n, garantissant que les workflows et configurations ne sont pas perdus lors des redémarrages ou mises à jour du conteneur.
+
+networks: 
+# Déclaration des réseaux
+  app-network: 
+  # Crée un réseau virtuel privé nommé "app-network" pour permettre aux conteneurs de communiquer entre eux de manière sécurisée et isolée.
+    driver: bridge 
+    # Utilise le pilote "bridge" pour créer un réseau isolé, permettant aux conteneurs de communiquer entre eux tout en restant séparés du réseau externe, offrant ainsi une couche supplémentaire de sécurité et de contrôle.
