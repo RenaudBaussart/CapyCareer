@@ -48,22 +48,27 @@ Table "Applied" {
   }
 }
 
-Table "searched" {
+Table "Searched" {
   "FK_user_id" INT
-  "PK_id_FK_history" INT
+  "FK_id_search_history" INT
 
   Indexes {
-    (FK_user_id, PK_id_FK_history) [pk]
+    (FK_user_id, FK_id_search_history) [pk]
   }
 }
 
 Table "defined" {
-  "job_offer_id" INT
-  "job_tag_name" VARCHAR(100)
+  "FK_job_offer_id" INT
+  "FK_job_tag_name" VARCHAR(100)
 
   Indexes {
-    (job_offer_id, job_tag_name) [pk]
+    (FK_job_offer_id, FK_job_tag_name) [pk]
   }
+}
+
+Table "Banned"{
+  "PK_banned_id" INT [pk, increment]
+  "email" VARCHAR(100) [not null]
 }
 
 Ref:"Roles"."name" < "User_"."FK_role_id"
@@ -74,10 +79,10 @@ Ref:"User_"."PK_id" < "Applied"."FK_user_id" [delete: cascade]
 
 Ref:"Job_Offers"."PK_id" < "Applied"."FK_job_offer_id" [delete: cascade]
 
-Ref:"User_"."PK_id" < "searched"."FK_user_id" [delete: cascade]
+Ref:"User_"."PK_id" < "Searched"."FK_user_id" [delete: cascade]
 
-Ref:"Search_history"."PK_id" < "searched"."PK_id_FK_history" [delete: cascade]
+Ref:"Search_history"."PK_id" < "Searched"."FK_id_search_history" [delete: cascade]
 
-Ref:"Job_Offers"."PK_id" < "defined"."job_offer_id" [delete: cascade]
+Ref:"Job_Offers"."PK_id" < "defined"."FK_job_offer_id" [delete: cascade]
 
-Ref:"Job_tags"."name" < "defined"."job_tag_name" [delete: cascade]
+Ref:"Job_tags"."name" < "defined"."FK_job_tag_name" [delete: cascade]
