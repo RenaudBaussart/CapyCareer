@@ -9,7 +9,7 @@ services:
       - .env
     ports:
       - "${CLIENT_PORT}:${CLIENT_PORT}" 
-      # "Port_Machine_Physique : Port_Conteneur" relie le port 5173 du PC au port 5173 du conteneur
+      # "Port_Machine_Physique : Port_Conteneur" relie le port 5xxx du PC au port 5xxx du conteneur
     volumes:
       - ./client:/app 
       # Synchronise le code source de du dossier physique ./client avec le dossier /app à l'intérieur du conteneur
@@ -30,7 +30,7 @@ services:
       # Dockerfile: Dockerfile
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}" 
-      # Expose l'API sur le port 5000
+      # Expose l'API sur le port 5xxx
     volumes:
       - ./server:/app 
       # Synchronise le code source backend avec le dossier /app à l'intérieur du conteneur
