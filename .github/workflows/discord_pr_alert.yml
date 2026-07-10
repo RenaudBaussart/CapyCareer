@@ -13,4 +13,4 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK_URL }}
         with:
-          args: 'La PR "${{ github.event.pull_request.title }}" a été créée par ${{ github.actor }}. Vérifie ici : ${{ github.event.pull_request.html_url }}'
+          args: '@here La PR "${{ github.event.pull_request.title }}" a été créée par ${{ github.actor }}. Vérifie ici : ${{ github.event.pull_request.html_url }}'
