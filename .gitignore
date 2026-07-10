@@ -1,0 +1,57 @@
+# ==============================
+# 1. DÉPENDANCES (Très lourd)
+# ==============================
+node_modules/
+.pnp
+.pnp.js
+
+
+# ==============================
+# 2. SÉCURITÉ (CRUCIAL)
+# ==============================
+# Ne JAMAIS envoyer les mots de passe OVH, les clés JWT ou WLD sur Git !
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==============================
+# 3. BUILD ET COMPILATION
+# ==============================
+# Dossiers générés par Vite (Front) et TypeScript (Back)
+dist/
+build/
+out/
+
+# ==============================
+# 4. LOGS ET DÉBOGAGE
+# ==============================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==============================
+# 5. DONNÉES LOCALES (Docker & n8n)
+# ==============================
+# Ignore le dossier de sauvegarde n8n s'il est créé localement
+n8n_data/
+# Ignore les potentiels dumps de base de données locaux
+*.sql
+*.sqlite
+
+# ==============================
+# 6. SYSTÈME ET ÉDITEURS (VS Code, Mac, Windows)
+# ==============================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+raw/
