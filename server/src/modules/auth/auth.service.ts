@@ -35,19 +35,21 @@ export class AuthService {
             const currentDate = new Date().toISOString().split('T')[0]; 
 
             const [result] = await connection.execute<ResultSetHeader>(
-                "INSERT INTO User_ (email, hashed_password, FK_role_id, firstname, lastname, username, biography, profil_pic_link, creation_date, last_connection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [
-                    validatedData.email,
-                    hashedPassword,
-                    validatedData.role,
-                    validatedData.firstname,
-                    validatedData.lastname,
-                    validatedData.username,
-                    validatedData.biography || null,
-                    validatedData.profil_pic_link || null,
-                    currentDate, // creation_date
-                    currentDate  // last_connection
-                ]
+                {
+                    sql: "INSERT INTO User_ (email, hashed_password, FK_role_id, firstname, lastname, username, biography, profil_pic_link, creation_date, last_connection) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    values: [
+                        validatedData.email,
+                        hashedPassword,
+                        validatedData.role,
+                        validatedData.firstname,
+                        validatedData.lastname,
+                        validatedData.username,
+                        validatedData.biography || null,
+                        validatedData.profil_pic_link || null,
+                        currentDate,
+                        currentDate
+                    ]
+                }
             );
 
             // génération du token
