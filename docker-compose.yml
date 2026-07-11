@@ -43,6 +43,7 @@ services:
       - OVH_DB_NAME=${OVH_DB_NAME} # nom exact de la base de données.
       - OVH_DB_PORT=${OVH_DB_PORT} # port de connexion à la base de données
       - WLD_API_KEY=${WLD_API_KEY} # clé secrète pour récupérer les offres WLD
+      - JWT_SECRET=${JWT_SECRET} # clé secrète pour signer les tokens JWT
     networks:
       - app-network 
       # Connecte le backend au réseau virtuel privé.
