@@ -9,7 +9,7 @@ profanity.add(FrWords);
 profanity.add(EnWords);
 profanity.add(EsWords);
 
-export const createMemberSchema = z.object({
+const createMemberSchema = z.object({
     email: z.string().email("email format invalid !").max(100, "email can't exceed 100 letters"),
 
     password: z.string().min(6, "Password lenght must have at least 6 letters").regex(/[A-Z]/, "Password must have at least one uppercase").regex(/[0-9]/, "Password must contain at least one number").regex(/[^a-zA-Z0-9]/,"Password must contain a special caracter"),
@@ -26,3 +26,8 @@ export const createMemberSchema = z.object({
 
     profil_pic_link: z.string().optional()
 })
+
+export const member = createMemberSchema;
+module.exports = {
+    member
+}
