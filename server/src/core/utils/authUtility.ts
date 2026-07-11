@@ -21,5 +21,5 @@ export const generatememberToken = (member: TokenMember): string => {
 
   return jwt.sign(payload, secret, {
     expiresIn: process.env.JWT_EXPIRATION as string || '1h'
-  });
+  } as jwt.SignOptions);
 };
