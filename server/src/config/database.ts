@@ -24,5 +24,3 @@ pool.getConnection()
         console.error('Échec de la connexion MySQL:', err.message);
         process.exit(1);
     });
-
-module.exports = pool;
