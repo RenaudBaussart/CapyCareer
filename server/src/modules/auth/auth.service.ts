@@ -14,7 +14,6 @@ export class AuthService {
         this.pool = dbPool;
     }
     
-    // inscription
     async register(validatedData: ValidatedMemberData) {
         const connection = await this.pool.getConnection();
 
@@ -57,6 +56,41 @@ export class AuthService {
                 id: result.insertId,
                 role: validatedData.role,
                 isFirstLogin: true
+            };
+
+            return generatememberToken(tokenPayload);
+
+        } finally {
+            if(connection) {
+                connection.release();
+            }
+        }
+    }
+
+    async login(username: string, password: string) {
+        const connection = await this.pool.getConnection();
+
+        try {
+            const [rows] = await connection.execute<RowDataPacket[]>(
+                "SELECT PK_id, hashed_password, FK_role_id FROM User_ WHERE username = ?",
+                [username]
+            );
+
+            if (rows.length === 0) {
+                throw new Error("USER_NOT_FOUND");
+            }
+
+            const user = rows[0] as any;
+            const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
+
+            if (!isPasswordValid) {
+                throw new Error("INVALID_PASSWORD");
+            }
+
+            const tokenPayload: TokenMember = {
+                id: user.PK_id,
+                role: user.FK_role_id,
+                isFirstLogin: false
             };
 
             return generatememberToken(tokenPayload);
