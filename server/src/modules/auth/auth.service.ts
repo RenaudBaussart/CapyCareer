@@ -3,6 +3,7 @@ import { Pool, RowDataPacket, ResultSetHeader } from "mysql2/promise";
 import { generatememberToken, TokenMember } from "../../core/utils/authUtility";
 import { z } from "zod";
 import { member } from "../members/member.schema";
+import jwtTool from 'jsonwebtoken';
 
 type ValidatedMemberData = z.infer<typeof member>;
 
@@ -71,6 +72,7 @@ export class AuthService {
         const connection = await this.pool.getConnection();
 
         try {
+            // On récupère l'utilisateur par son username
             const [rows] = await connection.execute<RowDataPacket[]>(
                 "SELECT PK_id, hashed_password, FK_role_id FROM User_ WHERE username = ?",
                 [username]
@@ -79,7 +81,7 @@ export class AuthService {
             if (rows.length === 0) {
                 throw new Error("USER_NOT_FOUND");
             }
-
+            // Encore le typage strict sinon typescript ne sait pas ce que c'est
             const user = rows[0] as any;
             const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
 
@@ -101,4 +103,29 @@ export class AuthService {
             }
         }
     }
+
+    async logout(token: string) {
+    const connection = await this.pool.getConnection();
+    try {
+        const decoded = jwtTool.verify(token, process.env.JWT_SECRET as string) as TokenMember;
+
+        await connection.execute(
+            "UPDATE User_ SET last_connection = NOW() WHERE PK_id = ?",
+            [decoded.id]
+        );
+
+        // On verra plus tard pour la liste noire. Voici une petite idée de comment on pourrait faire, mais pour l'instant, on ne l'implémente pas.
+
+        /* const blacklistToken = await connection.execute(
+            "INSERT INTO BlacklistedTokens (token, blacklisted_at) VALUES (?, NOW())",
+            [token]
+        ); */
+
+    } finally {
+        if(connection) {
+            connection.release();
+        }
+    }
+    return { message: "Déconnexion réussie." };
+}
 }
