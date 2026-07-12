@@ -1,9 +1,12 @@
 import request from "supertest";
 import express from "express";
-import { registerMember, loginMember } from "./auth.controller";
+import { registerMember, loginMember, logoutMember } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { middlewareAuth } from "../../core/middlewares/authMiddleware";
+import jwtTool from "jsonwebtoken";
 
 jest.mock("./auth.service");
+jest.mock('jsonwebtoken');
 
 jest.mock("../../config/database", () => ({
     pool: {} 
@@ -173,5 +176,69 @@ describe("AuthController - loginMember", () => {
                 message: "Erreur interne du serveur."
             });
         });
+    });
+});
+
+
+describe("AuthController - logoutMember", () => {
+    let app: express.Application;
+
+    beforeAll(() => {
+        app = express();
+        app.use(express.json());
+
+        app.post("/api/auth/logout", middlewareAuth, logoutMember);
+    });
+    
+    beforeEach(() => {
+        jest.clearAllMocks();
+
+        (jwtTool.verify as jest.Mock).mockImplementation((token, secret, callback) => {
+            callback(null, { id: 1, role: 'member' }); 
+        });
+    });
+
+    describe("POST /api/auth/logout", () => {
+        
+        it("doit retourner un statut 200 et invalider le token", async () => {
+            const mockLogout = jest.fn().mockResolvedValue({ message: "Déconnexion réussie." });
+            (AuthService as jest.Mock).mockImplementation(() => {
+                return { logout: mockLogout };
+            });
+
+            const monFauxToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.faux.token";
+
+            const response = await request(app)
+                .post("/api/auth/logout")
+                .set("Authorization", `Bearer ${monFauxToken}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body).toEqual({ message: "Déconnexion réussie." });
+            
+            expect(mockLogout).toHaveBeenCalledWith(monFauxToken);
+        });
+
+        it("doit retourner une erreur 401 si aucun token n'est fourni", async () => {
+            const response = await request(app)
+                .post("/api/auth/logout");
+
+            expect(response.status).toBe(401);
+            expect(response.body).toEqual({ error: "No token provided" });
+        });
+
+        it("doit retourner une erreur 500 si le service échoue", async () => {
+            const mockLogout = jest.fn().mockRejectedValue(new Error("Erreur DB"));
+            (AuthService as jest.Mock).mockImplementation(() => {
+                return { logout: mockLogout };
+            });
+
+            const response = await request(app)
+                .post("/api/auth/logout")
+                .set("Authorization", "Bearer fake-token");
+
+            expect(response.status).toBe(500);
+            expect(response.body).toEqual({ message: "Erreur interne du serveur." });
+        });
+        
     });
 });
