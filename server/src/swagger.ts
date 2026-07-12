@@ -5,6 +5,12 @@ import { loginSchema } from "./modules/auth/auth.schema";
 
 export const registry = new OpenAPIRegistry();
 
+const bearerAuth = registry.registerComponent('securitySchemes', 'bearerAuth', {
+    type: 'http',
+    scheme: 'bearer',
+    bearerFormat: 'JWT',
+});
+
 registry.registerPath({
     method: "post",
     path: "/api/auth/register",
@@ -131,6 +137,39 @@ registry.registerPath({
             }
         }
     },
+});
+
+registry.registerPath({
+    method: "post",
+    path: "/api/auth/logout",
+    description: "Déconnecter un membre et invalider son token JWT",
+    summary: "Déconnexion",
+    tags: ["Authentification"],
+    
+    security: [{ [bearerAuth.name]: [] }], 
+
+    responses: {
+        200: {
+            description: "Déconnexion réussie.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Déconnexion réussie." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
 });
 
 export function generateOpenAPI() {
