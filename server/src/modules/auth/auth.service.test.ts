@@ -97,3 +97,76 @@ describe("AuthService - Méthode Register", () => {
         });
     });
 });
+
+describe("AuthService - Méthode Login", () => {
+    let authService: AuthService;
+    let mockConnection: any;
+    let mockPool: any;
+
+    beforeEach(() => {
+        mockConnection = {
+            execute: jest.fn(),
+            release: jest.fn(),
+        };
+        
+        // On simule le Pool MySQL
+        mockPool = {
+            getConnection: jest.fn().mockResolvedValue(mockConnection),
+        };
+
+        // On injecte notre fausse base de données dans le service via l'injection de dépendances
+        authService = new AuthService(mockPool as unknown as Pool);
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    describe("Cas d'erreurs", () => {
+        
+        it("devrait jeter l'erreur USER_NOT_FOUND si le pseudonyme n'existe pas", async () => {
+            mockConnection.execute.mockResolvedValueOnce([[]]);
+
+            await expect(authService.login("Inconnu", "Password123!"))
+                .rejects.toThrow("USER_NOT_FOUND");
+            
+            expect(mockConnection.release).toHaveBeenCalled();
+        });
+
+        it("devrait jeter l'erreur INVALID_PASSWORD si le mot de passe est faux", async () => {
+            const fakeUser = [{ PK_id: 1, hashed_password: "hash-bdd", FK_role_id: "candidat" }];
+            mockConnection.execute.mockResolvedValueOnce([fakeUser]);
+
+            (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
+
+            await expect(authService.login("Jojodu59", "MauvaisMotDePasse"))
+                .rejects.toThrow("INVALID_PASSWORD");
+
+            expect(mockConnection.release).toHaveBeenCalled();
+        });
+    });
+
+    describe("Cas de succès", () => {
+        
+        it("devrait retourner un token si les identifiants sont corrects", async () => {
+            const fakeUser = [{ PK_id: 1, hashed_password: "hash-bdd", FK_role_id: "candidat" }];
+            mockConnection.execute.mockResolvedValueOnce([fakeUser]);
+
+            (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
+
+            const fakeToken = "eyFauxTokenJWT...";
+            (generatememberToken as jest.Mock).mockReturnValueOnce(fakeToken);
+
+            const result = await authService.login("Jojodu59", "BonMotDePasse1!");
+
+            expect(result).toBe(fakeToken);
+            expect(generatememberToken).toHaveBeenCalledWith({
+                id: 1,
+                role: "candidat",
+                isFirstLogin: false
+            });
+            expect(mockConnection.release).toHaveBeenCalled();
+        });
+    });
+});
+    
