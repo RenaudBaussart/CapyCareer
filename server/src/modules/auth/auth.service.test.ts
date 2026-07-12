@@ -2,9 +2,9 @@ import { AuthService } from "./auth.service";
 import bcrypt from "bcrypt";
 import { generatememberToken } from "../../core/utils/authUtility"; 
 import { Pool } from "mysql2/promise";
+import jwtTool from "jsonwebtoken";
 
-
-
+jest.mock('jsonwebtoken');
 jest.mock("bcrypt");
 jest.mock("../../core/utils/authUtility");
 
@@ -169,4 +169,59 @@ describe("AuthService - Méthode Login", () => {
         });
     });
 });
-    
+describe("AuthService - Méthode Logout", () => {
+    let authService: AuthService;
+    let mockConnection: any;
+    let mockPool: any;
+
+    beforeEach(() => {
+        mockConnection = {
+            execute: jest.fn(),
+            release: jest.fn(),
+        };
+        
+        mockPool = {
+            getConnection: jest.fn().mockResolvedValue(mockConnection),
+        };
+
+        authService = new AuthService(mockPool as unknown as Pool);
+
+        (jwtTool.verify as jest.Mock).mockReturnValue({ id: 1, role: 'member' });
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    describe("Cas d'erreurs", () => {
+        it("devrait rejeter la déconnexion si une erreur survient dans la base de données", async () => {
+            mockConnection.execute.mockRejectedValueOnce(new Error("Erreur DB"));
+
+            await expect(authService.logout("fauxToken")).rejects.toThrow("Erreur DB");
+            
+            expect(mockConnection.release).toHaveBeenCalled();
+        });
+    });
+
+    describe("Cas de succès", () => {
+        it("devrait réussir la déconnexion et invalider le token", async () => {
+            mockConnection.execute.mockResolvedValue([{}]);
+
+            const result = await authService.logout("fauxToken");
+
+            expect(result).toEqual({ message: "Déconnexion réussie." });
+            
+            expect(mockConnection.execute).toHaveBeenNthCalledWith(1,
+                "UPDATE User_ SET last_connection = NOW() WHERE PK_id = ?",
+                [1] 
+            );
+
+            expect(mockConnection.execute).toHaveBeenNthCalledWith(2,
+                "INSERT INTO BlacklistedTokens (token, blacklisted_at) VALUES (?, NOW())",
+                ["fauxToken"]
+            );
+
+            expect(mockConnection.release).toHaveBeenCalled();
+        });
+    });
+});
