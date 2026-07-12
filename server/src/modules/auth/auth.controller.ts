@@ -59,6 +59,17 @@ const loginMember = async (req: Request, res: Response) => {
     }
 };
 
+const logoutMember = async (req: Request, res: Response) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        const authService = new AuthService(pool);
+        await authService.logout(token as string);
 
-
-export { registerMember, loginMember };
+        res.status(200).json({ message: "Déconnexion réussie." });
+    } catch (error: any) {
+        console.error("Erreur lors de la déconnexion du membre:", error);
+        res.status(500).json({ message: "Erreur interne du serveur." });
+    }
+}
+    
+export { registerMember, loginMember, logoutMember };
