@@ -14,21 +14,21 @@ jest.mock("../../config/database", () => ({
 
 describe("AuthController - registerMember", () => {
     let app: express.Application;
-    // On nettoie les mocks avant chaque test
+    // nettoie mocks avant chaque test
     beforeAll(() => {
         app = express();
         app.use(express.json());
 
         app.post("/api/auth/register", registerMember);
     });
-    // on nettoie les mocks après chaque test
+    // nettoie mocks après chaque test
     afterEach(() => {
         jest.clearAllMocks();
     });
-    // Register tests
+    // register tests
     describe("POST /api/auth/register", () => {
         
-        // Données valides pour l'inscription
+        // datas valides pour l'inscription
         const validUserData = {
             email: "jojo@gmail.com",
             password: "HelloWorld0/",
@@ -37,7 +37,7 @@ describe("AuthController - registerMember", () => {
             lastname: "Bernard",
             username: "Jojodu59"
         };
-        // Ce que ca doit faire en cas de succes
+        // en cas de succes
         it("doit retourner un statut 201 et un token en cas de succès", async () => {
             const fauxToken = "mon_super_token_jwt_123";
             AuthService.prototype.register = jest.fn().mockResolvedValue(fauxToken);
@@ -53,7 +53,7 @@ describe("AuthController - registerMember", () => {
             });
             expect(AuthService.prototype.register).toHaveBeenCalledWith(validUserData);
         });
-        // En cas d'une email déjà existante
+        // erreur mail déjà existant
         it("doit retourner un statut 409 si l'email existe déjà", async () => {
             AuthService.prototype.register = jest.fn().mockRejectedValue(new Error("EMAIL_EXISTS"));
 
@@ -67,7 +67,7 @@ describe("AuthController - registerMember", () => {
                 message: "Un membre avec cet email existe déjà."
             });
         });
-        // Dans le cas du non respect de zod
+        // en cas du non respect de zod
         it("doit retourner un statut 400 si la validation Zod échoue", async () => {
             const response = await request(app)
                 .post("/api/auth/register")
@@ -83,7 +83,7 @@ describe("AuthController - registerMember", () => {
             
             expect(AuthService.prototype.register).not.toHaveBeenCalled();
         });
-        // En cas d'erreur inattendue du serveur
+        // en cas d'erreur inattendue du serveur
         it("doit retourner un statut 500 en cas d'erreur inattendue du serveur", async () => {
             AuthService.prototype.register = jest.fn().mockRejectedValue(new Error("Erreur SQL critique"));
 
