@@ -178,8 +178,8 @@ export function generateOpenAPI() {
         openapi: "3.0.0",
         info: {
             version: "1.0.0",
-            title: "API CappyCareer",
-            description: "Documentation interactive de l'API CappyCareer",
+            title: "API CapyCareer",
+            description: "Documentation interactive de l'API CapyCareer",
         },
         servers: [
             { url: "http://localhost:5000", description: "Serveur de développement" }
