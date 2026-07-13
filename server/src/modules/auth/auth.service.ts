@@ -19,7 +19,7 @@ export class AuthService {
         const connection = await this.pool.getConnection();
 
         try {
-            // on verifie le mail en premier
+            // verifie le mail en premier
             const [existingMembers] = await connection.execute<RowDataPacket[]>(
                 "SELECT PK_id FROM User_ WHERE email = ?",
                 [validatedData.email]
@@ -72,7 +72,7 @@ export class AuthService {
         const connection = await this.pool.getConnection();
 
         try {
-            // On récupère l'utilisateur par son username
+            // récupère l'user par son username
             const [rows] = await connection.execute<RowDataPacket[]>(
                 "SELECT PK_id, hashed_password, FK_role_id FROM User_ WHERE username = ?",
                 [username]
@@ -81,7 +81,7 @@ export class AuthService {
             if (rows.length === 0) {
                 throw new Error("USER_NOT_FOUND");
             }
-            // Encore le typage strict sinon typescript ne sait pas ce que c'est
+            // typage strict pour typescript
             const user = rows[0] as any;
             const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
 
@@ -114,7 +114,7 @@ export class AuthService {
             [decoded.id]
         );
 
-        // On verra plus tard pour la liste noire. Voici une petite idée de comment on pourrait faire, mais pour l'instant, on ne l'implémente pas.
+        // WARNING: voir pour liste noire
 
         /* const blacklistToken = await connection.execute(
             "INSERT INTO BlacklistedTokens (token, blacklisted_at) VALUES (?, NOW())",
