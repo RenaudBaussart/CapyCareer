@@ -12,16 +12,16 @@ describe("AuthUtility - Génération de Token", () => {
     it("doit générer un token JWT valide (une chaîne de caractères)", () => {
         const token = generatememberToken(mockPayload);
 
-        // On vérifie que c'est bien une string et qu'elle n'est pas vide
+        // verifie format string & non vide
         expect(typeof token).toBe("string");
         expect(token.length).toBeGreaterThan(0);
         
-        // Un token JWT comment par "eyJ"
+        // le token JWT commence eyJ
         expect(token.startsWith("eyJ")).toBe(true);
     });
 
     it("doit contenir les bonnes données dans le payload du token", () => {
-        // On génère le token
+        // génère token
         const token = generatememberToken(mockPayload);
 
         
@@ -29,12 +29,12 @@ describe("AuthUtility - Génération de Token", () => {
         
         const decoded = jwt.verify(token, secret) as any;
 
-        // On vérifie que nos données de base sont bien présentes à l'intérieur
+        // vérifie que les datas de base sont a l'intérieur
         expect(decoded.id).toBe(42);
         expect(decoded.role).toBe("candidat");
         expect(decoded.isFirstLogin).toBe(true);
         
-        // on verifie l'expiration
+        // verifie expiration de celui ci
         expect(decoded.exp).toBeDefined();
     });
 });
