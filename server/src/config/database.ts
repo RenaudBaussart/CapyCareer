@@ -3,7 +3,7 @@ import mysql from 'mysql2/promise';
 import { env } from './env';
 
 // Crée un pool de connexions MySQL OVH
-const pool = mysql.createPool({
+export const pool = mysql.createPool({
   host: env.OVH_DB_HOST,
   user: env.OVH_DB_USER,
   password: env.OVH_DB_PASSWORD,
@@ -24,5 +24,3 @@ pool.getConnection()
         console.error('Échec de la connexion MySQL:', err.message);
         process.exit(1);
     });
-
-module.exports = pool;

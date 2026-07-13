@@ -55,3 +55,10 @@ Thumbs.db
 *.sln
 *.sw?
 raw/
+
+
+# ==============================
+# 7. TESTS ET COUVERTURE
+# ==============================
+coverage/
+rapport-tests.html
