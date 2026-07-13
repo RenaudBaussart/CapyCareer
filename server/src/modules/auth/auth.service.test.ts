@@ -19,12 +19,12 @@ describe("AuthService - Méthode Register", () => {
             release: jest.fn(),
         };
         
-        // On simule le Pool MySQL
+        // simule Pool MySQL
         mockPool = {
             getConnection: jest.fn().mockResolvedValue(mockConnection),
         };
 
-        // On injecte notre fausse base de données dans le service via l'injection de dépendances
+        // injecte la bdd fictive dans le service via l'injection de dépendances
         authService = new AuthService(mockPool as unknown as Pool);
     });
 
@@ -49,7 +49,7 @@ describe("AuthService - Méthode Register", () => {
 
             expect(mockConnection.release).toHaveBeenCalledTimes(1);
             
-            // On vérifie que bcrypt n'a pas été appelé puisque ça a planté avant
+            // verifie que bcrypt n'a pas été appelé puisque ça a planté avant
             expect(bcrypt.hash).not.toHaveBeenCalled(); 
         });
     });
@@ -60,7 +60,7 @@ describe("AuthService - Méthode Register", () => {
                 .mockResolvedValueOnce([[]]) 
                 .mockResolvedValueOnce([{ insertId: 42 }]); 
             
-            // On lui donne le mdp à hacher et le token à générer
+            // donne mdp à hacher et token à générer
             (bcrypt.hash as jest.Mock).mockResolvedValue("hashedPassword123");
             (generatememberToken as jest.Mock).mockReturnValue("fake-jwt-token-123");
 
@@ -77,22 +77,22 @@ describe("AuthService - Méthode Register", () => {
             const result = await authService.register(userData as any);
 
             
-            // on voit que l'on a bien reçu le token généré
+            // attendu du token généré
             expect(result).toBe("fake-jwt-token-123");
             
-            // on voit si la connexion a été obtenue depuis le pool
+            // attendu de la connexion obtenue depuis le pool
             expect(mockConnection.execute).toHaveBeenCalledTimes(2); 
             
-            // on voit si le mot de passe a été haché avec les bons paramètres
+            // attendu du mdp haché avec les bons paramètres
             expect(bcrypt.hash).toHaveBeenCalledWith("HelloWorld0/", 10);
             
-            // on voit si le token a été généré avec les bonnes informations
+            // attendu du token généré avec les bonnes informations
             expect(generatememberToken).toHaveBeenCalledWith({
                 id: 42,
                 role: "candidat",
                 isFirstLogin: true
             });
-            // on s'assure que la connexion a été relâchée après l'opération
+            // attendu que la connexion a été relâchée après l'opération
             expect(mockConnection.release).toHaveBeenCalledTimes(1);
         });
     });
@@ -109,12 +109,12 @@ describe("AuthService - Méthode Login", () => {
             release: jest.fn(),
         };
         
-        // On simule le Pool MySQL
+        // simule Pool MySQL
         mockPool = {
             getConnection: jest.fn().mockResolvedValue(mockConnection),
         };
 
-        // On injecte notre fausse base de données dans le service via l'injection de dépendances
+        // injecte dans bdd fictive dans le service via l'injection de dépendances
         authService = new AuthService(mockPool as unknown as Pool);
     });
 
