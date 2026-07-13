@@ -1,1 +1,84 @@
 @import "tailwindcss";
+
+@theme {
+  /* --font-sans: remplace police par défaut */
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+
+  /* tonalités de verts */
+   /* vert sapin profond */
+  --color-primary-dark: #157A6E;
+  /* vert végétal */
+  --color-primary: #499F68;       
+   /* vert sauge doux */ 
+  --color-primary-light: #77B28C; 
+
+  /* couleur de fond */
+  /* blanc cassé */
+  --color-bone: #EDE3D3;
+
+  /* terracottas (accentuation) */
+  /* terracotta profond */
+  --color-accent-dark: #B4654A;
+  /* terracotta */
+  --color-accent: #BB735A;
+  /* terracotta rosé */
+  --color-accent-light: #C78C77;
+}
+
+@layer base {
+  body {
+    @apply bg-bone text-primary-dark font-sans;
+  }
+}
+
+
+/* classique */
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* medium */
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/fonts/Poppins/Poppins-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* semi bold */
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/fonts/Poppins/Poppins-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* bold */
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/fonts/Poppins/Poppins-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* italique */
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/fonts/Poppins/Poppins-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* italic bold */
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/fonts/Poppins/Poppins-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+
+

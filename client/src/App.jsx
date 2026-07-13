@@ -1,16 +1,16 @@
-function App() {
+// chef dorchestre du site (regroupe component, hook etc)
+
+// imports
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+// pages
+import Register from "./pages/Register";
+
+export default function App() {
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
-      <div className="rounded-xl bg-white p-8 shadow-lg">
-        <h1 className="text-3xl font-bold text-blue-600">
-          🚀 Tailwind v4 est installé !
-        </h1>
-        <p className="mt-4 text-gray-600">
-          Le frontend Job Aggregator est prêt pour le design sans fichier de config.
-        </p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
