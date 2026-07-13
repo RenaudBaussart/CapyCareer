@@ -23,7 +23,7 @@ export default function Navbar() {
 
           {/* partie gauche (navigations)n */}
           <div className="flex items-center gap-8">
-            <NavLink to="/" className={navLinkClass}>
+            <NavLink to="/home" className={navLinkClass}>
               <Home className="w-4 h-4" />
               Accueil
             </NavLink>
