@@ -13,8 +13,11 @@
   --color-primary-light: #77B28C; 
 
   /* couleur de fond */
+  /* blanc cassé plus clair */
+  --color-light-bone: #F8F3ED;
   /* blanc cassé */
   --color-bone: #EDE3D3;
+
 
   /* terracottas (accentuation) */
   /* terracotta profond */

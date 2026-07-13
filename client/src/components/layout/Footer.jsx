@@ -3,6 +3,8 @@
 // import
 import { Link } from "react-router-dom";
 import { Mail } from "lucide-react";
+// img
+import logo from "../../assets/logos/CapySquare.png";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -19,7 +21,8 @@ export default function Footer() {
                     {/* colonne 1/4 (marque, intro) */}
                     <div className="space-y-4">
                         <h2 className="text-2xl font-bold text-bone flex items-center gap-2">
-                            <span aria-hidden="true">logo à mettre</span> CapyCareer
+                            <img src={logo} alt="Logo CapyCareer" className="h-10 w-auto" />
+                            CapyCareer
                         </h2>
                         <p className="text-sm text-bone/70 leading-relaxed">
                             Trouvez l'opportunité qui vous correspond vraiment.
