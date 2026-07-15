@@ -3,7 +3,6 @@ import { errorHandlerMiddleware } from './errorHandlerMiddleware';
 import { HttpError, NotFoundError, InternalServerError } from './HttpError';
 import { logErrorToFile } from './ErrorsLogger';
 
-// Mock the ErrorsLogger module
 jest.mock('./ErrorsLogger', () => ({
   logErrorToFile: jest.fn(),
 }));
@@ -20,7 +19,6 @@ describe('errorHandlerMiddleware', () => {
       json: jest.fn(),
     };
     mockNext = jest.fn();
-    // Clear mock calls before each test
     (logErrorToFile as jest.Mock).mockClear();
   });
 

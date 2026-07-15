@@ -8,7 +8,7 @@ export const errorHandlerMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  // Log the error to a file
+  // Log l'erreur dans un fichier de log quotidien
   logErrorToFile(err.message, err);
 
   if (err instanceof HttpError) {
@@ -18,7 +18,6 @@ export const errorHandlerMiddleware = (
     });
   }
 
-  // For any other unexpected errors
   return res.status(500).json({
     success: false,
     message: 'Internal Server Error',
