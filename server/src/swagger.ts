@@ -5,11 +5,15 @@ import { loginSchema } from "./modules/auth/auth.schema";
 
 export const registry = new OpenAPIRegistry();
 
-const bearerAuth = registry.registerComponent('securitySchemes', 'bearerAuth', {
+const bearerAuthName = 'bearerAuth';
+
+registry.registerComponent('securitySchemes', bearerAuthName, {
     type: 'http',
     scheme: 'bearer',
     bearerFormat: 'JWT',
 });
+
+const publicMember = member.omit({ password: true }).openapi('PublicMember');
 
 registry.registerPath({
     method: "post",
@@ -146,7 +150,7 @@ registry.registerPath({
     summary: "Déconnexion",
     tags: ["Authentification"],
     
-    security: [{ [bearerAuth.name]: [] }], 
+    security: [{ [bearerAuthName]: [] }], 
 
     responses: {
         200: {
@@ -155,6 +159,76 @@ registry.registerPath({
                 "application/json": {
                     schema: z.object({
                         message: z.string().openapi({ example: "Déconnexion réussie." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+
+registry.registerPath({
+    method: "get",
+    path: "/api/members",
+    description: "Récupérer tous les profils des membres",
+    summary: "Lister les membres",
+    tags: ["Membres"],
+    security: [{ [bearerAuthName]: [] }],
+    responses: {
+        200: {
+            description: "Liste des profils des membres.",
+            content: {
+                "application/json": {
+                    schema: z.array(publicMember).openapi({
+                        example: [
+                            {
+                                id: 1,
+                                username: "Jojodu59",
+                                email: "jojo@example.com",
+                                firstname: "Jonathan",
+                                lastname: "Decroix",
+                                role: "candidat"
+                            }
+                        ]
+                    })
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        403: {
+            description: "Accès refusé. L'utilisateur n'a pas les droits nécessaires.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Accès refusé. L'utilisateur n'a pas les droits nécessaires." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Aucun membre trouvé",
+            content:  {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Aucun membre trouvé." })
                     })
                 }
             }
