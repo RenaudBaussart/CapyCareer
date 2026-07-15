@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import NotFoundPage from "./pages/404";
 import Company from "./pages/Companies"
+import Legal from "./pages/Legal"
 
 export default function App() {
   return (
@@ -25,6 +26,9 @@ export default function App() {
 
         {/* Page Compagnies */}
         <Route path="/companies" element={<Company />} />
+
+        {/* Page Legal */}
+        <Route path="/legal" element={<Legal />} />
 
         {/* Page 404 */}
         <Route path="/404" element={<NotFoundPage />} />
