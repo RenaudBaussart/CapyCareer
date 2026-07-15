@@ -8,7 +8,10 @@ const getAllMembersProfile = async (req: Request, res: Response) => {
         const members = await memberService.getAllMembers();
 
         res.status(200).json({ message: "Profils des membres récupérés avec succès.", members });
-    } catch (error) {
+    } catch (error: any) {
+        if (error.message === "NO_MEMBERS_FOUND") {
+           res.status(404).json({ messge: "Not found"})
+        }
         console.error("Erreur lors de la récupération des profils des membres:", error);
         res.status(500).json({ message: "Erreur interne du serveur." });
     }
