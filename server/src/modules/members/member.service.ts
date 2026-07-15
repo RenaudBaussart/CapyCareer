@@ -7,25 +7,20 @@ export class MemberService {
     constructor(dbPool: Pool) {
         this.pool = dbPool;
     }
-
     /**
      * Récupère tous les profils des membres de la base de données.
-     * @returns {Promise<Array>} Une promesse qui résout un tableau d'objets représentant les profils des membres.
-     * @throws {Error} Lance une erreur si aucun membre n'est trouvé ou si la requête échoue.
+     * @param excludedMemberId (optionnel) L'ID du membre à exclure de la liste.
+     * @returns Une promesse qui résout un tableau d'objets représentant les profils des membres.
+     * @throws Une erreur si aucun membre n'est trouvé ou si une erreur de base de données se produit.
      */
-    async getAllMembers() {
+    async getAllMembers(excludedMemberId?: number) {
         const connection = await this.pool.getConnection();
         try {
             const [rows] = await connection.execute<RowDataPacket[]>(
                 "SELECT PK_id, email, FK_role_id, firstname, lastname, username, biography, profil_pic_link, creation_date, last_connection FROM User_", 
             );
 
-            if (rows.length === 0) {
-                throw new Error("NO_MEMBERS_FOUND");
-            }
-            
-
-            return rows.map(row => ({
+            const members = rows.map(row => ({
                 id: row.PK_id,
                 email: row.email,
                 role: row.FK_role_id,
@@ -37,6 +32,16 @@ export class MemberService {
                 creation_date: row.creation_date,
                 last_connection: row.last_connection
             }));
+
+            const visibleMembers = excludedMemberId
+                ? members.filter(member => member.id !== excludedMemberId)
+                : members;
+
+            if (visibleMembers.length === 0) {
+                throw new Error("NO_MEMBERS_FOUND");
+            }
+
+            return visibleMembers;
         } finally {
             connection.release();
         }
