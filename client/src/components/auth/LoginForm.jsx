@@ -83,7 +83,7 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-primary text-bone font-bold py-3 px-4 rounded-3xl mt-6 hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none disabled:opacity-50"
+          className="w-full bg-deep-primary text-light-bone font-bold py-3 px-4 rounded-3xl mt-6 hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none disabled:opacity-50"
         >
           {isSubmitting ? "Connexion..." : "Se connecter"}
         </button>
@@ -98,7 +98,7 @@ export default function LoginForm() {
         {/* btn co google */}
         <button
           type="button"
-          className="w-full mb-6 flex items-center justify-center gap-2 bg-white text-primary-dark border border-primary-light font-semibold py-3 px-4 rounded-3xl hover:bg-primary-light/10 transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
+          className="w-full mb-6 flex items-center justify-center gap-2 bg-white text-primary-dark border border-primary-light font-semibold py-3 px-4 rounded-3xl transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
           aria-label="Se connecter avec Google"
         >
           <LogIn className="w-5 h-5" />

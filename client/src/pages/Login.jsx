@@ -37,13 +37,13 @@ export default function Login() {
                         <div className="  py-10 lg:py-16 px-6" >
                             <div className="max-w-2xl mx-auto text-center ">
                                 <h1 className="text-4xl font-bold text-primary-dark ">Bienvenue !</h1>
-                                <p className="text-primary-dark/80">
+                                <p className="text-primary-dark">
                                     Pour commencer, veuillez vous connecter ou vous inscrire via votre compte Google.
                                 </p>
 
 
-                                <p className="text-sm text-primary-dark/70">
-                                    En cliquant sur l'une des options "Se connecter" ci-dessous, vous comprenez et acceptez les <Link to="/cgu" className="text-accent-dark font-medium hover:underline">Conditions d'utilisation</Link> de CapyCareer. Vous confirmez également avoir pris connaissance de la <Link to="/privacy" className="text-accent-dark font-medium hover:underline">Politique de confidentialité</Link>.
+                                <p className="text-sm text-primary-dark">
+                                    En cliquant sur l'une des options "Se connecter" ci-dessous, vous comprenez et acceptez les <Link to="#" className="text-accent-deep font-medium hover:underline">Conditions d'utilisation</Link> de CapyCareer. Vous confirmez également avoir pris connaissance de la <Link to="#" className="text-accent-deep font-medium hover:underline">Politique de confidentialité</Link>.
                                 </p>
 
                             </div>

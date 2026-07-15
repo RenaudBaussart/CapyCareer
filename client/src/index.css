@@ -8,7 +8,9 @@
    /* vert sapin profond */
   --color-primary-dark: #157A6E;
   /* vert végétal */
-  --color-primary: #499F68;       
+  --color-primary: #499F68;
+   /* vert végétal + foncé */
+   --color-deep-primary: #33704A;
    /* vert sauge doux */ 
   --color-primary-light: #77B28C; 
 
@@ -24,6 +26,8 @@
   /* terracottas (accentuation) */
   /* terracotta profond */
   --color-accent-dark: #B4654A;
+  /* terracotta impacte + foncé */
+  --color-accent-deep: #8E4C38;
   /* terracotta */
   --color-accent: #BB735A;
   /* terracotta rosé */
