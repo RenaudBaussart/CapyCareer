@@ -7,11 +7,15 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import NotFoundPage from "./pages/404";
+import Company from "./pages/Companies"
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+
+        {/* Page Accueil */}
+        <Route path="/home" element={<Home />} />
 
         {/* Page Register */}
         <Route path="/register" element={<Register />} />
@@ -19,11 +23,11 @@ export default function App() {
         {/* Page Login */}
         <Route path="/login" element={<Login />} />
 
-        {/* Page Accueil */}
-        <Route path="/home" element={<Home />} />
+        {/* Page Compagnies */}
+        <Route path="/companies" element={<Company />} />
 
         {/* Page 404 */}
-        <Route path="/404" element={<NotFoundPage/>} />
+        <Route path="/404" element={<NotFoundPage />} />
 
       </Routes>
     </BrowserRouter>
