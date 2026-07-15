@@ -9,6 +9,9 @@ import Home from "./pages/Home";
 import NotFoundPage from "./pages/404";
 import Company from "./pages/Companies"
 import Legal from "./pages/Legal"
+import AccessibilityPage from "./pages/Accessibility";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 export default function App() {
   return (
@@ -29,6 +32,15 @@ export default function App() {
 
         {/* Page Legal */}
         <Route path="/legal" element={<Legal />} />
+
+        {/* Page Accessibility */}
+        <Route path="/accessibility" element={<AccessibilityPage />} />
+
+        {/* Page Privacy */}
+        <Route path="/privacy" element={<Privacy />} />
+
+        {/* Page Terms */}
+        <Route path="/terms" element={<Terms />} />
 
         {/* Page 404 */}
         <Route path="/404" element={<NotFoundPage />} />
