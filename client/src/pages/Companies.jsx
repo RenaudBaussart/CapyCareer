@@ -1,10 +1,11 @@
 // fichier gerant la page de presentation des entreprises proposant des offres demploi
 
-// import
-// component
+// import component
 import CompanyCard from "../components/companies/CompanyCard";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
+import Leaves from "../assets/images/Leaves.png";
+
 // icone
 import { Search } from "lucide-react";
 
@@ -20,10 +21,23 @@ const mockCompanies = [
 
 export default function Companies() {
     return (
-        <div className="flex flex-col min-h-screen">
+        // conteneur principal
+        <main
+            className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
+            style={{
+                backgroundImage: `url(${Leaves})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+            }}
+        >
             <Navbar />
-            <main className="min-h-screen bg-bone">
-                <div className="max-w-5xl mx-auto px-6 py-12 lg:py-20">
+
+            {/* conteneur card */}
+            <div className="grow flex items-center justify-center p-6 lg:p-12">
+                
+                {/* grande card */}
+                <div className="w-full max-w-5xl backdrop-blur-2xl bg-white/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl">
 
                     {/* section recherche */}
                     <section className="mb-16">
@@ -72,9 +86,9 @@ export default function Companies() {
                     </section>
 
                 </div>
-            </main>
-            <Footer />
+            </div>
 
-        </div>
+            <Footer />
+        </main>
     );
 }
