@@ -5,11 +5,20 @@
 import LoginForm from "../components/auth/LoginForm";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
+import { Link } from "react-router-dom";
+import CapyWrite from "../assets/images/CapyWriteSmoother.gif"
+import Leaves from "../assets/images/Leaves.png"
 
 export default function Login() {
     return (
         // conteneur principal
-        <main className="flex flex-col min-h-screen">
+        <main
+            className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
+            style={{
+                backgroundImage: `url(${Leaves})`,
+                backgroundRepeat: "no-repeat",
+            }}
+        >
             <Navbar />
 
             {/* conteneur principal contenu */}
@@ -17,28 +26,30 @@ export default function Login() {
                 <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
                     {/* colonne gauche (form) */}
-                    <section className="flex justify-center lg:justify-end lg:pr-12">
+                    <section className="order-2 lg:order-1 flex justify-center lg:justify-end lg:pr-12 backdrop-blur-2xl h-full p-5 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl">
                         <LoginForm />
                     </section>
 
                     {/* colonne droite (dessin capybara) */}
                     {/* masqué si format mobile */}
-                    <section
-                        className="flex-col items-center justify-center relative w-full hidden lg:flex max-w-md aspect-square bg-white/60 rounded-2xl border-2 border-dashed border-primary-light shadow-sm"
-                        aria-hidden="true"
-                    >
-                        {/* WARNING: emplacement pour feuilles */}
-                        <div className="absolute top-0 right-0 -mt-8 -mr-8 text-primary">
-                            [Emplacement Feuilles]
+                    <div className="order-1 lg:order-2 flex flex-col items-center text-center backdrop-blur-2xl rounded-3xl overflow-hidden bg-white shadow-[0_0_15px_rgba(0,0,0,0.15)]">
+                        <img src={CapyWrite} alt="Capybara qui prend des notes" className="w-full" />
+                        <div className="  py-10 lg:py-16 px-6" >
+                            <div className="max-w-2xl mx-auto text-center ">
+                                <h1 className="text-4xl font-bold text-primary-dark ">Bienvenue !</h1>
+                                <p className="text-primary-dark">
+                                    Pour commencer, veuillez vous connecter ou vous inscrire via votre compte Google.
+                                </p>
+
+
+                                <p className="text-sm text-primary-dark">
+                                    En cliquant sur l'une des options "Se connecter" ci-dessous, vous comprenez et acceptez les <Link to="#" className="text-accent-deep font-medium hover:underline">Conditions d'utilisation</Link> de CapyCareer. Vous confirmez également avoir pris connaissance de la <Link to="#" className="text-accent-deep font-medium hover:underline">Politique de confidentialité</Link>.
+                                </p>
+
+                            </div>
                         </div>
 
-                        {/* WARNING: emplacement capybarra lunettes */}
-                        <div className="text-center text-accent">
-                            <span className="block text-5xl mb-4">🦦</span>
-                            <p className="font-semibold">Emplacement :</p>
-                            <p className="text-sm italic">Dessin capybara</p>
-                        </div>
-                    </section>
+                    </div>
 
                 </div>
             </div>
