@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import authRouter from './modules/auth/auth.route';
+import memberRouter from './modules/members/member.route';
 import swaggerUi from "swagger-ui-express";
 import { generateOpenAPI } from "./swagger";
 const app = express();
@@ -20,5 +21,6 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 app.use('/api/auth', authRouter);
+app.use('/api/members', memberRouter);
 
 export default app;
