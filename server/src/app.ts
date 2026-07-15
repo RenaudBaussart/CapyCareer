@@ -21,4 +21,6 @@ app.get('/api/health', (req: Request, res: Response) => {
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 app.use('/api/auth', authRouter);
 
+app.use(errorHandlerMiddleware);
+
 export default app;
