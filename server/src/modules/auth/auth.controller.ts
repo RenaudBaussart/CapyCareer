@@ -23,8 +23,8 @@ const registerMember = async (req: Request, res: Response) => {
             });
         }
 
-        if (error.message === "EMAIL_EXISTS") {
-            return res.status(409).json({ message: "Un membre avec cet email existe déjà." });
+        if (error.message === "EMAIL_EXISTS" || error.message === "USERNAME_EXISTS") {
+            return res.status(409).json({ message: "Un membre avec cet utilisateur existe déjà." });
         }
 
         
