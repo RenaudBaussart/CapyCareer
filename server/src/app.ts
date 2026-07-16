@@ -3,6 +3,7 @@ import cors from 'cors';
 import authRouter from './modules/auth/auth.route';
 import swaggerUi from "swagger-ui-express";
 import { generateOpenAPI } from "./swagger";
+import { errorHandlerMiddleware } from './core/errors/errorHandlerMiddleware';
 const app = express();
 
 const openApiDocument = generateOpenAPI();
