@@ -25,9 +25,19 @@ export class AuthService {
                 [validatedData.email]
             );
 
+            const [existingMembersByUsername] = await connection.execute<RowDataPacket[]>(
+                "SELECT PK_id FROM User_ WHERE username = ?",
+                [validatedData.username]
+            );
+
+            if (existingMembersByUsername.length > 0) {
+                throw new Error("USERNAME_EXISTS");
+            }
+
             if (existingMembers.length > 0) {
                 throw new Error("EMAIL_EXISTS");
             }
+
             
             // hashage
             const hashedPassword = await bcrypt.hash(validatedData.password, 10);
