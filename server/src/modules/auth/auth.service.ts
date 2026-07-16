@@ -15,7 +15,16 @@ export class AuthService {
     constructor(dbPool: Pool) {
         this.pool = dbPool;
     }
-    
+    /**
+     * Enregistre un nouveau membre dans la base de données.
+     * Vérifie si l'email ou le nom d'utilisateur existe déjà.
+     * Si non, hache le mot de passe et insère les données du membre dans la base.
+     * Génère un token JWT pour le membre enregistré.
+     * @param validatedData - Les données validées du membre à enregistrer.
+     * @returns Un token JWT pour le membre enregistré.
+     * @throws ConflictError si l'email ou le nom d'utilisateur existe déjà.
+     * @throws InternalServerError si une erreur survient lors de l'enregistrement.
+     */
     async register(validatedData: ValidatedMemberData) {
         const connection = await this.pool.getConnection();
 
@@ -31,15 +40,10 @@ export class AuthService {
                 [validatedData.username]
             );
 
-            if (existingMembersByUsername.length > 0) {
-                throw new ConflictError("USERNAME_EXISTS");
+            if (existingMembersByUsername.length > 0 || existingMembers.length > 0) {
+                throw new ConflictError("USER_ALREADY_EXISTS");
             }
 
-            if (existingMembers.length > 0) {
-                throw new ConflictError("EMAIL_EXISTS");
-            }
-
-            
             // hashage
             const hashedPassword = await bcrypt.hash(validatedData.password, 10);
         
@@ -78,45 +82,59 @@ export class AuthService {
             }
         }
     }
-
+    /**
+     * Authentifie un membre en vérifiant son nom d'utilisateur et son mot de passe.
+     * Si les identifiants sont corrects, génère un token JWT pour le membre.
+     * @param username - Le nom d'utilisateur du membre.
+     * @param password - Le mot de passe du membre.
+     * @returns Un token JWT pour le membre authentifié.
+     * @throws UnauthorizedError si les identifiants sont incorrects.
+     * @throws InternalServerError si une erreur survient lors de l'authentification.
+     */
     async login(username: string, password: string) {
-        const connection = await this.pool.getConnection();
+    const connection = await this.pool.getConnection();
 
-        try {
-            // récupère l'user par son username
-            const [rows] = await connection.execute<RowDataPacket[]>(
-                "SELECT PK_id, hashed_password, FK_role_id FROM User_ WHERE username = ?",
-                [username]
-            );
+    try {
+        // ajoute username
+        const [rows] = await connection.execute<RowDataPacket[]>(
+            "SELECT PK_id, username, hashed_password, FK_role_id FROM User_ WHERE username = ?",
+            [username]
+        );
 
-            if (rows.length === 0) {
-                throw new NotFoundError("USER_NOT_FOUND");
-            }
-            // typage strict pour typescript
-            const user = rows[0] as any;
-            const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
-            const isUsernameValid = user.username === username;
+        if (rows.length === 0) {
+            throw new UnauthorizedError("Identifiants incorrects.");
+        }
+        
+        const user = rows[0] as any;
+        
+        const isUsernameValid = user.username === username;
+        const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
 
-            if (!isPasswordValid || !isUsernameValid) {
-                throw new UnauthorizedError("INVALID_CREDENTIALS");
-            }
+        if (!isPasswordValid || !isUsernameValid) {
+            throw new UnauthorizedError("Identifiants incorrects.");
+        }
 
+        const tokenPayload: TokenMember = {
+            id: user.PK_id,
+            role: user.FK_role_id,
+            isFirstLogin: false
+        };
 
-            const tokenPayload: TokenMember = {
-                id: user.PK_id,
-                role: user.FK_role_id,
-                isFirstLogin: false
-            };
+        return generatememberToken(tokenPayload);
 
-            return generatememberToken(tokenPayload);
-
-        } finally {
-            if(connection) {
-                connection.release();
-            }
+    } finally {
+        if(connection) {
+            connection.release();
         }
     }
-
+}
+    /**
+     * Déconnecte un membre en ajoutant son token JWT à la liste noire.
+     * Met à jour la date de dernière connexion du membre dans la base de données.
+     * @param token - Le token JWT du membre à déconnecter.
+     * @returns Un message de succès.
+     * @throws InternalServerError si une erreur survient lors de la déconnexion.
+     */
     async logout(token: string) {
     const connection = await this.pool.getConnection();
     try {
