@@ -124,14 +124,18 @@ export class AuthService {
             [decoded.id]
         );
 
-        // WARNING: voir pour liste noire
 
-        /* const blacklistToken = await connection.execute(
+        await connection.execute(
             "INSERT INTO BlacklistedTokens (token, blacklisted_at) VALUES (?, NOW())",
             [token]
-        ); */
+        );
 
-    } finally {
+    } catch (sqlError: any) {
+            if (sqlError.errno !== 1062) {
+                throw new Error("TOKEN_BLACKLIST_FAILED");
+            }
+        }
+    finally {
         if(connection) {
             connection.release();
         }
