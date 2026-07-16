@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { member } from "../members/member.schema";
 import { pool } from '../../config/database'; 
 import { AuthService } from "./auth.service"; 
 import { loginSchema } from "./auth.schema";
 
-const registerMember = async (req: Request, res: Response) => { 
+const registerMember = async (req: Request, res: Response, next: NextFunction) => { 
     try {
         const validatedData = member.parse(req.body);
 
@@ -23,17 +23,11 @@ const registerMember = async (req: Request, res: Response) => {
             });
         }
 
-        if (error.message === "EMAIL_EXISTS" || error.message === "USERNAME_EXISTS") {
-            return res.status(409).json({ message: "Un membre avec cet utilisateur existe déjà." });
-        }
-
-        
-        console.error("Erreur lors de l'enregistrement du membre:", error);
-        res.status(500).json({ message: "Erreur interne du serveur." });
+        next(error);
     }
 };
 
-const loginMember = async (req: Request, res: Response) => {
+const loginMember = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const loginData = loginSchema.parse(req.body);
         
@@ -50,16 +44,11 @@ const loginMember = async (req: Request, res: Response) => {
         }
 
         
-        if (error.message === "USER_NOT_FOUND" || error.message === "INVALID_PASSWORD") {
-            return res.status(401).json({ message: "Identifiants incorrects." }); 
-        }
-
-        console.error("Erreur lors de la connexion du membre:", error);
-        res.status(500).json({ message: "Erreur interne du serveur." });
+        next(error);
     }
 };
 
-const logoutMember = async (req: Request, res: Response) => {
+const logoutMember = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
         const authService = new AuthService(pool);
@@ -67,8 +56,7 @@ const logoutMember = async (req: Request, res: Response) => {
 
         res.status(200).json({ message: "Déconnexion réussie." });
     } catch (error: any) {
-        console.error("Erreur lors de la déconnexion du membre:", error);
-        res.status(500).json({ message: "Erreur interne du serveur." });
+        next(error);
     }
 }
     

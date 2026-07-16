@@ -4,6 +4,7 @@ import { generatememberToken, TokenMember } from "../../core/utils/authUtility";
 import { z } from "zod";
 import { member } from "../members/member.schema";
 import jwtTool from 'jsonwebtoken';
+import { ConflictError, UnauthorizedError, NotFoundError, InternalServerError } from '../../core/errors/HttpError';
 
 type ValidatedMemberData = z.infer<typeof member>;
 
@@ -31,11 +32,11 @@ export class AuthService {
             );
 
             if (existingMembersByUsername.length > 0) {
-                throw new Error("USERNAME_EXISTS");
+                throw new ConflictError("USERNAME_EXISTS");
             }
 
             if (existingMembers.length > 0) {
-                throw new Error("EMAIL_EXISTS");
+                throw new ConflictError("EMAIL_EXISTS");
             }
 
             
@@ -89,15 +90,17 @@ export class AuthService {
             );
 
             if (rows.length === 0) {
-                throw new Error("USER_NOT_FOUND");
+                throw new NotFoundError("USER_NOT_FOUND");
             }
             // typage strict pour typescript
             const user = rows[0] as any;
             const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
+            const isUsernameValid = user.username === username;
 
-            if (!isPasswordValid) {
-                throw new Error("INVALID_PASSWORD");
+            if (!isPasswordValid || !isUsernameValid) {
+                throw new UnauthorizedError("INVALID_CREDENTIALS");
             }
+
 
             const tokenPayload: TokenMember = {
                 id: user.PK_id,
@@ -132,7 +135,7 @@ export class AuthService {
 
     } catch (sqlError: any) {
             if (sqlError.errno !== 1062) {
-                throw new Error("TOKEN_BLACKLIST_FAILED");
+                throw new InternalServerError("Échec de la mise en liste noire du token.");
             }
         }
     finally {
