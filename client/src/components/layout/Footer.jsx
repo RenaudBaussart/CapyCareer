@@ -35,7 +35,7 @@ export default function Footer() {
                         <h3 className="text-light-bone font-semibold mb-4">Candidats</h3>
                         <ul className="space-y-3 text-sm">
                             <li><Link to="#" className="hover:text-white transition-colors">Parcourir les offres</Link></li>
-                            <li><Link to="#" className="hover:text-white transition-colors">Découvrir les entreprises</Link></li>
+                            <li><Link to="/companies" className="hover:text-white transition-colors">Découvrir les entreprises</Link></li>
                             <li><Link to="#" className="hover:text-white transition-colors">Mon espace personnel</Link></li>
                         </ul>
                     </div>
@@ -44,8 +44,8 @@ export default function Footer() {
                     <div>
                         <h3 className="text-light-bone font-semibold mb-4">+ d'informations</h3>
                         <ul className="space-y-3 text-sm">
-                            <li><Link to="#" className="hover:text-white transition-colors">À propos de nous</Link></li>
-                            <li><Link to="#" className="hover:text-white transition-colors">Documentation API</Link></li>
+                            <li><Link to="/about" className="hover:text-white transition-colors">À propos de nous</Link></li>
+                            {/* <li><Link to="/api-doc" className="hover:text-white transition-colors">Documentation API</Link></li> */}
                             <li><a href="https://epi-api.welovedevs.com/" target="_blank" rel="noopener noreferrer"
                                 className="hover:text-white transition-colors">Partenaire WeLoveDevs</a></li>
                         </ul>
