@@ -17,6 +17,7 @@ registry.registerPath({
     description: "Inscrire un nouveau membre dans l'application",
     summary: "Inscription",
     tags: ["Authentification"],
+    security: [{ [bearerAuth.name]: [] }, {}],
     request: {
         body: {
             description: "Les données nécessaires pour créer un compte",
@@ -52,6 +53,17 @@ registry.registerPath({
                 }
             }
         },
+        403: {
+            description: "Membre déjà connecté.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Vous êtes déjà connecté." })
+                    })
+                }
+            }
+        },
         409: { 
             description: "Cet utilisateur existe déjà.",
             content: {
@@ -81,6 +93,7 @@ registry.registerPath({
     description: "Authentifier un membre existant et récupérer un token JWT",
     summary: "Connexion",
     tags: ["Authentification"], 
+    security: [{ [bearerAuth.name]: [] }, {}],
     request: {
         body: {
             description: "Les identifiants de connexion",
@@ -122,6 +135,17 @@ registry.registerPath({
                 "application/json": {
                     schema: z.object({
                         message: z.string().openapi({ example: "Identifiants incorrects." })
+                    })
+                }
+            }
+        },
+        403: {
+            description: "Membre déjà connecté.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Vous êtes déjà connecté." })
                     })
                 }
             }
