@@ -8,7 +8,7 @@ export const loginLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, 
     max: 3,
     message: {
-        message: "Trop de tentatives de connexion échouées. Veuillez réessayer dans 15 minutes."
+        message: "Trop de tentatives de connexion échouées. Veuillez réessayer dans 1 minute."
     },
     standardHeaders: true, 
     legacyHeaders: false, 
