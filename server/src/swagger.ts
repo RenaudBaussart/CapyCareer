@@ -159,6 +159,16 @@ registry.registerPath({
                 }
             }
         },
+        401: {
+            description: "Token invalide ou expiré.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Token invalide." })
+                    })
+                }
+            }
+        },
         500: {
             description: "Erreur interne du serveur.",
             content: {
