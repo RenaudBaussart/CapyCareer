@@ -59,8 +59,8 @@ function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
             tabIndex={0}
             aria-pressed={isSelected}
             className={`bg-bone-light rounded-2xl p-4 border cursor-pointer transition-all hover:shadow-[0_0_15px_rgba(0,0,0,0.15)] focus:outline-none focus:ring-2 focus:ring-primary ${isSelected
-                    ? "border-primary shadow-[0_0_15px_rgba(0,0,0,0.15)]"
-                    : "border-primary-light/40 shadow-[0_0_15px_rgba(0,0,0,0.06)]"
+                ? "border-primary shadow-[0_0_15px_rgba(0,0,0,0.15)]"
+                : "border-primary-light/40 shadow-[0_0_15px_rgba(0,0,0,0.06)]"
                 }`}
         >
             <div className="flex items-start justify-between gap-2">
@@ -102,17 +102,17 @@ function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
 
 function JobDetail({ job, isSaved, onToggleSave }) {
     return (
-        <article className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-7">
+        <article className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-5 sm:p-7">
             <div className="flex items-start justify-between gap-4">
                 <div>
-                    <h2 className="text-xl font-bold text-primary-dark">{job.title}</h2>
+                    <h2 className="text-lg sm:text-xl font-bold text-primary-dark">{job.title}</h2>
                     <p className="mt-1 font-medium text-primary-dark/70">{job.company}</p>
                     <p className="text-sm mt-0.5 flex items-center gap-1 text-primary-dark/70">
                         <MapPin size={14} aria-hidden="true" /> {formatLocation(job)}
                     </p>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 shrink-0">
                     <button
                         type="button"
                         onClick={onToggleSave}
@@ -208,31 +208,40 @@ export default function JobsSection({ jobs }) {
             </div>
 
             {/* barre de recherche */}
-            <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light flex items-center px-4 py-3 gap-3 mb-10 transition-colors focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
-                <label htmlFor="job-query" className="sr-only">Intitulé de poste, mots clés</label>
-                <Search size={18} className="text-primary-dark/50 shrink-0" aria-hidden="true" />
-                <input
-                    id="job-query"
-                    type="text"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Intitulé de poste, mots clés..."
-                    className="flex-1 bg-transparent outline-none text-sm placeholder:text-primary-dark/40"
-                />
-                <div className="w-px h-6 bg-primary-light/50" aria-hidden="true" />
-                <label htmlFor="job-location" className="sr-only">Localisation</label>
-                <MapPin size={18} className="text-primary-dark/50 shrink-0" aria-hidden="true" />
-                <input
-                    id="job-location"
-                    type="text"
-                    value={lieu}
-                    onChange={(e) => setLieu(e.target.value)}
-                    placeholder="Localisation"
-                    className="w-40 bg-transparent outline-none text-sm placeholder:text-primary-dark/40"
-                />
+            <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light flex flex-col sm:flex-row sm:items-center px-4 py-3 gap-3 mb-10 transition-colors focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <Search size={18} className="text-primary-dark/50 shrink-0" aria-hidden="true" />
+                    <label htmlFor="job-query" className="sr-only">Intitulé de poste, mots clés</label>
+                    <input
+                        id="job-query"
+                        type="text"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Intitulé de poste, mots clés..."
+                        className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-primary-dark/40"
+                    />
+                </div>
+
+                <div className="hidden sm:block w-px h-6 bg-primary-light/50 shrink-0" aria-hidden="true" />
+                <div className="sm:hidden border-t border-primary-light/30" aria-hidden="true" />
+
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <MapPin size={18} className="text-primary-dark/50 shrink-0" aria-hidden="true" />
+                    <label htmlFor="job-location" className="sr-only">Localisation</label>
+                    <input
+                        id="job-location"
+                        type="text"
+                        value={lieu}
+                        onChange={(e) => setLieu(e.target.value)}
+                        placeholder="Localisation"
+                        className="flex-1 min-w-0 sm:w-40 bg-transparent outline-none text-sm placeholder:text-primary-dark/40"
+                    />
+                </div>
+
                 <button
                     type="button"
-                    className="bg-primary text-bone font-bold text-sm px-5 py-2 rounded-xl hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none"
+                    className="w-full sm:w-auto bg-primary text-bone font-bold text-sm px-5 py-2 rounded-xl hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none shrink-0"
                 >
                     Rechercher
                 </button>
