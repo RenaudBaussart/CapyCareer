@@ -30,7 +30,7 @@ const createMemberSchema = z.object({
             description: "Le mot de passe en clair (minimum 6 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial)"
         }),
 
-    role: z.enum(["candidat", "entreprise", "admin"])
+    role: z.enum(["candidat", "entreprise"])
         .openapi({
             example: "candidat",
             description: "Le rôle du membre sur la plateforme"
