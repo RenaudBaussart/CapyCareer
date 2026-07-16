@@ -63,6 +63,11 @@ services:
       - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE} # Active l'authentification de base pour sécuriser l'accès à l'interface web de n8n.
       - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER} # Définit le nom d'utilisateur pour l'authentification de base, garantissant que seuls les utilisateurs autorisés peuvent accéder à n8n.
       - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD} # Définit le mot de passe pour l'authentification de base, renforçant ainsi la sécurité de l'accès à n8n.
+      - N8N_DIAGNOSTICS_ENABLED=false # Désactive l'envoi de données de diagnostic à n8n, protégeant ainsi la confidentialité des informations de l'utilisateur.
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=false # Désactive les notifications de mise à jour de n8n, évitant ainsi les interruptions ou distractions pour l'utilisateur.
+      - N8N_RUNNERS_MODE=external # Indique que n8n utilisera des runners externes pour exécuter les tâches, permettant ainsi une meilleure répartition de la charge et une exécution plus rapide des workflows.
+      - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN} # Définit le jeton d'authentification pour sécuriser la communication entre n8n et les runners externes, garantissant que seules les instances autorisées peuvent exécuter des tâches.
+      - N8N_RUNNERS_BROKER_LISTEN_ADDRESS=0.0.0.0 # Configure n8n pour écouter sur toutes les interfaces réseau du conteneur pour les communications avec les runners.
     restart: always
     # Assure que le conteneur n8n redémarre automatiquement en cas de plantage ou d'arrêt, garantissant ainsi une disponibilité continue.
     depends_on:
@@ -71,10 +76,23 @@ services:
 
     volumes:
       - n8n_data:/home/node/.n8n 
-      # C'est crucial : n8n sauvegarde tes workflows dans /home/node/.n8n. En liant cela au volume "n8n_data", on s'assure que si le conteneur plante ou est éteint, tes flux d'automatisation ne sont pas perdus.
+      # Monte le volume nommé "n8n_data" dans le conteneur à l'emplacement /home/node/.n8n, permettant à n8n de stocker ses données persistantes (comme les workflows et configurations) de manière sécurisée et durable.
     networks:
       - app-network 
       # Connecte n8n au réseau.
+
+  # n8n-runners c'est un conteneur qui va exécuter les tâches de n8n en parallèle, permettant d'améliorer les performances et la réactivité de l'application.
+  n8n-runners:
+    image: n8nio/runners:latest
+    container_name: n8n-runners
+    environment:
+      - N8N_RUNNERS_TASK_BROKER_URI=${N8N_RUNNERS_TASK_BROKER_URI}
+      - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+    restart: always
+    depends_on:
+      - n8n
+    networks:
+      - app-network
 
 # Déclaration des volumes
 volumes: 
