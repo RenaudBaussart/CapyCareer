@@ -12,6 +12,8 @@ import Legal from "./pages/Legal"
 import AccessibilityPage from "./pages/Accessibility";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import About from "./pages/About";
+import ApiDoc from "./pages/ApiDoc";
 
 export default function App() {
   return (
@@ -41,6 +43,12 @@ export default function App() {
 
         {/* Page Terms */}
         <Route path="/terms" element={<Terms />} />
+
+        {/* Page About */}
+        <Route path="/about" element={<About />} />
+
+        {/* Page APIDoc */}
+        <Route path="/api-doc" element={<ApiDoc />} />
 
         {/* Page 404 */}
         <Route path="/404" element={<NotFoundPage />} />
