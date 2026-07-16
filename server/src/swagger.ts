@@ -53,11 +53,11 @@ registry.registerPath({
             }
         },
         409: { 
-            description: "Un membre avec cet email existe déjà.",
+            description: "Cet utilisateur existe déjà.",
             content: {
                 "application/json": {
                     schema: z.object({
-                        message: z.string().openapi({ example: "Un membre avec cet email existe déjà." })
+                        message: z.string().openapi({ example: "Un membre avec cet utilisateur existe déjà." })
                     })
                 }
             }
