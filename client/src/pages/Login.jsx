@@ -17,6 +17,7 @@ export default function Login() {
             style={{
                 backgroundImage: `url(${Leaves})`,
                 backgroundRepeat: "no-repeat",
+                backgroundSize: "100%"
             }}
         >
             <Navbar />

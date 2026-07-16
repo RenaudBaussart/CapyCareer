@@ -23,6 +23,7 @@ export default function Home() {
                 style={{
                     backgroundImage: `url(${Leaves})`,
                     backgroundRepeat: "no-repeat",
+                    backgroundSize: "100%"
                 }}
             >
                 <div className="max-w-7xl mx-auto">
