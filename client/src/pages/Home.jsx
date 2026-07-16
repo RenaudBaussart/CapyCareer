@@ -1,22 +1,23 @@
 // fichier de la page d'accueil
 
 // import
-// component
+// components
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
-import CapyGlasses from "../assets/images/CapyGlasses.png"
+import JobsSection from "../components/home/JobsSection";
 // icone
-import { Banana , Apple, Citrus } from "lucide-react";
+import { Banana, Apple, Citrus } from "lucide-react";
 // img
+import CapyGlasses from "../assets/images/CapyGlasses.png";
 import Leaves from "../assets/images/Leaves.png";
+// data
+import { JOBS_MOCK } from "../data/jobsMock";
 
 export default function Home() {
-
     return (
         <main className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans">
             <Navbar />
 
-            {/* section hero */}
             <section
                 className="relative px-6 pt-12 pb-16 lg:pt-16 lg:pb-20"
                 style={{
@@ -24,48 +25,51 @@ export default function Home() {
                     backgroundRepeat: "no-repeat",
                 }}
             >
-                <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                <div className="max-w-7xl mx-auto">
 
-                    {/* texte de présentation */}
-                    <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)]">
+                    {/* hero */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 justify-center">
 
-                        <div className="w-full h-auto p-5 relative bg-primary">
-                        <h1 className="text-4xl lg:text-5xl font-bold text-bone mb-4">
-                            Bienvenue !
-                        </h1>
+                        <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)] flex flex-col">
+                            <div className="w-full h-auto p-5 relative bg-primary">
+                                <h1 className="text-4xl lg:text-5xl font-bold text-bone mb-4">
+                                    Bienvenue sur CapyCareer !
+                                </h1>
+                            </div>
 
-                        
-                        <p className="text-bone/80 mb-2">
-                            *Texte de présentation du site*
-                        </p>
+                            <div className="bg-bone-light p-8 grow flex flex-col justify-center">
+                                <p className="text-primary-dark/70 mb-6 text-start">
+                                    Explorez des offres adaptées à votre profil, développez votre réseau professionnel
+                                    et avancez dans votre carrière à votre rythme. Que vous soyez étudiant,
+                                    jeune diplômé ou professionnel confirmé, CapyCareer vous accompagne à
+                                    chaque étape de votre parcours.
+                                </p>
+
+                                <div className="flex items-center gap-4 justify-center text-3xl">
+                                    <Apple className="animate-bounce" aria-hidden="true" />
+                                    <Citrus className="animate-bounce [animation-delay:100ms]" aria-hidden="true" />
+                                    <Banana className="animate-bounce [animation-delay:200ms]" aria-hidden="true" />
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="bg-bone-light p-8">
-                        <p className="text-primary-dark/70 mb-6">
-                            *Texte autre*
-                        </p>
+                        <div className="relative hidden lg:block">
+                            <img
+                                src={CapyGlasses}
+                                alt="Capybara portant des lunettes"
+                                loading="lazy"
+                                className="absolute inset-0 w-full h-full object-cover rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)]"
+                            />
+                        </div>
 
-                        {/* fruits qui sautent */}
-                        <div className="flex items-center gap-4 justify-center text-3xl">
-                                <Apple className="animate-bounce" />
-                                <Citrus className="animate-bounce [animation-delay:100ms]" />
-                                <Banana className="animate-bounce [animation-delay:200ms]" />
-                        </div>
-                        </div>
                     </div>
 
-                    {/* dessin capybara */}
-                    <div className="flex justify-center ">
-                        <div
-                            className="w-full max-w-sm aspect-square rounded-3xl overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.15)]"
-                            aria-hidden="true"
-                        >
-                            <img src={CapyGlasses} alt="Capybara avec des lunettes" loading="lazy" />
-                        </div>
-                    </div>
+                    {/* WARNING: JOBS_MOCK à remplacer par les offres récupérées via N8N */}
+                    <JobsSection jobs={JOBS_MOCK} />
 
                 </div>
             </section>
+
             <Footer />
         </main>
     );
