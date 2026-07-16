@@ -8,14 +8,14 @@ import {
     LayoutDashboard,
     Users,
     Briefcase,
-    CopyCopy,
+    Copy,
     Terminal,
     LogOut,
     Menu,
     X
 } from "lucide-react";
 // img
-import logo from "../../assets/logos/CapySquare.png";
+import logo from "../../../assets/logos/CapySquare.png";
 
 export default function AdminNavbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -56,8 +56,8 @@ export default function AdminNavbar() {
                         </NavLink>
 
                         <NavLink to="/admin/duplicates" className={navLinkClass}>
-                            <CopyCopy className="w-4 h-4 text-white" />
-                            Doublons (IA)
+                            <Copy className="w-4 h-4 text-white" />
+                            Doublons
                         </NavLink>
 
                         <NavLink to="/admin/logs" className={navLinkClass}>
@@ -79,13 +79,13 @@ export default function AdminNavbar() {
                     {/* partie droite (logo + btn retour) */}
                     <div className="flex items-center gap-4">
                         {/* quitter le pannel admin pour return a l'accueil */}
-                        <Link
+                        {/* <Link
                             to="/home"
                             className="hidden sm:flex items-center gap-1 text-xs text-light-bone/80 hover:text-white transition-colors border border-light-bone/20 rounded px-2 py-1"
                         >
                             <LogOut className="w-3 h-3" />
                             Retour site
-                        </Link>
+                        </Link> */}
 
                         <div className="flex items-center gap-2">
                             <span className="text-xl font-bold text-bone tracking-tight">
@@ -119,7 +119,7 @@ export default function AdminNavbar() {
                         </NavLink>
 
                         <NavLink to="/admin/duplicates" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
-                            <CopyCopy className="w-4 h-4 text-white" />
+                            <Copy className="w-4 h-4 text-white" />
                             Doublons (IA)
                         </NavLink>
 
@@ -131,7 +131,7 @@ export default function AdminNavbar() {
                         <hr className="border-light-bone/10 my-2" />
 
                         <Link
-                            to="/home"
+                            to="/"
                             className="flex items-center gap-2 py-3 px-2 rounded-md font-medium text-red-400 hover:bg-red-500/10 transition-colors"
                             onClick={() => setIsOpen(false)}
                         >
