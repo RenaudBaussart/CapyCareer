@@ -1,7 +1,7 @@
 // chef dorchestre du site (regroupe component, hook etc)
 
 // imports
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // pages
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -21,7 +21,7 @@ export default function App() {
       <Routes>
 
         {/* Page Accueil */}
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
 
         {/* Page Register */}
         <Route path="/register" element={<Register />} />
@@ -52,6 +52,9 @@ export default function App() {
 
         {/* Page 404 */}
         <Route path="/404" element={<NotFoundPage />} />
+
+        {/* Toutes les routes inexistantes */}
+        <Route path="*" element={<Navigate to="/404" replace />} />
 
       </Routes>
     </BrowserRouter>
