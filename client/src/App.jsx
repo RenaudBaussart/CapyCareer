@@ -17,6 +17,9 @@ import ApiDoc from "./pages/ApiDoc";
 // pages ADMIN
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminJobs from "./pages/admin/AdminJobs";
+import AdminDuplicates from "./pages/admin/AdminDuplicates";
+import AdminLogs from "./pages/admin/AdminLogs";
 
 export default function App() {
   return (
@@ -59,6 +62,12 @@ export default function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         {/* pages Admin Users */}
         <Route path="/admin/users" element={<AdminUsers />} />
+        {/* pages Admin Jobs */}
+        <Route path="/admin/jobs" element={<AdminJobs />} />
+        {/* pages Admin Duplicates */}
+        <Route path="/admin/duplicates" element={<AdminDuplicates />} />
+        {/* pages Admin Logs */}
+        <Route path="/admin/logs" element={<AdminLogs />} />
 
         {/* ROUTES COMMUNES */}
         {/* Page 404 */}
