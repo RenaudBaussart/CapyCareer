@@ -1,21 +1,12 @@
-// fichier gerant le component navbar uniquement chez ladmin
+// fichier gerant le component navbar admin
 
 // import
 import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
+// component
+import ProfileMenu from "../../layout/ProfileMenu";
 // icone
-import {
-    LayoutDashboard,
-    Users,
-    Briefcase,
-    Copy,
-    Terminal,
-    LogOut,
-    Menu,
-    X
-} from "lucide-react";
-// img
-import logo from "../../../assets/logos/CapySquare.png";
+import { LayoutDashboard, Users, Briefcase, Copy, Terminal, Menu, X, LogOut, User } from "lucide-react";
 
 export default function AdminNavbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -44,29 +35,25 @@ export default function AdminNavbar() {
                             <LayoutDashboard className="w-4 h-4 text-white" />
                             Dashboard
                         </NavLink>
-
                         <NavLink to="/admin/users" className={navLinkClass}>
                             <Users className="w-4 h-4 text-white" />
                             Utilisateurs
                         </NavLink>
-
                         <NavLink to="/admin/jobs" className={navLinkClass}>
                             <Briefcase className="w-4 h-4 text-white" />
                             Offres
                         </NavLink>
-
                         <NavLink to="/admin/duplicates" className={navLinkClass}>
                             <Copy className="w-4 h-4 text-white" />
                             Doublons
                         </NavLink>
-
                         <NavLink to="/admin/logs" className={navLinkClass}>
                             <Terminal className="w-4 h-4 text-white" />
                             Logs
                         </NavLink>
                     </div>
 
-                    {/* menu burger */}
+                    {/* menu burger (mobile) */}
                     <button
                         onClick={() => setIsOpen(!isOpen)}
                         className="md:hidden p-2 text-bone"
@@ -76,30 +63,17 @@ export default function AdminNavbar() {
                         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                     </button>
 
-                    {/* partie droite (logo + btn retour) */}
-                    <div className="flex items-center gap-4">
-                        {/* quitter le pannel admin pour return a l'accueil */}
-                        {/* <Link
-                            to="/home"
-                            className="hidden sm:flex items-center gap-1 text-xs text-light-bone/80 hover:text-white transition-colors border border-light-bone/20 rounded px-2 py-1"
-                        >
-                            <LogOut className="w-3 h-3" />
-                            Retour site
-                        </Link> */}
-
-                        <div className="flex items-center gap-2">
-                            <span className="text-xl font-bold text-bone tracking-tight">
-                                CapyAdmin
-                            </span>
-                            <img src={logo} alt="Logo CapyCareer" className="h-10 w-auto" />
-                        </div>
-                    </div>
+                    {/* partie droite menu profil */}
+                    <ProfileMenu
+                        roleName="CapyAdmin"
+                        profileLink="/admin/profile"
+                    />
 
                 </div>
 
                 {/* menu mobile */}
                 <div
-                    className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? "max-h-87.5 pb-4" : "max-h-0"
+                    className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? "max-h-125 pb-4" : "max-h-0"
                         }`}
                 >
                     <div className="flex flex-col gap-1">
@@ -107,22 +81,18 @@ export default function AdminNavbar() {
                             <LayoutDashboard className="w-4 h-4 text-white" />
                             Dashboard
                         </NavLink>
-
                         <NavLink to="/admin/users" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
                             <Users className="w-4 h-4 text-white" />
                             Utilisateurs
                         </NavLink>
-
                         <NavLink to="/admin/jobs" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
                             <Briefcase className="w-4 h-4 text-white" />
                             Offres
                         </NavLink>
-
                         <NavLink to="/admin/duplicates" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
                             <Copy className="w-4 h-4 text-white" />
                             Doublons (IA)
                         </NavLink>
-
                         <NavLink to="/admin/logs" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
                             <Terminal className="w-4 h-4 text-white" />
                             Logs
@@ -130,6 +100,15 @@ export default function AdminNavbar() {
 
                         <hr className="border-light-bone/10 my-2" />
 
+                        {/* link (profil & deconnexion) */}
+                        <Link
+                            to="/admin/profile"
+                            className="flex items-center gap-2 py-3 px-2 rounded-md font-medium text-white hover:bg-primary-light/10 transition-colors"
+                            onClick={() => setIsOpen(false)}
+                        >
+                            <User className="w-4 h-4" />
+                            Mon Profil
+                        </Link>
                         <Link
                             to="/"
                             className="flex items-center gap-2 py-3 px-2 rounded-md font-medium text-red-400 hover:bg-red-500/10 transition-colors"
