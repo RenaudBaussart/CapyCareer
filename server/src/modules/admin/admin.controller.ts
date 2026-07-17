@@ -28,4 +28,29 @@ const getMembers = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export { getMembers };
+const banMember = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const email = req.query.email as string;
+
+        
+        const adminService = new AdminService(pool);
+        const result = await adminService.banMember(email);
+        res.status(200).json(result);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+const unbanMember = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email } = req.query;
+        
+        const adminService = new AdminService(pool);
+        const result = await adminService.unbanMember(email as string);
+        res.status(200).json(result);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+export { getMembers, banMember, unbanMember };
