@@ -15,8 +15,7 @@ export default function AccessibilityPage() {
       style={{
         backgroundImage: `url(${Leaves})`,
         backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundSize: "100%",
       }}
     >
       <Navbar />
