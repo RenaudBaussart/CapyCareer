@@ -154,6 +154,16 @@ registry.registerPath({
                 }
             }
         },
+        429: { 
+            description: "Trop de tentatives de connexion. Veuillez réessayer plus tard.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Trop de tentatives de connexion. Veuillez réessayer plus tard." })
+                    })
+                }
+            }
+        },
         500: { 
             description: "Erreur interne du serveur.",
             content: {
@@ -193,76 +203,6 @@ registry.registerPath({
                 "application/json": {
                     schema: z.object({
                         message: z.string().openapi({ example: "Token invalide." })
-                    })
-                }
-            }
-        },
-        500: {
-            description: "Erreur interne du serveur.",
-            content: {
-                "application/json": {
-                    schema: z.object({
-                        message: z.string().openapi({ example: "Erreur interne du serveur." })
-                    })
-                }
-            }
-        }
-    }
-});
-
-registry.registerPath({
-    method: "get",
-    path: "/api/members",
-    description: "Récupérer tous les profils des membres",
-    summary: "Lister les membres",
-    tags: ["Membres"],
-    security: [{ [bearerAuthName]: [] }],
-    responses: {
-        200: {
-            description: "Liste des profils des membres.",
-            content: {
-                "application/json": {
-                    schema: z.array(publicMember).openapi({
-                        example: [
-                            {
-                                id: 1,
-                                username: "Jojodu59",
-                                email: "jojo@example.com",
-                                firstname: "Jonathan",
-                                lastname: "Decroix",
-                                role: "candidat"
-                            }
-                        ]
-                    })
-                }
-            }
-        },
-        401: {
-            description: "Non autorisé. Le token JWT est manquant ou invalide.",
-            content: {
-                "application/json": {
-                    schema: z.object({
-                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
-                    })
-                }
-            }
-        },
-        403: {
-            description: "Accès refusé. L'utilisateur n'a pas les droits nécessaires.",
-            content: {
-                "application/json": {
-                    schema: z.object({
-                        message: z.string().openapi({ example: "Accès refusé. L'utilisateur n'a pas les droits nécessaires." })
-                    })
-                }
-            }
-        },
-        404: {
-            description: "Aucun membre trouvé",
-            content:  {
-                "application/json": {
-                    schema: z.object({
-                        message: z.string().openapi({ example: "Aucun membre trouvé." })
                     })
                 }
             }
@@ -320,6 +260,90 @@ registry.registerPath({
             content: {
                 "application/json": {
                     schema: z.object({
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+registry.registerPath({
+    method: "get",
+    path: "/api/admin/members",
+    description: "Récupérer la liste de tous les membres ou filtrer par rôle (accessible uniquement aux administrateurs)",
+    summary: "Liste et filtrage des membres",
+    tags: ["Administration"],
+    security: [{ [bearerAuthName]: [] }],
+    request: {
+        query: z.object({
+            role: z.string().optional().openapi({
+                description: "Filtre optionnel pour récupérer un type spécifique d'utilisateurs. Valeurs acceptées : 'admin', 'candidat', 'entreprise'.",
+                example: "candidat"
+            })
+        })
+    },
+    responses: {
+        200: {
+            description: "Liste des membres récupérée avec succès.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Liste des candidats récupérée avec succès." }),
+                        members: z.array(publicMember)
+                    })
+                }
+            }
+        },
+        400: {
+            description: "Rôle invalide fourni dans l'URL.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Rôle invalide. Utilisez 'admin', 'candidat' ou 'entreprise'." })
+                    })
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        403: {
+            description: "Accès refusé. L'utilisateur n'est pas un administrateur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Accès refusé, vous devez être un administrateur." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Aucun membre trouvé.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Aucun membre trouvé pour ce rôle." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
                         message: z.string().openapi({ example: "Erreur interne du serveur." })
                     })
                 }
