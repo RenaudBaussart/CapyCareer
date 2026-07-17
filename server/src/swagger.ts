@@ -2,6 +2,7 @@ import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-open
 import { z } from "zod";
 import { member } from "./modules/members/member.schema";
 import { loginSchema } from "./modules/auth/auth.schema";
+import { jobOfferSchema } from "./modules/job_offers/job.offers.schema"; // Import the new schema
 
 export const registry = new OpenAPIRegistry();
 
@@ -10,6 +11,116 @@ const bearerAuth = registry.registerComponent('securitySchemes', 'bearerAuth', {
     scheme: 'bearer',
     bearerFormat: 'JWT',
 });
+
+// #region Job Offers Schemas
+const jobOffersResponseSchema = z.object({
+    job_offers: z.array(jobOfferSchema),
+    is_the_end: z.boolean().openapi({ description: "Indicates if there are no more job offers after this page." }),
+});
+
+const errorSchema = z.object({
+    error: z.string()
+});
+// #endregion
+
+registry.registerPath({
+    method: "get",
+    path: "/api/job-offers",
+    description: "This endpoint retrieves a paginated list of job offers from the database.",
+    summary: "Retrieve a list of job offers",
+    tags: ["Job Offers"],
+    parameters: [{
+        in: 'query',
+        name: 'page',
+        schema: { type: 'integer', minimum: 1 },
+        required: false,
+        description: 'Page number for pagination. Must be a positive integer.',
+    }],
+    responses: {
+        200: {
+            description: "A paginated list of job offers.",
+            content: {
+                "application/json": {
+                    schema: jobOffersResponseSchema,
+                }
+            }
+        },
+        400: {
+            description: "Bad request, e.g., invalid page number.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Le numéro de page doit être un entier positif." }) })
+                }
+            }
+        },
+        404: {
+            description: "Not Found, e.g., no job offers for the requested page.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Aucune offre d'emploi trouvée pour cette page." }) })
+                }
+            }
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        }
+    }
+});
+
+registry.registerPath({
+    method: "get",
+    path: "/api/job-offers/{id}",
+    description: "This endpoint retrieves a single job offer by its unique identifier.",
+    summary: "Retrieve a single job offer by ID",
+    tags: ["Job Offers"],
+    parameters: [{
+        in: 'path',
+        name: 'id',
+        schema: { type: 'string' },
+        required: true,
+        description: 'Unique identifier of the job offer.',
+    }],
+    responses: {
+        200: {
+            description: "A single job offer object.",
+            content: {
+                "application/json": {
+                    schema: jobOfferSchema,
+                }
+            }
+        },
+        400: {
+            description: "Bad request, e.g., missing or invalid job offer ID.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Identifiant d'offre manquant." }) })
+                }
+            }
+        },
+        404: {
+            description: "Not Found, e.g., job offer with the specified ID does not exist.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "L'offre d'emploi demandée n'a pas été trouvée." }) })
+                }
+            }
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        }
+    }
+});
+
 
 registry.registerPath({
     method: "post",
@@ -35,7 +146,7 @@ registry.registerPath({
                 "application/json": {
                     schema: z.object({
                         message: z.string().openapi({ example: "Membre enregistré avec succès." }),
-                        token: z.string().openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." })
+                        token: z.string().openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5c4IkpXVCJ9..." })
                     })
                 }
             }
