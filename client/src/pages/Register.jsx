@@ -8,15 +8,7 @@ import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function Register() {
   return (
-    <main
-      className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
-      style={{
-        backgroundImage: `url(${Leaves}), url(${BGLeaves})`,
-        backgroundRepeat: "no-repeat, repeat",
-        backgroundSize: "100%, 100%",
-        backgroundPosition: "top, top",
-      }}
-    >
+    <main className="bg-main-layout">
       <Navbar />
 
       {/* conteneur principal contenu */}

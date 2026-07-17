@@ -12,10 +12,10 @@ import { Search, Briefcase, Trash2 } from "lucide-react";
 
 export default function AdminJobs() {
     // call le hook (datas, fonctions)
-    const { 
-        jobs, 
-        searchQuery, 
-        setSearchQuery, 
+    const {
+        jobs,
+        searchQuery,
+        setSearchQuery,
         isModalOpen,
         setIsModalOpen,
         modalConfig,
@@ -41,19 +41,12 @@ export default function AdminJobs() {
     const currentModal = modalConfig.actionType ? modalContentMap[modalConfig.actionType] : {};
 
     return (
-        <div 
-            className="min-h-screen bg-bone text-primary-dark flex flex-col font-sans"
-            style={{
-                backgroundImage: `url(${Leaves})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "100%"
-            }}
-        >
+        <div className="bg-main-layout">
             <AdminNavbar />
 
             <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
                 <div className="bg-white/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1 flex flex-col">
-                    
+
                     {/* haut de page (recherche) */}
                     <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
@@ -67,7 +60,7 @@ export default function AdminJobs() {
                         </div>
 
                         <div className="relative w-full md:w-72">
-                            <input 
+                            <input
                                 type="text"
                                 placeholder="Rechercher une offre..."
                                 value={searchQuery}
@@ -80,10 +73,10 @@ export default function AdminJobs() {
 
                     {/* tableau doffres */}
                     <div className="bg-white/40 rounded-2xl p-2 border border-white/50 flex-1">
-                        <JobDataGrid 
-                            jobs={jobs} 
+                        <JobDataGrid
+                            jobs={jobs}
                             handleEditJob={handleEditJob}
-                            handleDeleteJob={requestDeleteJob} 
+                            handleDeleteJob={requestDeleteJob}
                         />
                     </div>
 
@@ -91,11 +84,11 @@ export default function AdminJobs() {
             </main>
 
             {/* modale */}
-            <AdminActionModal 
+            <AdminActionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={executeAction}
-                
+
                 title={currentModal.title}
                 message={currentModal.message}
                 confirmText={currentModal.confirmText}

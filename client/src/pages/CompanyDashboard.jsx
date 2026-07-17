@@ -85,15 +85,7 @@ export default function CompanyDashboard() {
         <main className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans">
             <Navbar />
 
-            <section
-                className="relative px-4 sm:px-6 pt-12 pb-16 lg:pt-16 lg:pb-20"
-                style={{
-                    backgroundImage: `url(${Leaves}), url(${BGLeaves})`,
-                    backgroundRepeat: "no-repeat, repeat",
-                    backgroundSize: "100%, 100%",
-                    backgroundPosition: "top, top",
-                }}
-            >
+            <section className="bg-main-layout">
                 <div className="max-w-7xl mx-auto">
                     {/* en-tête */}
                     <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)] mb-10">

@@ -29,13 +29,7 @@ export default function AdminUsers() {
 
     return (
         <div
-            className="min-h-screen bg-bone text-primary-dark flex flex-col font-sans"
-            style={{
-                backgroundImage: `url(${Leaves})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "100%"
-            }}
-        >
+            className="bg-main-layout">
             <AdminNavbar />
 
             <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">

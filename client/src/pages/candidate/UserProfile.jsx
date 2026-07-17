@@ -27,9 +27,7 @@ export default function UserProfile() {
 
     return (
         <div
-            className="min-h-screen bg-bone text-primary-dark flex flex-col font-sans"
-            style={{ backgroundImage: `url(${Leaves})`, backgroundRepeat: "no-repeat", backgroundSize: "100%" }}
-        >
+            className="bg-main-layout">
             <Navbar />
             <main className="flex-1 max-w-4xl w-full mx-auto px-6 py-12 flex flex-col">
                 <div className="bg-white/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full">

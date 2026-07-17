@@ -16,15 +16,7 @@ import { JOBS_MOCK } from "../data/jobsMock";
 
 export default function Home() {
     return (
-        <main
-            className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
-            style={{
-                backgroundImage: `url(${Leaves}), url(${BGLeaves})`,
-                backgroundRepeat: "no-repeat, repeat",
-                backgroundSize: "100%, 100%",
-                backgroundPosition: "top, top",
-            }}
-        >
+        <main className="bg-main-layout">
             <Navbar />
 
             <section className="relative px-4 sm:px-6 pt-12 pb-16 lg:pt-16 lg:pb-20">

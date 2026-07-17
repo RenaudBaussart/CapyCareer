@@ -13,15 +13,7 @@ import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function Terms() {
   return (
-    <main
-      className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
-      style={{
-        backgroundImage: `url(${Leaves}), url(${BGLeaves})`,
-        backgroundRepeat: "no-repeat, repeat",
-        backgroundSize: "100%, 100%",
-        backgroundPosition: "top, top",
-      }}
-    >
+    <main className="bg-main-layout">
       <Navbar />
 
       <div className="grow flex items-center justify-center p-6 lg:p-12">
@@ -63,7 +55,7 @@ export default function Terms() {
 
 
           <div className="pt-6 border-t border-primary-light/30">
-            <Link to="/home" className="inline-flex items-center justify-center font-bold text-primary hover:text-deep-primary hover:underline transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-2 py-1">
+            <Link to="/" className="inline-flex items-center justify-center font-bold text-primary hover:text-deep-primary hover:underline transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-2 py-1">
               ← Retour à l'accueil
             </Link>
           </div>

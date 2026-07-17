@@ -77,7 +77,7 @@ export default function Navbar() {
             }`}
         >
           <div className="flex flex-col gap-1">
-            <NavLink to="/home" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
+            <NavLink to="/" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
               <Home className="w-4 h-4 text-white" />
               Accueil
             </NavLink>
