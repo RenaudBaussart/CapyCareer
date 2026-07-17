@@ -40,6 +40,18 @@
   }
 }
 
+@layer utilities {
+ .bg-main-layout {
+    background-image: url('./assets/images/Leaves.png'), url('./assets/images/BackgroundLeavesCream.png');
+    background-repeat: no-repeat, repeat;
+    background-size: 100%, 100%;
+    background-position: top, top;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+}
+
 
 /* classique */
 @font-face {

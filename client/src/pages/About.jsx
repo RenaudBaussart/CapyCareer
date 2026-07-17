@@ -9,6 +9,7 @@ import Footer from "../components/layout/Footer";
 import { Users, Code } from "lucide-react";
 // img
 import Leaves from "../assets/images/Leaves.png";
+import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 // datas de la squad
 const teamMembers = [
@@ -46,15 +47,7 @@ const teamMembers = [
 
 export default function About() {
     return (
-        <main
-            className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
-            style={{
-                backgroundImage: `url(${Leaves})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-            }}
-        >
+       <main className="bg-main-layout">
             <Navbar />
 
             <div className="grow flex items-center justify-center p-6 lg:p-12">
@@ -141,7 +134,7 @@ export default function About() {
 
                     {/* btn retour */}
                     <div className="pt-6 border-t border-primary-light/30">
-                        <Link to="/index" className="inline-flex items-center justify-center font-bold text-primary hover:text-deep-primary hover:underline transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-2 py-1">
+                        <Link to="/" className="inline-flex items-center justify-center font-bold text-primary hover:text-deep-primary hover:underline transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-2 py-1">
                             ← Retour à l'accueil
                         </Link>
                     </div>

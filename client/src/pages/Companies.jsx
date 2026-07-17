@@ -5,6 +5,7 @@ import CompanyCard from "../components/companies/CompanyCard";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
 import Leaves from "../assets/images/Leaves.png";
+import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 // icone
 import { Search } from "lucide-react";
@@ -22,20 +23,12 @@ const mockCompanies = [
 export default function Companies() {
     return (
         // conteneur principal
-        <main
-            className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
-            style={{
-                backgroundImage: `url(${Leaves})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-            }}
-        >
+        <main className="bg-main-layout">
             <Navbar />
 
             {/* conteneur card */}
             <div className="grow flex items-center justify-center p-6 lg:p-12">
-                
+
                 {/* grande card */}
                 <div className="w-full max-w-5xl backdrop-blur-2xl bg-white/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl">
 
