@@ -14,6 +14,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import About from "./pages/About";
 import ApiDoc from "./pages/ApiDoc";
+import UserProfile from "./pages/candidate/UserProfile";
 // pages ADMIN
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -21,6 +22,7 @@ import AdminJobs from "./pages/admin/AdminJobs";
 import AdminDuplicates from "./pages/admin/AdminDuplicates";
 import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProfile from "./pages/admin/AdminProfile";
+
 
 export default function App() {
   return (
@@ -58,18 +60,27 @@ export default function App() {
         {/* Page APIDoc */}
         <Route path="/api-doc" element={<ApiDoc />} />
 
+        {/* Pages User Profile */}
+        <Route path="/candidate/profile" element={<UserProfile />} />
+
         {/* ROUTES ADMIN */}
-        {/* pages Admin Dashboard */}
+
+        {/* Pages Admin Dashboard */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        {/* pages Admin Users */}
+
+        {/* Pages Admin Users */}
         <Route path="/admin/users" element={<AdminUsers />} />
-        {/* pages Admin Jobs */}
+
+        {/* Pages Admin Jobs */}
         <Route path="/admin/jobs" element={<AdminJobs />} />
-        {/* pages Admin Duplicates */}
+
+        {/* Pages Admin Duplicates */}
         <Route path="/admin/duplicates" element={<AdminDuplicates />} />
-        {/* pages Admin Logs */}
+
+        {/* Pages Admin Logs */}
         <Route path="/admin/logs" element={<AdminLogs />} />
-        {/* pages Admin Profile */}
+
+        {/* Pages Admin Profile */}
         <Route path="/admin/profile" element={<AdminProfile />} />
 
         {/* ROUTES COMMUNES */}
