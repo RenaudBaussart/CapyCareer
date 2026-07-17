@@ -10,22 +10,24 @@ import { Banana, Apple, Citrus } from "lucide-react";
 // img
 import CapyGlasses from "../assets/images/CapyGlasses.png";
 import Leaves from "../assets/images/Leaves.png";
+import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 // data
 import { JOBS_MOCK } from "../data/jobsMock";
 
 export default function Home() {
     return (
-        <main className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans">
+        <main
+            className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
+            style={{
+                backgroundImage: `url(${Leaves}), url(${BGLeaves})`,
+                backgroundRepeat: "no-repeat, repeat",
+                backgroundSize: "100%, 100%",
+                backgroundPosition: "top, top",
+            }}
+        >
             <Navbar />
 
-            <section
-                className="relative px-4 sm:px-6 pt-12 pb-16 lg:pt-16 lg:pb-20"
-                style={{
-                    backgroundImage: `url(${Leaves})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "100%"
-                }}
-            >
+            <section className="relative px-4 sm:px-6 pt-12 pb-16 lg:pt-16 lg:pb-20">
                 <div className="max-w-7xl mx-auto">
 
                     {/* hero */}

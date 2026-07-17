@@ -1,8 +1,8 @@
 // chef dorchestre du site (regroupe component, hook etc)
 
 // imports
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-// pages USER
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// pages
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
@@ -22,7 +22,8 @@ import AdminJobs from "./pages/admin/AdminJobs";
 import AdminDuplicates from "./pages/admin/AdminDuplicates";
 import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProfile from "./pages/admin/AdminProfile";
-
+// pages Entreprise/Recruteur
+import CompanyDashboard from "./pages/CompanyDashboard";
 
 export default function App() {
   return (
@@ -31,7 +32,7 @@ export default function App() {
 
         {/* ROUTES USERS */}
         {/* Page Accueil */}
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
 
         {/* Page Register */}
         <Route path="/register" element={<Register />} />
@@ -63,6 +64,8 @@ export default function App() {
         {/* Pages User Profile */}
         <Route path="/candidate/profile" element={<UserProfile />} />
 
+
+
         {/* ROUTES ADMIN */}
 
         {/* Pages Admin Dashboard */}
@@ -83,9 +86,19 @@ export default function App() {
         {/* Pages Admin Profile */}
         <Route path="/admin/profile" element={<AdminProfile />} />
 
+
+        {/* ROUTES ENTREPRISES */}
+        <Route path="/company-dashboard" element={<CompanyDashboard />} />
+
+
+
         {/* ROUTES COMMUNES */}
         {/* Page 404 */}
         <Route path="/404" element={<NotFoundPage />} />
+
+
+        {/* Toutes les routes inexistantes */}
+        <Route path="*" element={<Navigate to="/404" replace />} />
 
       </Routes>
     </BrowserRouter>

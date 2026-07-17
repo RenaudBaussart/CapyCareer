@@ -31,7 +31,7 @@ export default function Navbar() {
 
           {/* partie gauche (navigations) */}
           <div className="hidden md:flex items-center gap-8 ">
-            <NavLink to="/home" className={navLinkClass}>
+            <NavLink to="/" className={navLinkClass}>
               <Home className="w-4 h-4 text-white" />
               Accueil
             </NavLink>

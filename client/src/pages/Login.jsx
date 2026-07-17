@@ -8,6 +8,7 @@ import Navbar from "../components/layout/Navbar";
 import { Link } from "react-router-dom";
 import CapyWrite from "../assets/images/CapyWriteSmoother.gif"
 import Leaves from "../assets/images/Leaves.png"
+import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function Login() {
     return (
@@ -15,9 +16,10 @@ export default function Login() {
         <main
             className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
             style={{
-                backgroundImage: `url(${Leaves})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "100%"
+                backgroundImage: `url(${Leaves}), url(${BGLeaves})`,
+                backgroundRepeat: "no-repeat, repeat",
+                backgroundSize: "100%, 100%",
+                backgroundPosition: "top, top",
             }}
         >
             <Navbar />

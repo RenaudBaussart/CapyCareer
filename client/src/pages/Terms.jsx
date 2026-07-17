@@ -9,22 +9,24 @@ import Footer from "../components/layout/Footer";
 import { FileText } from "lucide-react";
 // img
 import Leaves from "../assets/images/Leaves.png";
+import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function Terms() {
   return (
     <main
       className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
       style={{
-        backgroundImage: `url(${Leaves})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "100%",
+        backgroundImage: `url(${Leaves}), url(${BGLeaves})`,
+        backgroundRepeat: "no-repeat, repeat",
+        backgroundSize: "100%, 100%",
+        backgroundPosition: "top, top",
       }}
     >
       <Navbar />
 
       <div className="grow flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-4xl backdrop-blur-2xl bg-white/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
-          
+
           <div className="flex items-center gap-3 mb-2">
             <FileText className="w-8 h-8 text-primary" aria-hidden="true" />
             <h1 className="text-3xl md:text-4xl font-bold text-primary-dark">
