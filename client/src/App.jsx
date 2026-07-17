@@ -2,7 +2,7 @@
 
 // imports
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-// pages
+// pages USER
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
@@ -14,12 +14,20 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import About from "./pages/About";
 import ApiDoc from "./pages/ApiDoc";
+// pages ADMIN
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminJobs from "./pages/admin/AdminJobs";
+import AdminDuplicates from "./pages/admin/AdminDuplicates";
+import AdminLogs from "./pages/admin/AdminLogs";
+import AdminProfile from "./pages/admin/AdminProfile";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
 
+        {/* ROUTES USERS */}
         {/* Page Accueil */}
         <Route path="/home" element={<Home />} />
 
@@ -50,6 +58,21 @@ export default function App() {
         {/* Page APIDoc */}
         <Route path="/api-doc" element={<ApiDoc />} />
 
+        {/* ROUTES ADMIN */}
+        {/* pages Admin Dashboard */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        {/* pages Admin Users */}
+        <Route path="/admin/users" element={<AdminUsers />} />
+        {/* pages Admin Jobs */}
+        <Route path="/admin/jobs" element={<AdminJobs />} />
+        {/* pages Admin Duplicates */}
+        <Route path="/admin/duplicates" element={<AdminDuplicates />} />
+        {/* pages Admin Logs */}
+        <Route path="/admin/logs" element={<AdminLogs />} />
+        {/* pages Admin Profile */}
+        <Route path="/admin/profile" element={<AdminProfile />} />
+
+        {/* ROUTES COMMUNES */}
         {/* Page 404 */}
         <Route path="/404" element={<NotFoundPage />} />
 
