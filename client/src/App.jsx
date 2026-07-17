@@ -14,6 +14,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import About from "./pages/About";
 import ApiDoc from "./pages/ApiDoc";
+import CompanyDashboard from "./pages/CompanyDashboard";
 
 export default function App() {
   return (
@@ -52,6 +53,8 @@ export default function App() {
 
         {/* Page 404 */}
         <Route path="/404" element={<NotFoundPage />} />
+
+        <Route path="/company-dashboard" element={<CompanyDashboard/>} />
 
         {/* Toutes les routes inexistantes */}
         <Route path="*" element={<Navigate to="/404" replace />} />
