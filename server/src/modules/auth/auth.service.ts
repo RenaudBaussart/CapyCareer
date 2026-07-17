@@ -147,7 +147,7 @@ export class AuthService {
 
 
         await connection.execute(
-            "INSERT INTO BlacklistedTokens (token, blacklisted_at) VALUES (?, NOW())",
+            "INSERT INTO Blacklist (token, blacklisted_at) VALUES (?, NOW())",
             [token]
         );
 

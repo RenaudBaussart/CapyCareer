@@ -178,7 +178,7 @@ describe("AuthService - Méthode Logout", () => {
             );
 
             expect(mockConnection.execute).toHaveBeenNthCalledWith(2,
-                "INSERT INTO BlacklistedTokens (token, blacklisted_at) VALUES (?, NOW())",
+                "INSERT INTO Blacklist (token, blacklisted_at) VALUES (?, NOW())",
                 ["fauxToken"]
             );
 

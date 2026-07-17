@@ -141,20 +141,22 @@ describe("AuthController - loginMember", () => {
 
 describe("AuthController - logoutMember", () => {
     let app: express.Application;
-
+    let logoutSpy: jest.SpyInstance;
     beforeAll(() => {
         app = express();
         app.use(express.json());
         app.post("/api/auth/logout", middlewareAuth, logoutMember);
         app.use(errorHandlerMiddleware);
+        logoutSpy = jest.spyOn(AuthService.prototype, 'logout');
     });
     
     beforeEach(() => {
-        jest.clearAllMocks();
-        (jwtTool.verify as jest.Mock).mockImplementation((token, secret, callback) => {
-            callback(null, { id: 1, role: 'member' }); 
-        });
+    jest.clearAllMocks();
+    
+    (jwtTool.verify as jest.Mock).mockImplementation((token, secret) => {
+        return { id: 1, role: 'candidat' }; 
     });
+});
 
     describe("POST /api/auth/logout", () => {
         
@@ -179,18 +181,17 @@ describe("AuthController - logoutMember", () => {
         });
 
         it("doit retourner une erreur 500 si le service échoue", async () => {
-            const mockLogout = jest.fn().mockRejectedValue(new InternalServerError("Erreur DB"));
-            (AuthService as jest.Mock).mockImplementation(() => ({ logout: mockLogout }));
+        logoutSpy.mockRejectedValue(new InternalServerError("Erreur DB"));
 
-            const response = await request(app)
-                .post("/api/auth/logout")
-                .set("Authorization", "Bearer fake-token");
+        const response = await request(app)
+            .post("/api/auth/logout")
+            .set("Authorization", "Bearer fake-token");
 
-            expect(response.status).toBe(500);
-            expect(response.body).toEqual({ 
-                success: false, 
-                message: "Erreur DB" 
-            });
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({
+            success: false,
+            message: "Erreur DB"
         });
     });
+});
 });

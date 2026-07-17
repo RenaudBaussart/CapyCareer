@@ -25,7 +25,7 @@ export const middlewareAuthAdmin = async (req: Request, res: Response, next: Nex
 
   try {
       const [blacklistedTokens]: any = await pool.execute(
-          "SELECT 1 FROM BlacklistedTokens WHERE token = ?",
+          "SELECT 1 FROM Blacklist WHERE token = ?",
           [token]
       );
 
