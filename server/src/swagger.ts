@@ -21,7 +21,7 @@ registry.registerPath({
     description: "Inscrire un nouveau membre dans l'application",
     summary: "Inscription",
     tags: ["Authentification"],
-    security: [{ [bearerAuth.name]: [] }, {}],
+    security: [{ [bearerAuthName]: [] }, {}],
     request: {
         body: {
             description: "Les données nécessaires pour créer un compte",
@@ -97,7 +97,7 @@ registry.registerPath({
     description: "Authentifier un membre existant et récupérer un token JWT",
     summary: "Connexion",
     tags: ["Authentification"], 
-    security: [{ [bearerAuth.name]: [] }, {}],
+    security: [{ [bearerAuthName]: [] }, {}],
     request: {
         body: {
             description: "Les identifiants de connexion",
@@ -263,6 +263,54 @@ registry.registerPath({
                 "application/json": {
                     schema: z.object({
                         message: z.string().openapi({ example: "Aucun membre trouvé." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+registry.registerPath({
+    method: "get",
+    path: "/api/members/me",
+    description: "Récupérer le profil du membre actuellement connecté",
+    summary: "Profil du membre connecté",
+    tags: ["Membres"],
+    security: [{ [bearerAuthName]: [] }],
+    responses: {
+        200: {
+            description: "Profil du membre connecté.",
+            content: {
+                "application/json": {
+                    schema: publicMember
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Membre non trouvé",
+            content:  {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Membre non trouvé." })
                     })
                 }
             }
