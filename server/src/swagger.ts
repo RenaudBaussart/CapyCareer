@@ -352,6 +352,167 @@ registry.registerPath({
     }
 });
 
+registry.registerPath({
+    method: "delete",
+    path: "/api/admin/members/ban",
+    description: "Bannir un membre (accessible uniquement aux administrateurs)",
+    summary: "Bannir un membre",
+    tags: ["Administration"],
+    security: [{ [bearerAuthName]: [] }],
+    request: {
+        query: z.object({
+            email: z.string().email().openapi({ example: "user@example.com" })
+        }),
+    },
+    responses: {
+        200: {
+            description: "Membre banni avec succès.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Membre banni avec succès." })
+                    })
+                }
+            }
+        },
+        400: {
+            description: "Requête invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Requête invalide." })
+                    })
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        403: {
+            description: "Accès refusé. L'utilisateur n'est pas un administrateur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Accès refusé, vous devez être un administrateur." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Membre non trouvé.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Membre non trouvé." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+registry.registerPath({
+    method: "delete",
+    path: "/api/admin/members/unban",
+    description: "Débannir un membre (accessible uniquement aux administrateurs)",
+    summary: "Débannir un membre",
+    tags: ["Administration"],
+    security: [{ [bearerAuthName]: [] }],
+    request: {
+        query: z.object({
+            email: z.string().email().openapi({ example: "user@example.com" })
+        }),
+    },
+    responses: {
+        200: {
+            description: "Membre débanni avec succès.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Membre débanni avec succès." })
+                    })
+                }
+            }
+        },
+        400: {
+            description: "Requête invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Requête invalide." })
+                    })
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        403: {
+            description: "Accès refusé. L'utilisateur n'est pas un administrateur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Accès refusé, vous devez être un administrateur." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Membre non trouvé.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Membre non trouvé。" })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur。",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Erreur interne du serveur。" })
+                    })
+                }
+            }
+        }
+    }
+});
+
 export function generateOpenAPI() {
     const generator = new OpenApiGeneratorV3(registry.definitions);
     return generator.generateDocument({
