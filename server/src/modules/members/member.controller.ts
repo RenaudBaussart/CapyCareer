@@ -1,20 +1,42 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { MemberService } from "./member.service";
 import { pool } from "../../config/database";
 
-const getAllMembersProfile = async (req: Request, res: Response) => {
+
+/**
+ * Recupere la liste de tous les profils des membres.
+ * @param req - La requête Express.
+ * @param res - La réponse Express.
+ * @param next - La fonction next pour passer au middleware suivant en cas d'erreur.
+ * @returns Une réponse JSON contenant la liste des profils des membres.
+ * @throws Une erreur si aucun membre n'est trouvé ou si une erreur de base de données se produit.
+ */
+const getAllMembersProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const memberService = new MemberService(pool);
         const members = await memberService.getAllMembers(req.member?.id);
 
         res.status(200).json({ message: "Profils des membres récupérés avec succès.", members });
-    } catch (error) {
-        if (error instanceof Error && error.message === "NO_MEMBERS_FOUND") {
-            return res.status(404).json({ message: "Aucun membre trouvé." });
-        }
-        console.error("Erreur lors de la récupération des profils des membres:", error);
-        res.status(500).json({ message: "Erreur interne du serveur." });
+    } catch (error: any) {
+        next(error);
+    }
+};
+/**
+ * Récupère le profil du membre actuellement connecté.
+ * @param req - La requête Express contenant l'ID du membre dans req.member.id.
+ * @param res - La réponse Express pour envoyer le profil du membre.
+ * @param next - La fonction next pour passer au middleware suivant en cas d'erreur.
+ */
+const getMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const myId = req.member.id;
+        const memberService = new MemberService(pool);
+        const member = await memberService.getMemberById(myId);
+        
+        res.status(200).json({ message: "Mon profil récupéré.", member });
+    } catch (error: any) {
+        next(error);
     }
 };
 
-export { getAllMembersProfile };
+export { getAllMembersProfile, getMyProfile };
