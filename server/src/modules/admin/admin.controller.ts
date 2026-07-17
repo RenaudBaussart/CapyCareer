@@ -3,15 +3,29 @@ import { AdminService } from "./admin.service";
 import { pool } from "../../config/database";
 
 
-const getAllMembersProfile = async (req: Request, res: Response, next: NextFunction) => {
+
+const getMembers = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const adminService = new AdminService(pool);
-        const members = await adminService.getAllMembers(req.member?.id);
+        
+        const roleQuery = req.query.role as string; 
 
-        res.status(200).json({ message: "Profils des membres récupérés avec succès.", members });
+        if (roleQuery) {
+           
+        const members = await adminService.getMemberByRoleName(roleQuery, req.member?.id);
+            return res.status(200).json({ 
+                message: `Liste des ${roleQuery}s récupérée avec succès.`, 
+                members 
+            });
+        }
+
+ 
+        const allMembers = await adminService.getAllMembers(req.member?.id);
+        res.status(200).json({ message: "Tous les profils récupérés.", members: allMembers });
+
     } catch (error: any) {
         next(error);
     }
 };
 
-export { getAllMembersProfile };
+export { getMembers };
