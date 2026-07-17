@@ -11,6 +11,7 @@ import CompanyJobsList from "../components/dashboard/CompanyJobsList";
 import { PlusCircle, LayoutList } from "lucide-react";
 // img
 import Leaves from "../assets/images/Leaves.png";
+import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 // data
 import { COMPANY_JOBS_MOCK } from "../data/companyJobsMock";
 
@@ -87,9 +88,10 @@ export default function CompanyDashboard() {
             <section
                 className="relative px-4 sm:px-6 pt-12 pb-16 lg:pt-16 lg:pb-20"
                 style={{
-                    backgroundImage: `url(${Leaves})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "100%",
+                    backgroundImage: `url(${Leaves}), url(${BGLeaves})`,
+                    backgroundRepeat: "no-repeat, repeat",
+                    backgroundSize: "100%, 100%",
+                    backgroundPosition: "top, top",
                 }}
             >
                 <div className="max-w-7xl mx-auto">
@@ -120,8 +122,8 @@ export default function CompanyDashboard() {
                                 aria-selected={activeTab === id}
                                 onClick={() => setActiveTab(id)}
                                 className={`flex items-center justify-center gap-2 flex-1 font-bold text-sm py-3 px-5 rounded-3xl border transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${activeTab === id
-                                        ? "bg-deep-primary text-white border-deep-primary"
-                                        : "bg-bone-light text-primary-dark border-primary-light/40 hover:bg-primary-light/10"
+                                    ? "bg-deep-primary text-white border-deep-primary"
+                                    : "bg-bone-light text-primary-dark border-primary-light/40 hover:bg-primary-light/10"
                                     }`}
                             >
                                 <Icon size={16} aria-hidden="true" />
