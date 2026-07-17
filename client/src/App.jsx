@@ -20,6 +20,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminJobs from "./pages/admin/AdminJobs";
 import AdminDuplicates from "./pages/admin/AdminDuplicates";
 import AdminLogs from "./pages/admin/AdminLogs";
+import AdminProfile from "./pages/admin/AdminProfile";
 
 export default function App() {
   return (
@@ -68,6 +69,8 @@ export default function App() {
         <Route path="/admin/duplicates" element={<AdminDuplicates />} />
         {/* pages Admin Logs */}
         <Route path="/admin/logs" element={<AdminLogs />} />
+        {/* pages Admin Profile */}
+        <Route path="/admin/profile" element={<AdminProfile />} />
 
         {/* ROUTES COMMUNES */}
         {/* Page 404 */}
