@@ -8,17 +8,12 @@ import Navbar from "../components/layout/Navbar";
 import { Link } from "react-router-dom";
 import CapyWrite from "../assets/images/CapyWriteSmoother.gif"
 import Leaves from "../assets/images/Leaves.png"
+import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function Login() {
     return (
         // conteneur principal
-        <main
-            className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
-            style={{
-                backgroundImage: `url(${Leaves})`,
-                backgroundRepeat: "no-repeat",
-            }}
-        >
+        <main className="bg-main-layout">
             <Navbar />
 
             {/* conteneur principal contenu */}

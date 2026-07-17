@@ -11,24 +11,17 @@ import Footer from "../components/layout/Footer";
 import { Terminal, Code2, ShieldAlert } from "lucide-react";
 // img
 import Leaves from "../assets/images/Leaves.png";
+import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function ApiDoc() {
   return (
-    <main
-      className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans"
-      style={{
-        backgroundImage: `url(${Leaves})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+   <main className="bg-main-layout">
       <Navbar />
 
       <div className="grow flex items-center justify-center p-6 lg:p-12">
         {/* grande card */}
         <div className="w-full max-w-4xl backdrop-blur-2xl bg-white/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
-          
+
           {/* haut de page */}
           <div className="flex items-center gap-3 mb-2">
             <Terminal className="w-8 h-8 text-primary" aria-hidden="true" />
@@ -121,7 +114,7 @@ export default function ApiDoc() {
               <Code2 className="w-6 h-6" /> Exemple de réponse (GET /companies/1)
             </h2>
             <pre className="bg-bone-light p-4 rounded-xl border border-primary-light/20 overflow-x-auto text-xs font-mono text-primary-dark">
-{`{
+              {`{
   "status": "success",
   "data": {
     "id": 1,
