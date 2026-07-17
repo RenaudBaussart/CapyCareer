@@ -114,4 +114,98 @@ export class AdminService {
             connection.release();
         }
     }
+
+    async banMember(email: string) {
+    const connection = await this.pool.getConnection();
+    
+    try {
+        await connection.beginTransaction();
+
+        const [rows] = await connection.execute<RowDataPacket[]>(
+            "SELECT PK_id, username, FK_role_id FROM User_ WHERE email = ?", 
+            [email]
+        );
+
+        if(email.trim() === "") {
+            throw new BadRequestError("L'adresse e-mail ne peut pas être vide.");
+        }
+
+        if (!email) {
+            throw new BadRequestError("L'adresse e-mail est requise pour bannir un membre.");
+        }
+
+        if (rows.length === 0) {
+            throw new NotFoundError("MEMBER_NOT_FOUND");
+        }
+
+        if (rows[0]!.FK_role_id === 'admin') {
+             throw new BadRequestError("Impossible de bannir un autre administrateur.");
+        }
+
+        await connection.execute(
+            "INSERT INTO Banned (email, username, banned_at) VALUES (?, ?, NOW())",
+            [email, rows[0]!.username]
+        );
+
+      
+        await connection.execute("DELETE FROM User_ WHERE email = ?", [email]);
+
+        await connection.commit();
+        return { message: "Membre banni et supprimé avec succès." };
+
+    } catch (error) {
+        // annuler la transaction en cas d'erreur
+        await connection.rollback(); 
+        throw error;
+    } finally {
+        connection.release();
+    }
+
+}
+
+/**
+ * Débannit un membre en supprimant son email de la table Banned.
+ * @param email - L'adresse e-mail du membre à débannir.
+ * @returns Un message de succès.
+ * @throws NotFoundError si l'email n'est pas trouvé dans la table Banned.
+ * @throws InternalServerError si une erreur survient lors du débannissement.
+ */
+async unbanMember(email: string) {
+    const connection = await this.pool.getConnection();
+    
+    try {
+        await connection.beginTransaction();
+
+        const [rows] = await connection.execute<RowDataPacket[]>(
+            "SELECT PK_banned_id FROM Banned WHERE email = ?", 
+            [email]
+        );
+
+        if(email.trim() === "") {
+            throw new BadRequestError("L'adresse e-mail ne peut pas être vide.");
+        }
+
+        if (!email) {
+            throw new BadRequestError("L'adresse e-mail est requise pour débannir un membre.");
+        }
+
+        if (rows.length === 0) {
+            throw new NotFoundError("Cet email n'est pas dans la liste des bannis.");
+        }
+
+        await connection.execute(
+            "DELETE FROM Banned WHERE email = ?", 
+            [email]
+        );
+
+        await connection.commit();
+        return { message: "Membre débanni avec succès. Il peut désormais recréer un compte." };
+
+    } catch (error) {
+        await connection.rollback(); 
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
 }
