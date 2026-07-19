@@ -37,7 +37,7 @@ export const middlewareAuthAdmin = async (req: Request, res: Response, next: Nex
         if (err) {
           return res.status(401).json({ error: 'Invalid token' });
         }
-        req.member = decoded;
+        req.member = decoded as any;
         if (req.member.role !== 'admin') {
           return res.status(403).json({ error: 'Access refusé, vous devez être un administrateur.' });
         }
