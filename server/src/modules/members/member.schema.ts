@@ -82,7 +82,19 @@ const createMemberSchema = z.object({
         })
 }).openapi("Member");
 
+
+
+const profileSchema = createMemberSchema.partial().omit({ 
+    password: true,
+    role: true 
+});
+
+export const updateMemberSchema = z.object({
+}).merge(profileSchema).openapi("UpdateMember");
+
 export const member = createMemberSchema;
+
 module.exports = {
-    member
-}
+    member,
+    updateMemberSchema
+};
