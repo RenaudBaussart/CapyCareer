@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AdminService } from "./admin.service";
 import { pool } from "../../config/database";
+import { updateMemberSchema } from "../members/member.schema";
 
 
 
@@ -52,5 +53,27 @@ const unbanMember = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
+const updateMembers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const id = parseInt(req.query.id as string, 10);
+        if (isNaN(id)) {
+            return res.status(400).json({ message: "ID invalide dans la query." });
+        }
 
-export { getMembers, banMember, unbanMember };
+        const profileData = updateMemberSchema.parse(req.body);
+
+        const cleanProfileData = Object.fromEntries(
+            Object.entries(profileData).filter(([_, value]) => value !== undefined)
+        );
+
+        const adminService = new AdminService(pool);
+        const result = await adminService.updateMemberProfile(id, cleanProfileData as any);
+        
+        res.status(200).json(result);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+export { getMembers, banMember, unbanMember, updateMembers };
+
