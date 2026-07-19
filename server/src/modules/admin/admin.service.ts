@@ -206,6 +206,54 @@ async unbanMember(email: string) {
         throw error;
     } finally {
         connection.release();
+        }
+    }
+
+    async updateMemberProfile(memberId: number, profileData: Record<string, string | undefined>) {
+        const connection = await this.pool.getConnection();
+        try {
+            const [rows] = await connection.execute<RowDataPacket[]>("SELECT PK_id FROM User_ WHERE PK_id = ?", [memberId]);
+            if (rows.length === 0) throw new NotFoundError("MEMBER_NOT_FOUND");
+
+            const [roleRows] = await connection.execute<RowDataPacket[]>("SELECT FK_role_id FROM User_ WHERE PK_id = ?", [memberId]);
+            if (roleRows[0]?.FK_role_id === "admin") throw new BadRequestError("Impossible de modifier le profil d'un administrateur.");
+
+            if (profileData.email) {
+                await this.validateAndCheckEmailConflict(connection, memberId, profileData.email);
+            }
+
+            const updateFields = Object.keys(profileData).filter(key => profileData[key as keyof typeof profileData] !== undefined);
+            if (updateFields.length === 0) throw new BadRequestError("Aucun champ à mettre à jour.");
+
+            const setClause = updateFields.map(field => `${field} = ?`).join(", ");
+            const values = updateFields.map(field => profileData[field as keyof typeof profileData]);
+
+            await connection.execute(`UPDATE User_ SET ${setClause} WHERE PK_id = ?`, [...values, memberId] as any[]);
+
+            return { message: "Profil mis à jour avec succès." };
+        } finally {
+            connection.release();
+        }
+    }
+
+    private async validateAndCheckEmailConflict(connection: any, memberId: number, newEmail: string) {
+    const [bannedRows] = await connection.execute(
+        "SELECT 1 FROM Banned WHERE email = ?",
+        [newEmail]
+    ) as [RowDataPacket[], any];
+
+    if (bannedRows.length > 0) {
+        throw new ConflictError("Cet email est banni et ne peut pas être utilisé.");
+    }
+
+    const [rows] = await connection.execute(
+        "SELECT PK_id FROM User_ WHERE email = ? AND PK_id != ?",
+        [newEmail, memberId]
+    ) as [RowDataPacket[], any]; 
+
+    if (rows.length > 0) {
+        throw new ConflictError("Cet email est déjà utilisé par un autre membre.");
     }
 }
 }
+
