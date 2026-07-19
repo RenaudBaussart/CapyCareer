@@ -1,6 +1,6 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
-import { member } from "./modules/members/member.schema";
+import { member, updateMemberSchema } from "./modules/members/member.schema";
 import { loginSchema } from "./modules/auth/auth.schema";
 
 export const registry = new OpenAPIRegistry();
@@ -506,6 +506,106 @@ registry.registerPath({
                     schema: z.object({
                         success: z.boolean().openapi({ example: false }),
                         message: z.string().openapi({ example: "Erreur interne du serveur。" })
+                    })
+                }
+            }
+        }
+    }
+});
+registry.registerPath({
+    method: "put",
+    path: "/api/admin/members/:id",
+    description: "Mettre à jour le profil d'un membre (accessible uniquement aux administrateurs)",
+    summary: "Mettre à jour le profil d'un membre",
+    tags: ["Administration"],
+    security: [{ [bearerAuthName]: [] }],
+    request: {
+        body: {
+            description: "Les données du profil à mettre à jour",
+            content: {
+                "application/json": {
+                    schema: updateMemberSchema,
+                },
+            },
+        },
+        query: z.object({
+            id: z.number().int().positive().openapi({ example: 1 })
+        })
+    },
+    responses: {
+        200: {
+            description: "Profil du membre mis à jour avec succès.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Profil du membre mis à jour avec succès." }),
+                        member: publicMember
+                    })
+                }
+            }
+        },
+        400: {
+            description: "Requête invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Requête invalide." })
+                    })
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        403: {
+            description: "Accès refusé. L'utilisateur n'est pas un administrateur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Accès refusé, vous devez être un administrateur." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Membre non trouvé.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Membre non trouvé." })
+                    })
+                }
+            }
+        },
+        409: {
+            description: "Conflit de mise à jour. Les données fournies entrent en conflit avec les données existantes.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Conflit de mise à jour. Les données fournies entrent en conflit avec les données existantes." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
                     })
                 }
             }
