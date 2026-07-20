@@ -1,8 +1,7 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
-import { member, updateMemberSchema } from "./modules/members/member.schema";
+import { member, updateMemberSchema, updateProfileSchema, updatePasswordSchema, updateAccountSchema } from "./modules/members/member.schema";
 import { loginSchema } from "./modules/auth/auth.schema";
-
 export const registry = new OpenAPIRegistry();
 
 const bearerAuthName = 'bearerAuth';
@@ -766,6 +765,230 @@ registry.registerPath({
                     schema: z.object({
                         success: z.boolean().openapi({ example: false }),
                         message: z.string().openapi({ example: "Accès refusé, vous devez être un administrateur." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Membre non trouvé.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Membre non trouvé." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+registry.registerPath({
+    method: "put",
+    path: "/api/members/me",
+    description: "Mettre à jour le profil du membre actuellement connecté",
+    summary: "Mettre à jour le profil du membre connecté",
+    tags: ["Membres"],
+    security: [{ [bearerAuthName]: [] }],
+    request: {
+        body: {
+            description: "Les données du profil à mettre à jour",
+            content: {
+                "application/json": {
+                    schema: updateProfileSchema,
+                },
+            },
+        },
+    },
+    responses: {
+        200: {
+            description: "Profil mis à jour avec succès.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Profil mis à jour avec succès." }),
+                        member: publicMember
+                    })
+                }
+            }
+        },
+        400: {
+            description: "Requête invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Requête invalide." })
+                    })
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Membre non trouvé.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Membre non trouvé." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+registry.registerPath({
+    method: "patch",
+    path: "/api/members/me/password",
+    description: "Mettre à jour le mot de passe du membre actuellement connecté",
+    summary: "Mettre à jour le mot de passe du membre connecté",
+    tags: ["Membres"],
+    security: [{ [bearerAuthName]: [] }],
+    request: {
+        body: {
+            description: "Le nouveau mot de passe",
+            content: {
+                "application/json": {
+                    schema: updatePasswordSchema,
+                },
+            },
+        },
+    },
+    responses: {
+        200: {
+            description: "Mot de passe mis à jour avec succès.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Mot de passe mis à jour avec succès." }),
+                    })
+                }
+            }
+        },
+        400: {
+            description: "Requête invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Requête invalide." })
+                    })
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Membre non trouvé.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Membre non trouvé." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+registry.registerPath({
+    method: "patch",
+    path: "/api/members/me/account",
+    description: "Mettre à jour les informations de compte du membre actuellement connecté",
+    summary: "Mettre à jour les informations de compte du membre connecté",
+    tags: ["Membres"],
+    security: [{ [bearerAuthName]: [] }],
+    request: {
+        body: {
+            description: "Les nouvelles informations de compte",
+            content: {
+                "application/json": {
+                    schema: updateAccountSchema,
+                },
+            },
+        },
+    },
+    responses: {
+        200: {
+            description: "Informations de compte mises à jour avec succès.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Informations de compte mises à jour avec succès." }),
+                        member: publicMember
+                    })
+                }
+            }
+        },
+        400: {
+            description: "Requête invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Requête invalide." })
+                    })
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
                     })
                 }
             }
