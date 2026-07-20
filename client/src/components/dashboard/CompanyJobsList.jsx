@@ -128,7 +128,7 @@ export default function CompanyJobsList({ jobs, onEditJob, onDeleteJob, onToggle
                 <h3 className="flex items-center gap-2 font-bold text-primary-dark mb-3">
                     <Sparkles size={16} className="text-primary" aria-hidden="true" /> Vos offres publiées
                 </h3>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 max-h-130 overflow-auto scrollbar-thumb-primary">
                     {jobs.map((job) => (
                         <CompanyJobCard
                             key={job.id}

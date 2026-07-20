@@ -253,7 +253,7 @@ export default function JobsSection({ jobs }) {
                     <h3 className="flex items-center gap-2 font-bold text-primary-dark mb-3">
                         <Sparkles size={16} className="text-primary" aria-hidden="true" /> Emplois recommandés
                     </h3>
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 overflow-auto max-h-150 scrollbar-thumb-primary-dark rounded-2xl">
                         {filtered.map((job) => (
                             <JobCard
                                 key={job.source_id}

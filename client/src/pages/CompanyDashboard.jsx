@@ -86,6 +86,7 @@ export default function CompanyDashboard() {
             <Navbar />
 
             <section className="bg-main-layout">
+                <div className="w-full p-10">
                 <div className="max-w-7xl mx-auto">
                     {/* en-tête */}
                     <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)] mb-10">
@@ -138,6 +139,7 @@ export default function CompanyDashboard() {
                             />
                         )}
                     </div>
+                </div>
                 </div>
             </section>
 
