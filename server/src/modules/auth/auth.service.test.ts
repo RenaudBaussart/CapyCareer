@@ -15,7 +15,7 @@ describe("AuthService - Méthode Register", () => {
     let mockPool: any;
 
     beforeEach(() => {
-        mockConnection = { execute: jest.fn(), release: jest.fn() };
+        mockConnection = { execute: jest.fn().mockResolvedValue([[]]), release: jest.fn() };
         mockPool = { getConnection: jest.fn().mockResolvedValue(mockConnection) };
         authService = new AuthService(mockPool as unknown as Pool);
     });
@@ -26,7 +26,9 @@ describe("AuthService - Méthode Register", () => {
 
     describe("Cas d'erreurs", () => {
         it("doit rejeter l'inscription et lever une ConflictError si l'email existe déjà", async () => {
-            mockConnection.execute.mockResolvedValue([[{ PK_id: 1 }]]); 
+            mockConnection.execute
+                .mockResolvedValueOnce([[]]) 
+                .mockResolvedValueOnce([[{ PK_id: 1 }]]); 
             
             const userData = {
                 email: "jojo@gmail.com",
@@ -38,7 +40,6 @@ describe("AuthService - Méthode Register", () => {
             };
 
             await expect(authService.register(userData as any)).rejects.toThrow(ConflictError);  
-
             expect(mockConnection.release).toHaveBeenCalledTimes(1);
             expect(bcrypt.hash).not.toHaveBeenCalled(); 
         });
@@ -47,6 +48,7 @@ describe("AuthService - Méthode Register", () => {
     describe("Cas de succès", () => {
         it("doit inscrire un nouvel utilisateur, hacher son mot de passe et retourner un token", async () => {
             mockConnection.execute
+                .mockResolvedValueOnce([[]]) 
                 .mockResolvedValueOnce([[]]) 
                 .mockResolvedValueOnce([[]]) 
                 .mockResolvedValueOnce([{ insertId: 42 }]); 
@@ -66,7 +68,7 @@ describe("AuthService - Méthode Register", () => {
             const result = await authService.register(userData as any);
 
             expect(result).toBe("fake-jwt-token-123");
-            expect(mockConnection.execute).toHaveBeenCalledTimes(3); // 👈 Changé de 2 à 3
+            expect(mockConnection.execute).toHaveBeenCalledTimes(4); // 4 requêtes maintenant
             expect(bcrypt.hash).toHaveBeenCalledWith("HelloWorld0/", 10);
             expect(generatememberToken).toHaveBeenCalledWith({
                 id: 42,
@@ -84,7 +86,7 @@ describe("AuthService - Méthode Login", () => {
     let mockPool: any;
 
     beforeEach(() => {
-        mockConnection = { execute: jest.fn(), release: jest.fn() };
+        mockConnection = { execute: jest.fn().mockResolvedValue([[]]), release: jest.fn() };
         mockPool = { getConnection: jest.fn().mockResolvedValue(mockConnection) };
         authService = new AuthService(mockPool as unknown as Pool);
     });
@@ -95,7 +97,9 @@ describe("AuthService - Méthode Login", () => {
 
     describe("Cas d'erreurs", () => {
         it("devrait jeter l'erreur UnauthorizedError si le pseudonyme n'existe pas", async () => {
-            mockConnection.execute.mockResolvedValueOnce([[]]);
+            mockConnection.execute
+                .mockResolvedValueOnce([[]])  
+                .mockResolvedValueOnce([[]]);
 
             await expect(authService.login("Inconnu", "Password123!"))
                 .rejects.toThrow(UnauthorizedError);
@@ -105,7 +109,10 @@ describe("AuthService - Méthode Login", () => {
 
         it("devrait jeter l'erreur UnauthorizedError si le mot de passe est faux", async () => {
             const fakeUser = [{ PK_id: 1, username: "Jojodu59", hashed_password: "hash-bdd", FK_role_id: "candidat" }];
-            mockConnection.execute.mockResolvedValueOnce([fakeUser]);
+            mockConnection.execute
+                .mockResolvedValueOnce([[]])
+                .mockResolvedValueOnce([fakeUser]); 
+            
             (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
 
             await expect(authService.login("Jojodu59", "MauvaisMotDePasse"))
@@ -118,7 +125,9 @@ describe("AuthService - Méthode Login", () => {
     describe("Cas de succès", () => {
         it("devrait retourner un token si les identifiants sont corrects", async () => {
             const fakeUser = [{ PK_id: 1, username: "Jojodu59", hashed_password: "hash-bdd", FK_role_id: "candidat" }];
-            mockConnection.execute.mockResolvedValueOnce([fakeUser]);
+            mockConnection.execute
+                .mockResolvedValueOnce([[]]) 
+                .mockResolvedValueOnce([fakeUser]); 
 
             (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
 
