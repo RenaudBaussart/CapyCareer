@@ -1,18 +1,25 @@
 // fichier gerant le component de connexion
 
 // import
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 // hook gere les formulaire react
 import { useForm } from "react-hook-form";
+// communique avec API
+import { login } from "../../services/auth.service";
 // permet de co react hook form avec la validation zod
 import { zodResolver } from "@hookform/resolvers/zod";
 // schema zod
 import { loginSchema } from "../../schemas/auth.schema";
 // navigation
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // icone
 import { LogIn } from "lucide-react";
 
 export default function LoginForm() {
+  // recupere la fonction login contexte
+  const { login: contextLogin } = useContext(AuthContext);
+
   const {
     register,
     handleSubmit,
@@ -21,19 +28,52 @@ export default function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
 
+  // etat pour gerer les erreurs renvoyees par l'API
+  const [apiError, setApiError] = useState("");
+  // hook pour rediriger apres la co
+  const navigate = useNavigate();
+
+  // fonction appelee quand le formulaire est valide
   const onSubmit = async (data) => {
-    // WARNING: connecter a lAPI
-    console.log("Login data :", data);
+    setApiError("");
+
+    try {
+      // appel au service externe pour se co
+      const result = await login(data);
+
+      // SI token alors il est stocké
+      if (result.token) {
+        contextLogin(result.token, { username: data.username });
+      }
+
+      console.log("Connexion réussie !", result);
+      
+      // redirection vers home ou dashboard
+      // WARNING: selon role à voir
+      navigate("/"); 
+
+    } catch (error) {
+      console.error("Erreur de connexion :", error.message);
+      // affiche erreur pour luser
+      setApiError(error.message);
+    }
   };
 
   return (
     <div className="w-full max-w-md">
 
-      {/* connexion classique */}
+      {/* connexion de base */}
       <form
         className="space-y-4"
         onSubmit={handleSubmit(onSubmit)}
         noValidate>
+
+        {/* affichage des erreurs api) */}
+        {apiError && (
+          <div className="p-3 bg-accent-dark/10 border border-accent-dark text-accent-dark rounded-xl text-sm font-medium text-center">
+            {apiError}
+          </div>
+        )}
 
         {/* identifiant de connexion */}
         <div>
@@ -62,7 +102,7 @@ export default function LoginForm() {
               htmlFor="password" >
               Mot de passe *
             </label>
-            {/* WARNING: mdp oublié */}
+            {/* WARNING: mdp oublié à faire */}
             <Link to="/forgot-password" className="text-xs text-accent font-medium hover:text-accent-dark hover:underline">
               Mot de passe oublié ?
             </Link>
@@ -107,8 +147,6 @@ export default function LoginForm() {
 
       </form>
 
-
-
       {/* link vers inscription */}
       <p className="text-center mt-6 text-sm text-primary-dark/80">
         Pas encore de compte ?{" "}
@@ -117,7 +155,6 @@ export default function LoginForm() {
         </Link>
       </p>
 
-      
     </div>
   );
 }

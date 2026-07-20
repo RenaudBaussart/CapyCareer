@@ -81,7 +81,7 @@ export default function UserProfile() {
 
                         {/* liens reseaux */}
                         <div className="space-y-4 pt-2">
-                            <h2 className="text-lg font-semibold text-primary-dark">Présence en ligne</h2>
+                            <h2 className="text-lg font-semibold text-primary-dark">Liens professionnels</h2>
 
                             <div className="relative">
                                 <input type="text" name="github" placeholder="Lien de votre GitHub" value={profileData.github} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 bg-white/50 border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-primary-dark transition-all" />
