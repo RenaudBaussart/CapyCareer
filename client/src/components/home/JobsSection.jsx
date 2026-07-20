@@ -178,7 +178,7 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
     const [query, setQuery] = useState("");
     const [lieu, setLieu] = useState("");
 
-    // liste "légère" issue de la route listing
+    // liste légère issue de la route listing
     const [jobs, setJobs] = useState([]);
     const [page, setPage] = useState(0);
     const [isEnd, setIsEnd] = useState(true);
@@ -189,7 +189,8 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
     const [selectedDetail, setSelectedDetail] = useState(null);
     const [isLoadingDetail, setIsLoadingDetail] = useState(false);
     const [detailError, setDetailError] = useState(null);
-    const detailsCache = useRef(new Map()); // évite de refetch une offre déjà consultée
+    // évite de refetch si loffre a déjà été consultée
+    const detailsCache = useRef(new Map());
 
     const [saved, setSaved] = useState(() => new Set());
 
