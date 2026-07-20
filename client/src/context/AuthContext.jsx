@@ -1,7 +1,7 @@
-// fichier gerant a conserver un user connecté en stockant ses infos
-
 // import
 import { createContext, useState, useEffect } from "react";
+// fonction blacklist
+import { logoutApi } from "../services/auth.service";
 
 // creation contexte dauthentification
 export const AuthContext = createContext();
@@ -17,32 +17,59 @@ export function AuthProvider({ children }) {
 
     // sexecute uniquement au loading du site
     useEffect(() => {
-        const storedToken = localStorage.getItem("capy_token");
-        const storedUser = localStorage.getItem("capy_user");
+        // verif localStorage si luser a coché rester connecté
+        const storedToken = localStorage.getItem("capy_token") || sessionStorage.getItem("capy_token");
+        const storedUser = localStorage.getItem("capy_user") || sessionStorage.getItem("capy_user");
 
         if (storedToken && storedUser) {
-            setToken(storedToken);
-            setUser(JSON.parse(storedUser));
+            try {
+                setToken(storedToken);
+                setUser(JSON.parse(storedUser));
+                // en cas derreur ou corruption, met luser en etat deconnexion
+            } catch (e) {
+                console.error("Erreur lors du parsing des infos utilisateur", e);
+                logout();
+            }
         }
         setIsLoading(false);
     }, []);
 
     // fonction call pour se co
     const login = (newToken, userData) => {
-        localStorage.setItem("capy_token", newToken);
-        localStorage.setItem("capy_user", JSON.stringify(userData));
+        const { rememberMe, ...userInfos } = userData;
+
+        // SI luser a coché rememberMe ALORS met en localStorage (soit conservation)
+        const storage = rememberMe ? localStorage : sessionStorage;
+
+        storage.setItem("capy_token", newToken);
+        storage.setItem("capy_user", JSON.stringify(userInfos));
+
         setToken(newToken);
-        setUser(userData);
+        setUser(userInfos);
     };
 
     // fonction call pour se deco
-    const logout = () => {
-        localStorage.removeItem("capy_token");
-        localStorage.removeItem("capy_user");
-        setToken(null);
-        setUser(null);
-    };
+    const logout = async () => {
+        try {
+            if (token) {
+                // call api
+                await logoutApi(token);
+            }
+            // en cas derreur
+        } catch (error) {
+            console.error("Erreur lors du blacklistage", error);
+        } finally {
+            // clean les deux espaces du token
+            localStorage.removeItem("capy_token");
+            localStorage.removeItem("capy_user");
+            sessionStorage.removeItem("capy_token");
+            sessionStorage.removeItem("capy_user");
 
+            setToken(null);
+            setUser(null);
+        };
+
+    }
     return (
         <AuthContext.Provider value={{ token, user, login, logout, isLoading }}>
             {children}
