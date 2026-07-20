@@ -1017,6 +1017,52 @@ registry.registerPath({
         }
     }
 });
+registry.registerPath({
+    method: "delete",
+    path: "/api/members/me",
+    description: "Supprimer le compte du membre actuellement connecté",
+    summary: "Supprimer le compte du membre connecté",
+    tags: ["Membres"],
+    security: [{ [bearerAuthName]: [] }],
+    responses: {
+        204: {
+            description: "Compte supprimé avec succès.",
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Membre non trouvé.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Membre non trouvé." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
 
 export function generateOpenAPI() {
     const generator = new OpenApiGeneratorV3(registry.definitions);
