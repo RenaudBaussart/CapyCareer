@@ -23,6 +23,7 @@ import AdminDuplicates from "./pages/admin/AdminDuplicates";
 import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProfile from "./pages/admin/AdminProfile";
 // pages Entreprise/Recruteur
+import CompanyRegister from "./pages/company/CompanyRegister";
 import CompanyDashboard from "./pages/CompanyDashboard";
 // permet de communiquer le token a linterface
 import { AuthProvider } from "./context/AuthContext";
@@ -149,6 +150,8 @@ export default function App() {
           />
 
           {/* ROUTES ENTREPRISES */}
+
+          {/*Dashboard entreprise*/}
           <Route
             path="/company/dashboard"
             element={
@@ -157,6 +160,11 @@ export default function App() {
               </RequireAuth>
             }
           />
+
+          {/*inscription entreprise*/}
+          <Route 
+            path="/register-company" 
+            element={<CompanyRegister />} />
 
         </Routes>
       </BrowserRouter>
