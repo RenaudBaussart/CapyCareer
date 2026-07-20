@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { MemberService } from "./member.service";
 import { pool } from "../../config/database";
-
+import { updateAccountSchema, updateProfileSchema, updatePasswordSchema } from "./member.schema";
+import { ZodError } from "zod"; 
 
 /**
  * Récupère le profil du membre actuellement connecté.
@@ -21,4 +22,47 @@ const getMyProfile = async (req: Request, res: Response, next: NextFunction) => 
     }
 };
 
-export { getMyProfile };
+/**
+ * Met à jour le profil du membre actuellement connecté.
+ * @param req - La requête Express contenant les données à mettre à jour dans req.body.
+ * @param res - La réponse Express pour confirmer la mise à jour du profil.
+ * @param next - La fonction next pour passer au middleware suivant en cas d'erreur.
+ */
+const updateMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const myId = req.member.id;
+        const memberService = new MemberService(pool);
+        
+        let validatedData: any;
+        let successMessage = "";
+
+        if (req.originalUrl.endsWith('/password')) {
+            const parsedData = updatePasswordSchema.parse(req.body); 
+            validatedData = { newPassword: parsedData.password };
+            successMessage = "Mot de passe mis à jour avec succès.";
+        } 
+        else if (req.originalUrl.endsWith('/account')) {
+            validatedData = updateAccountSchema.parse(req.body);
+            successMessage = "Informations de compte mises à jour avec succès.";
+        } 
+        else {
+            validatedData = updateProfileSchema.parse(req.body);
+            successMessage = "Profil mis à jour avec succès.";
+        }
+
+        await memberService.modifyYourProfile(myId, validatedData);
+        
+        res.status(200).json({ message: successMessage });
+
+    } catch (error: any) {
+        if (error instanceof ZodError) {
+            return res.status(400).json({ 
+                message: "Erreur de validation des données.", 
+                errors: error.flatten().fieldErrors 
+            });
+        }
+        next(error);
+    }
+};
+
+export { getMyProfile, updateMyProfile };
