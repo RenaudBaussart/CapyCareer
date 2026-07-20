@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import authRouter from './modules/auth/auth.route';
-import jobOfferRouter from './modules/job_offers/job.offers.route'; // Assurez-vous que ce fichier et cette route existent
+import jobOfferRouter from './modules/job_offers/job.offers.route';
 import swaggerUi from "swagger-ui-express";
 import { generateOpenAPI } from "./swagger";
 import { errorHandlerMiddleware } from './core/errors/errorHandlerMiddleware';

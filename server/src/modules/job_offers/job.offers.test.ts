@@ -1,6 +1,6 @@
 import request from "supertest";
 import express from "express";
-import { getJobOffers } from "./job.offert.controller";
+import { getJobOffers } from "./job.offers.controller";
 import { pool } from "../../config/database";
 
 // je crée une application express dédiée uniquement à exécuter notre route pour le test
