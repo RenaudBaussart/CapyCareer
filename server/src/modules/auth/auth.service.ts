@@ -4,7 +4,7 @@ import { generatememberToken, TokenMember } from "../../core/utils/authUtility";
 import { z } from "zod";
 import { member } from "../members/member.schema";
 import jwtTool from 'jsonwebtoken';
-import { ConflictError, UnauthorizedError, NotFoundError, InternalServerError } from '../../core/errors/HttpError';
+import { ConflictError, UnauthorizedError, NotFoundError, InternalServerError, BadRequestError } from '../../core/errors/HttpError';
 
 type ValidatedMemberData = z.infer<typeof member>;
 
@@ -29,6 +29,15 @@ export class AuthService {
         const connection = await this.pool.getConnection();
 
         try {
+
+            const [bannedRows] = await connection.execute(
+            "SELECT 1 FROM Banned WHERE email = ?",
+            [validatedData.email]
+            ) as [RowDataPacket[], any];
+
+            if (bannedRows.length > 0) {
+            throw new BadRequestError("Les champs de formulaire ne sont pas conformes");
+            }
             // verifie le mail en premier
             const [existingMembers] = await connection.execute<RowDataPacket[]>(
                 "SELECT PK_id FROM User_ WHERE email = ?",
@@ -95,6 +104,15 @@ export class AuthService {
     const connection = await this.pool.getConnection();
 
     try {
+
+            const [bannedRows] = await connection.execute(
+        "SELECT 1 FROM Banned WHERE username = ?",
+        [username]
+        ) as [RowDataPacket[], any];
+
+        if (bannedRows.length > 0) {
+        throw new BadRequestError("Les champs de formulaire n'est pas conforme");
+        }
         // ajoute username
         const [rows] = await connection.execute<RowDataPacket[]>(
             "SELECT PK_id, username, hashed_password, FK_role_id FROM User_ WHERE username = ?",
@@ -147,7 +165,7 @@ export class AuthService {
 
 
         await connection.execute(
-            "INSERT INTO BlacklistedTokens (token, blacklisted_at) VALUES (?, NOW())",
+            "INSERT INTO Blacklist (token, blacklisted_at) VALUES (?, NOW())",
             [token]
         );
 
