@@ -65,4 +65,23 @@ const updateMyProfile = async (req: Request, res: Response, next: NextFunction) 
     }
 };
 
-export { getMyProfile, updateMyProfile };
+const deleteMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const myId = req.member.id;
+        
+        const token = req.headers.authorization?.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({ message: "Token non fourni." });
+        }
+
+        const memberService = new MemberService(pool);
+        const result = await memberService.deleteYourProfile(myId, token);
+        
+        res.status(200).json(result);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+export { getMyProfile, updateMyProfile, deleteMyProfile };
