@@ -242,7 +242,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const normalizedOffers = [];\n\n// Ajout de la plage \\u{1F1E6}-\\u{1F1FF} spécifique aux drapeaux (Regional Indicator Symbols)\nconst emojiRegex = /\\p{Extended_Pictographic}|[\\u{1F1E6}-\\u{1F1FF}\\u{1F300}-\\u{1F9FF}\\u{2600}-\\u{26FF}\\u{2700}-\\u{27BF}\\u{1FA00}-\\u{1FAFF}\\u{2B00}-\\u{2BFF}\\u{2300}-\\u{23FF}]/gu;\n\nfor (const item of $input.all()) {\n    const offer = item.json;\n    \n    // Nettoyage des emojis et drapeaux sur le titre\n    let title = offer.title || offer.name || \"Titre inconnu\";\n    title = title.replace(emojiRegex, '').trim();\n    \n    let description = offer.description || \"\";\n    \n    // Nettoyage des emojis et drapeaux sur la description\n    description = description.replace(emojiRegex, '');\n    \n    description = description\n        .replace(/<[^>]*>/g, ' ')\n        .replace(/\\*\\*/g, '')\n        .replace(/__/g, '')\n        .replace(/[ \\t]+/g, ' ')\n        .replace(/\\* /g, '- ')\n        .trim();\n\n    let contractType = \"NC\";\n    if (offer.post_type) {\n        if (offer.post_type.includes('permanent')) contractType = 'CDI';\n        else if (offer.post_type.includes('freelance')) contractType = 'Freelance';\n        else if (offer.post_type.includes('internship')) contractType = 'Stage';\n        else if (offer.post_type.includes('apprenticeship')) contractType = 'Alternance';\n        else if (offer.post_type.includes('partTime')) contractType = 'Temps partiel';\n        else if (offer.post_type.includes('fixedTerm')) contractType = 'CDD';\n        else contractType = offer.post_type.replace(/\\[|\\]|\"/g, '');\n    }\n\n    if (contractType === 'NC' && (description.toLowerCase().includes('cdd') || description.toLowerCase().includes('contrat à durée déterminée'))) {\n        contractType = 'CDD';\n    }\n\n    let city = null;\n    let country = null;\n    if (offer.location && offer.location.length > 0) {\n        const locParts = offer.location[0].split(',');\n        if (locParts.length > 1) {\n            city = locParts[0].trim();\n            country = locParts[1].trim();\n        } else {\n            country = locParts[0].trim();\n        }\n    }\n\n    const textToSearch = `${title} ${description}`.toLowerCase();\n    \n    const isRemote = textToSearch.includes('remote') || \n                     textToSearch.includes('télétravail') ||\n                     textToSearch.includes('home office');\n                     \n    const isHybrid = textToSearch.includes('hybride') ||\n                     textToSearch.includes('hybrid');\n\n    let salaryMin = null;\n    let salaryMax = null;\n    let currency = \"EUR\";\n    \n    const patterns = [\n        { regex: /(\\d{2,3})\\s*[\\/-]\\s*(\\d{2,3})\\s*k/i, multiplier: 1000 },\n        { regex: /(\\d{2,3})\\s*k\\s*€?\\s*(?:et|à)\\s*(\\d{2,3})\\s*k/i, multiplier: 1000 },\n        { regex: /(?:€|K)?\\s*(\\d{2,3})[\\s,.]?000\\s*(?:-|à)\\s*(?:€|K)?\\s*(\\d{2,3})[\\s,.]?000/i, multiplier: 1 },\n        { regex: /(\\d{2,3})\\s*k\\s*€/i, multiplier: 1000 }\n    ];\n\n    for (const p of patterns) {\n        const match = textToSearch.match(p.regex);\n        if (match) {\n            salaryMin = parseInt(match[1], 10) * p.multiplier;\n            salaryMax = match[2] ? parseInt(match[2], 10) * p.multiplier : salaryMin;\n            break;\n        }\n    }\n\n    if (salaryMin !== null && salaryMin < 1000) {\n        salaryMin = salaryMin * 1000;\n    }\n    if (salaryMax !== null && salaryMax < 1000) {\n        salaryMax = salaryMax * 1000;\n    }\n\n    if (textToSearch.includes('$') || textToSearch.includes('dollar')) {\n        currency = \"USD\";\n    }\n\n    const publishRaw = offer.publish_date || offer.published_at || null;\n    let publishDate = null;\n\n    if (publishRaw) {\n        const dateInMs = Math.floor(publishRaw / 1000);\n        const dateObj = new Date(dateInMs);\n        publishDate = dateObj.toISOString().slice(0, 19).replace('T', ' ');\n    }\n\n    // Récupération de l'entreprise (gestion de plusieurs formats possibles)\n    const company = offer.company_name || (offer.company && offer.company.name) || (typeof offer.company === 'string' ? offer.company : null);\n\n    const rawString = `${title}-${city}-${contractType}-${company}-${publishDate}`.toLowerCase();\n    let contentHash = 0;\n    for (let i = 0; i < rawString.length; i++) {\n        const char = rawString.charCodeAt(i);\n        contentHash = ((contentHash << 5) - contentHash) + char;\n        contentHash = contentHash & contentHash; \n    }\n    const finalHash = Math.abs(contentHash).toString(16);\n\n    normalizedOffers.push({\n        json: {\n            source: \"welovedevs\",\n            source_id: offer.url || finalHash,\n            company: company,\n            title: title,\n            description: description,\n            city: city,\n            country: country,\n            remote: isRemote,\n            hybrid: isHybrid,\n            contract_type: contractType,\n            salary_min: salaryMin,\n            salary_max: salaryMax,\n            currency: currency,\n            url: offer.url,\n            publish_date: publishDate,\n            PK_content_hash: finalHash\n        }\n    });\n}\n\nreturn normalizedOffers;"
+        "jsCode": "const normalizedOffers = [];\n\n// Ajout de la plage \\u{1F1E6}-\\u{1F1FF} spécifique aux drapeaux (Regional Indicator Symbols)\nconst emojiRegex = /\\p{Extended_Pictographic}|[\\u{1F1E6}-\\u{1F1FF}\\u{1F300}-\\u{1F9FF}\\u{2600}-\\u{26FF}\\u{2700}-\\u{27BF}\\u{1FA00}-\\u{1FAFF}\\u{2B00}-\\u{2BFF}\\u{2300}-\\u{23FF}]/gu;\n\nfor (const item of $input.all()) {\n    const offer = item.json;\n    \n    // Nettoyage des emojis et drapeaux sur le titre\n    let title = offer.title || offer.name || \"Titre inconnu\";\n    title = title.replace(emojiRegex, '').trim();\n    \n    let description = offer.description || \"\";\n    \n    // Nettoyage des emojis et drapeaux sur la description\n    description = description.replace(emojiRegex, '');\n    \n    description = description\n        .replace(/<[^>]*>/g, ' ')\n        .replace(/\\*\\*/g, '')\n        .replace(/__/g, '')\n        .replace(/[ \\t]+/g, ' ')\n        .replace(/\\* /g, '- ')\n        .trim();\n\n    let contractType = \"NC\";\n    if (offer.post_type) {\n        if (offer.post_type.includes('permanent')) contractType = 'CDI';\n        else if (offer.post_type.includes('freelance')) contractType = 'Freelance';\n        else if (offer.post_type.includes('internship')) contractType = 'Stage';\n        else if (offer.post_type.includes('apprenticeship')) contractType = 'Alternance';\n        else if (offer.post_type.includes('partTime')) contractType = 'Temps partiel';\n        else if (offer.post_type.includes('fixedTerm')) contractType = 'CDD';\n        else contractType = offer.post_type.replace(/\\[|\\]|\"/g, '');\n    }\n\n    if (contractType === 'NC' && (description.toLowerCase().includes('cdd') || description.toLowerCase().includes('contrat à durée déterminée'))) {\n        contractType = 'CDD';\n    }\n\n    let city = null;\n    let country = null;\n    if (offer.location && offer.location.length > 0) {\n        const locParts = offer.location[0].split(',');\n        if (locParts.length > 1) {\n            city = locParts[0].trim();\n            country = locParts[1].trim();\n        } else {\n            country = locParts[0].trim();\n        }\n    }\n\n    const textToSearch = `${title} ${description}`.toLowerCase();\n    \n    const isRemote = textToSearch.includes('remote') || \n                     textToSearch.includes('télétravail') ||\n                     textToSearch.includes('home office');\n                     \n    const isHybrid = textToSearch.includes('hybride') ||\n                     textToSearch.includes('hybrid');\n\n    let salaryMin = null;\n    let salaryMax = null;\n    let currency = \"EUR\";\n    \n    const patterns = [\n        { regex: /(\\d{2,3})\\s*[\\/-]\\s*(\\d{2,3})\\s*k/i, multiplier: 1000 },\n        { regex: /(\\d{2,3})\\s*k\\s*€?\\s*(?:et|à)\\s*(\\d{2,3})\\s*k/i, multiplier: 1000 },\n        { regex: /(?:€|K)?\\s*(\\d{2,3})[\\s,.]?000\\s*(?:-|à)\\s*(?:€|K)?\\s*(\\d{2,3})[\\s,.]?000/i, multiplier: 1 },\n        { regex: /(\\d{2,3})\\s*k\\s*€/i, multiplier: 1000 }\n    ];\n\n    for (const p of patterns) {\n        const match = textToSearch.match(p.regex);\n        if (match) {\n            salaryMin = parseInt(match[1], 10) * p.multiplier;\n            salaryMax = match[2] ? parseInt(match[2], 10) * p.multiplier : salaryMin;\n            break;\n        }\n    }\n\n    if (salaryMin !== null && salaryMin < 1000) {\n        salaryMin = salaryMin * 1000;\n    }\n    if (salaryMax !== null && salaryMax < 1000) {\n        salaryMax = salaryMax * 1000;\n    }\n\n    if (textToSearch.includes('$') || textToSearch.includes('dollar')) {\n        currency = \"USD\";\n    }\n\n    const publishRaw = offer.publish_date || offer.published_at || null;\n    let publishDate = null;\n\n    if (publishRaw) {\n        const dateInMs = Math.floor(publishRaw / 1000);\n        const dateObj = new Date(dateInMs);\n        publishDate = dateObj.toISOString().slice(0, 19).replace('T', ' ');\n    }\n\n    // Récupération de l'entreprise (gestion de plusieurs formats possibles)\n    const company = offer.company_name || (offer.company && offer.company.name) || (typeof offer.company === 'string' ? offer.company : null);\n\n    const rawString = `${title}-${city}-${contractType}-${company}-${publishDate}`.toLowerCase();\n    let contentHash = 0;\n    for (let i = 0; i < rawString.length; i++) {\n        const char = rawString.charCodeAt(i);\n        contentHash = ((contentHash << 5) - contentHash) + char;\n        contentHash = contentHash & contentHash; \n    }\n    const finalHash = Math.abs(contentHash).toString(16);\n\n    normalizedOffers.push({\n        json: {\n            source: \"welovedevs\",\n            source_id: offer.url || finalHash,\n            company: company,\n            title: title,\n            description: description,\n            city: city,\n            country: country,\n            remote: isRemote,\n            hybrid: isHybrid,\n            contract_type: contractType,\n            salary_min: salaryMin,\n            salary_max: salaryMax,\n            currency: currency,\n            url: offer.url,\n            publish_date: publishDate,\n            content_hash: finalHash\n        }\n    });\n}\n\nreturn normalizedOffers;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -258,10 +258,10 @@
         "operation": "upsert",
         "table": {
           "__rl": true,
-          "mode": "name",
-          "value": "Job_Offers"
+          "value": "Job_Offers",
+          "mode": "name"
         },
-        "columnToMatchOn": "PK_content_hash",
+        "columnToMatchOn": "content_hash",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
@@ -299,30 +299,6 @@
           "name": ""
         }
       }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://server:port/api/update-status",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "total_offers",
-              "value": "={{ $json.total }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [
-        304,
-        288
-      ],
-      "id": "7797ef96-5378-4ecf-af60-62fcf9453487",
-      "name": "response"
     }
   ],
   "pinData": {},
@@ -440,13 +416,7 @@
     },
     "how much offers in db ?": {
       "main": [
-        [
-          {
-            "node": "response",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     }
   },
@@ -459,7 +429,7 @@
     "timezone": "Europe/Paris",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "a6ddba88-64ed-4641-9369-37c20f22b43d",
+  "versionId": "645018bf-77b1-49eb-9090-1b0f709a5dc9",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "6888813f73990a8dac112bbd6ccbc9ebd5532a8cd7b550a9fc22bddf2f93fe8a"
