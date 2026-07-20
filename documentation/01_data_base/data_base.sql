@@ -27,7 +27,7 @@ CREATE TABLE `User_` (
 
 CREATE TABLE `Job_Offers` (
   `PK_id` int PRIMARY KEY AUTO_INCREMENT,
-  `content_hash` TEXT NOT NULL,
+  `content_hash` TEXT UNIQUE NOT NULL,
   `name` VARCHAR(150) NOT NULL,
   `description` TEXT NOT NULL,
   `url` VARCHAR(500) NOT NULL,

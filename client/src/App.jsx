@@ -1,7 +1,7 @@
 // chef dorchestre du site (regroupe component, hook etc)
 
 // imports
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // pages
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -14,46 +14,152 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import About from "./pages/About";
 import ApiDoc from "./pages/ApiDoc";
+import UserProfile from "./pages/candidate/UserProfile";
+// pages ADMIN
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminJobs from "./pages/admin/AdminJobs";
+import AdminDuplicates from "./pages/admin/AdminDuplicates";
+import AdminLogs from "./pages/admin/AdminLogs";
+import AdminProfile from "./pages/admin/AdminProfile";
+// pages Entreprise/Recruteur
+import CompanyDashboard from "./pages/CompanyDashboard";
+// permet de communiquer le token a linterface
+import { AuthProvider } from "./context/AuthContext";
+// sécurité des routes
+import RequireAuth from "./guards/RequireAuth";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
 
-        {/* Page Accueil */}
-        <Route path="/home" element={<Home />} />
+          {/* ROUTES COMMUNES */}
+          {/* Toutes les routes inexistantes */}
+          <Route path="*" element={<Navigate to="/404" replace />} />
+          {/* Page 404 */}
+          <Route path="/404" element={<NotFoundPage />} />
 
-        {/* Page Register */}
-        <Route path="/register" element={<Register />} />
+          {/* ROUTES USERS OFFLINE */}
+          {/* Page Accueil */}
+          <Route path="/" element={<Home />} />
 
-        {/* Page Login */}
-        <Route path="/login" element={<Login />} />
+          {/* Page Register */}
+          <Route path="/register" element={<Register />} />
 
-        {/* Page Compagnies */}
-        <Route path="/companies" element={<Company />} />
+          {/* Page Login */}
+          <Route path="/login" element={<Login />} />
 
-        {/* Page Legal */}
-        <Route path="/legal" element={<Legal />} />
+          {/* Page Compagnies */}
+          <Route path="/companies" element={<Company />} />
 
-        {/* Page Accessibility */}
-        <Route path="/accessibility" element={<AccessibilityPage />} />
+          {/* Page Legal */}
+          <Route path="/legal" element={<Legal />} />
 
-        {/* Page Privacy */}
-        <Route path="/privacy" element={<Privacy />} />
+          {/* Page Accessibility */}
+          <Route path="/accessibility" element={<AccessibilityPage />} />
 
-        {/* Page Terms */}
-        <Route path="/terms" element={<Terms />} />
+          {/* Page Privacy */}
+          <Route path="/privacy" element={<Privacy />} />
 
-        {/* Page About */}
-        <Route path="/about" element={<About />} />
+          {/* Page Terms */}
+          <Route path="/terms" element={<Terms />} />
 
-        {/* Page APIDoc */}
-        <Route path="/api-doc" element={<ApiDoc />} />
+          {/* Page About */}
+          <Route path="/about" element={<About />} />
 
-        {/* Page 404 */}
-        <Route path="/404" element={<NotFoundPage />} />
+          {/* Page APIDoc */}
+          <Route path="/api-doc" element={<ApiDoc />} />
 
-      </Routes>
-    </BrowserRouter>
+
+          {/* ROUTES USER ONLINE */}
+
+          {/* Pages User Profile */}
+          <Route
+            path="/candidate/profile"
+            element={
+              <RequireAuth>
+                <UserProfile />
+              </RequireAuth>
+            }
+          />
+
+
+          {/* ROUTES ADMIN */}
+
+          {/* Pages Admin Dashboard */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <RequireAuth>
+                <AdminDashboard />
+              </RequireAuth>
+            }
+          />
+
+          {/* Pages Admin Users */}
+          <Route
+            path="/admin/users"
+            element={
+              <RequireAuth>
+                <AdminUsers />
+              </RequireAuth>
+            }
+          />
+
+          {/* Pages Admin Jobs */}
+          <Route
+            path="/admin/jobs"
+            element={
+              <RequireAuth>
+                <AdminJobs />
+              </RequireAuth>
+            }
+          />
+
+          {/* Pages Admin Duplicates */}
+          <Route
+            path="/admin/duplicates"
+            element={
+              <RequireAuth>
+                <AdminDuplicates />
+              </RequireAuth>
+            }
+          />
+
+          {/* Pages Admin Logs */}
+          <Route
+            path="/admin/logs"
+            element={
+              <RequireAuth>
+                <AdminLogs />
+              </RequireAuth>
+            }
+          />
+
+          {/* Pages Admin Profile */}
+          <Route
+            path="/admin/profile"
+            element={
+              <RequireAuth>
+                <AdminProfile />
+              </RequireAuth>
+            }
+          />
+
+          {/* ROUTES ENTREPRISES */}
+          <Route
+            path="/company-dashboard"
+            element={
+              <RequireAuth>
+                <CompanyDashboard />
+              </RequireAuth>
+            }
+          />
+
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
