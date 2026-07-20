@@ -82,15 +82,23 @@ const createMemberSchema = z.object({
         })
 }).openapi("Member");
 
-
-
-const profileSchema = createMemberSchema.partial().omit({ 
+const baseUpdateSchema = createMemberSchema.partial().omit({ 
     password: true,
-    role: true 
+    role: true     
 });
 
-export const updateMemberSchema = z.object({
-}).merge(profileSchema).openapi("UpdateMember");
+export const updateMemberSchema = baseUpdateSchema.extend({
+    role: z.enum(["candidat", "entreprise", "admin"]).optional(),
+    
+    newPassword: z.string()
+        .min(6, "Password length must have at least 6 letters")
+        .regex(/[A-Z]/, "Password must have at least one uppercase")
+        .regex(/[0-9]/, "Password must contain at least one number")
+        .regex(/[^a-zA-Z0-9]/,"Password must contain a special character")
+        .optional(),
+        
+    password: z.string().optional() 
+}).openapi("UpdateMember");
 
 export const member = createMemberSchema;
 
