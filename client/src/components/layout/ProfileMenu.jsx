@@ -3,6 +3,8 @@
 // import
 import { useState } from "react";
 import { Link } from "react-router-dom";
+// call du hook
+import { useClickOutside } from "../../hook/useClickOutside";
 // icone
 import { ChevronDown, User, LogOut } from "lucide-react";
 // img
@@ -15,9 +17,15 @@ export default function ProfileMenu({
 }) {
     // etat du menu deroulant
     const [isOpen, setIsOpen] = useState(false);
+    
+    // appel du hook de clic
+    const menuRef = useClickOutside(() => {
+        setIsOpen(false);
+    });
 
     return (
-        <div className="relative flex items-center">
+        // ref retournée par hook
+        <div className="relative flex items-center" ref={menuRef}>
             {/* btn logo */}
             <button 
                 onClick={() => setIsOpen(!isOpen)}
