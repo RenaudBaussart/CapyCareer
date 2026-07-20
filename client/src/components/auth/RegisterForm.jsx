@@ -168,6 +168,14 @@ export default function RegisterForm() {
           S'inscrire avec Google
         </button>
 
+        <Link
+          to="/register-company"
+          className="text-primary text-center"
+        >
+          <p>Vous êtes un recruteur ?</p>
+        </Link>
+
+
       </form>
     </div>
   );

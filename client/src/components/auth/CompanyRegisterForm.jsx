@@ -3,7 +3,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerCompanySchema } from "../../schemas/auth.schema";
-import { Building2 } from "lucide-react";
+
+// navigation
+import { Link } from "react-router-dom";
 
 export default function CompanyRegisterForm() {
     const {
@@ -42,6 +44,20 @@ export default function CompanyRegisterForm() {
                         aria-describedby={errors.companyName ? "companyName-error" : undefined}
                     />
                     {errors.companyName && <p id="companyName-error" className="text-accent-dark font-medium text-xs mt-1">{errors.companyName.message}</p>}
+                </div>
+
+                {/* siret */}
+                <div>
+                    <input
+                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.siret ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+                        id="siret"
+                        type="text"
+                        placeholder="Numéro de SIRET (facultatif)"
+                        {...register("siret")}
+                        aria-invalid={errors.siret ? "true" : "false"}
+                        aria-describedby={errors.siret ? "siret-error" : undefined}
+                    />
+                    {errors.siret && <p id="siret-error" className="text-accent-dark font-medium text-xs mt-1">{errors.siret.message}</p>}
                 </div>
 
                 {/* personne de contact */}
@@ -136,6 +152,13 @@ export default function CompanyRegisterForm() {
                     {isSubmitting ? "Inscription..." : "Créer mon espace recruteur"}
                 </button>
             </form>
+
+            <Link
+                to="/register"
+                className="text-primary text-center"
+            >
+                <p className="mt-5">Retour</p>
+            </Link>
         </div>
     );
 }
