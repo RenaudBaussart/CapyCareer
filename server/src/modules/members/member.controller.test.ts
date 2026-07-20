@@ -1,6 +1,6 @@
 import request from "supertest";
 import express from "express";
-import { getMyProfile, updateMyProfile } from "./member.controller";
+import { getMyProfile, updateMyProfile, deleteMyProfile } from "./member.controller";
 import { middlewareAuth } from "../../core/middlewares/authMiddleware";
 import jwtTool from "jsonwebtoken";
 import { MemberService } from "./member.service";
@@ -31,6 +31,8 @@ describe("MemberController", () => {
         app.put("/api/members/me", middlewareAuth, updateMyProfile);
         app.patch("/api/members/me/account", middlewareAuth, updateMyProfile);
         app.patch("/api/members/me/password", middlewareAuth, updateMyProfile);
+
+        app.delete("/api/members/me", middlewareAuth, deleteMyProfile);
         
         app.use(errorHandlerMiddleware);
     });
@@ -145,4 +147,34 @@ describe("MemberController", () => {
             expect(res.body.message).toBe("Erreur de validation des données.");
         });
     });
-});
+
+    describe("deleteMyProfile", () => {
+        it("doit supprimer le profil du membre connecté avec succès", async () => {
+            const successMessage = { message: "Profil supprimé et déconnexion réussie." };
+            (MemberService.prototype.deleteYourProfile as jest.Mock).mockResolvedValue(successMessage);
+
+            const res = await request(app)
+                .delete("/api/members/me")
+                .set("Authorization", "Bearer fake-token");
+
+            expect(res.status).toBe(200); 
+            expect(res.body).toEqual(successMessage);
+            expect(MemberService.prototype.deleteYourProfile).toHaveBeenCalledWith(1, "fake-token");
+        });
+
+        it("doit retourner une erreur 500 si la suppression échoue", async () => {
+            (MemberService.prototype.deleteYourProfile as jest.Mock).mockRejectedValue(new InternalServerError("Erreur interne du serveur."));
+
+            const res = await request(app)
+                .delete("/api/members/me")
+                .set("Authorization", "Bearer fake-token");
+
+            expect(res.status).toBe(500);
+            expect(res.body).toEqual({
+                success: false,
+                message: "Erreur interne du serveur."
+            });
+            expect(MemberService.prototype.deleteYourProfile).toHaveBeenCalledWith(1, "fake-token");
+        });
+    });
+})
