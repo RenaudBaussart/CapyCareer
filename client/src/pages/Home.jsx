@@ -9,10 +9,8 @@ import JobsSection from "../components/home/JobsSection";
 import { Banana, Apple, Citrus } from "lucide-react";
 // img
 import CapyGlasses from "../assets/images/CapyGlasses.png";
-import Leaves from "../assets/images/Leaves.png";
-import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 // data
-import { JOBS_MOCK } from "../data/jobsMock";
+import { fetchJobOffersMock, fetchJobOfferDetailMock } from "../data/jobsMock";
 
 export default function Home() {
     return (
@@ -60,7 +58,7 @@ export default function Home() {
                     </div>
 
                     {/* WARNING: JOBS_MOCK à remplacer par les offres récupérées via N8N */}
-                    <JobsSection jobs={JOBS_MOCK} />
+                    <JobsSection fetchJobOffers={fetchJobOffersMock} fetchJobOfferDetail={fetchJobOfferDetailMock} />
 
                 </div>
             </section>

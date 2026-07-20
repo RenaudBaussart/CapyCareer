@@ -1,7 +1,7 @@
 // fichier du component fil d'offres (recherche + liste + detail)
 
 // import
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 // icone
 import { Search, MapPin, Bookmark, Share2, Briefcase, Sparkles } from "lucide-react";
 
@@ -13,8 +13,8 @@ function formatLocation(job) {
 }
 
 function getWorkMode(job) {
-    if (job.remote) return "Télétravail";
-    if (job.hybrid) return "Hybride";
+    if (job.is_remote_job) return "Télétravail";
+    if (job.is_hybride_job) return "Hybride";
     return "Sur site";
 }
 
@@ -65,7 +65,7 @@ function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
         >
             <div className="flex items-start justify-between gap-2">
                 <div>
-                    <p className="font-semibold text-sm leading-snug text-primary-dark">{job.title}</p>
+                    <p className="font-semibold text-sm leading-snug text-primary-dark">{job.name}</p>
                     <p className="text-xs mt-0.5 text-primary-dark/60">{job.company}</p>
                     <p className="text-xs flex items-center gap-1 mt-0.5 text-primary-dark/60">
                         <MapPin size={11} aria-hidden="true" /> {formatLocation(job)}
@@ -105,7 +105,7 @@ function JobDetail({ job, isSaved, onToggleSave }) {
         <article className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-5 sm:p-7">
             <div className="flex items-start justify-between gap-4">
                 <div>
-                    <h2 className="text-lg sm:text-xl font-bold text-primary-dark">{job.title}</h2>
+                    <h2 className="text-lg sm:text-xl font-bold text-primary-dark">{job.name}</h2>
                     <p className="mt-1 font-medium text-primary-dark/70">{job.company}</p>
                     <p className="text-sm mt-0.5 flex items-center gap-1 text-primary-dark/70">
                         <MapPin size={14} aria-hidden="true" /> {formatLocation(job)}
@@ -150,7 +150,7 @@ function JobDetail({ job, isSaved, onToggleSave }) {
                 rel="noopener noreferrer"
                 className="inline-block bg-primary text-bone text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark"
             >
-                Postuler — Voir l'offre sur {job.source || "le site"}
+                Postuler — Voir l'offre
             </a>
 
             <div className="mt-7 pt-6 border-t border-primary-light/30">
@@ -174,23 +174,115 @@ function JobDetail({ job, isSaved, onToggleSave }) {
 
 /* section principale */
 
-export default function JobsSection({ jobs }) {
+export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
     const [query, setQuery] = useState("");
     const [lieu, setLieu] = useState("");
-    const [selectedId, setSelectedId] = useState(jobs[0]?.source_id ?? null);
+
+    // liste légère issue de la route listing
+    const [jobs, setJobs] = useState([]);
+    const [page, setPage] = useState(0);
+    const [isEnd, setIsEnd] = useState(true);
+    const [isLoadingList, setIsLoadingList] = useState(true);
+    const [listError, setListError] = useState(null);
+
+    const [selectedId, setSelectedId] = useState(null);
+    const [selectedDetail, setSelectedDetail] = useState(null);
+    const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+    const [detailError, setDetailError] = useState(null);
+    // évite de refetch si loffre a déjà été consultée
+    const detailsCache = useRef(new Map());
+
     const [saved, setSaved] = useState(() => new Set());
+
+    // récupère la première page d'offres au montage
+    useEffect(() => {
+        let cancelled = false;
+        setIsLoadingList(true);
+        setListError(null);
+
+        fetchJobOffers({ page: 0 })
+            .then((data) => {
+                if (cancelled) return;
+                setJobs(data.job_offers);
+                setIsEnd(data.is_the_end);
+                setPage(0);
+            })
+            .catch((err) => {
+                if (cancelled) return;
+                setListError(err.message);
+            })
+            .finally(() => {
+                if (!cancelled) setIsLoadingList(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [fetchJobOffers]);
+
+    // charge la page suivante d'offres
+    function loadMore() {
+        const nextPage = page + 1;
+        setIsLoadingList(true);
+        fetchJobOffers({ page: nextPage })
+            .then((data) => {
+                setJobs((prev) => [...prev, ...data.job_offers]);
+                setIsEnd(data.is_the_end);
+                setPage(nextPage);
+            })
+            .catch((err) => setListError(err.message))
+            .finally(() => setIsLoadingList(false));
+    }
 
     const filtered = useMemo(() => {
         const q = query.trim().toLowerCase();
         const l = lieu.trim().toLowerCase();
         return jobs.filter((job) => {
-            const matchQ = !q || job.title.toLowerCase().includes(q) || job.company.toLowerCase().includes(q);
+            const matchQ = !q || job.name.toLowerCase().includes(q) || job.company.toLowerCase().includes(q);
             const matchL = !l || formatLocation(job).toLowerCase().includes(l);
             return matchQ && matchL;
         });
     }, [jobs, query, lieu]);
 
-    const selected = filtered.find((j) => j.source_id === selectedId) || filtered[0] || null;
+    // sélectionne automatiquement la première offre de la liste filtrée
+    useEffect(() => {
+        if (!selectedId && filtered.length > 0) {
+            setSelectedId(filtered[0].PK_id);
+        }
+    }, [filtered, selectedId]);
+
+    // récupère le détail de l'offre sélectionnée (avec cache)
+    useEffect(() => {
+        if (selectedId == null) return;
+
+        const cached = detailsCache.current.get(selectedId);
+        if (cached) {
+            setSelectedDetail(cached);
+            return;
+        }
+
+        let cancelled = false;
+        setIsLoadingDetail(true);
+        setDetailError(null);
+
+        fetchJobOfferDetail(selectedId)
+            .then((data) => {
+                if (cancelled) return;
+                detailsCache.current.set(selectedId, data);
+                setSelectedDetail(data);
+            })
+            .catch((err) => {
+                if (cancelled) return;
+                setDetailError(err.message);
+            })
+            .finally(() => {
+                if (!cancelled) setIsLoadingDetail(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [selectedId, fetchJobOfferDetail]);
 
     function toggleSave(id) {
         setSaved((prev) => {
@@ -247,6 +339,10 @@ export default function JobsSection({ jobs }) {
                 </button>
             </div>
 
+            {listError && (
+                <p className="text-sm text-accent-dark mb-4">Impossible de charger les offres : {listError}</p>
+            )}
+
             {/* liste des offres & détails */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-6">
                 <aside aria-label="Liste des offres">
@@ -256,27 +352,54 @@ export default function JobsSection({ jobs }) {
                     <div className="flex flex-col gap-3 overflow-auto max-h-150 scrollbar-thumb-primary-dark rounded-2xl">
                         {filtered.map((job) => (
                             <JobCard
-                                key={job.source_id}
+                                key={job.PK_id}
                                 job={job}
-                                isSelected={selected?.source_id === job.source_id}
-                                isSaved={saved.has(job.source_id)}
-                                onSelect={() => setSelectedId(job.source_id)}
-                                onToggleSave={() => toggleSave(job.source_id)}
+                                isSelected={selectedId === job.PK_id}
+                                isSaved={saved.has(job.PK_id)}
+                                onSelect={() => setSelectedId(job.PK_id)}
+                                onToggleSave={() => toggleSave(job.PK_id)}
                             />
                         ))}
-                        {filtered.length === 0 && (
+                        {!isLoadingList && filtered.length === 0 && (
                             <p className="text-sm text-center py-6 text-primary-dark/60">Aucun résultat.</p>
+                        )}
+                        {isLoadingList && (
+                            <p className="text-sm text-center py-6 text-primary-dark/60">Chargement des offres...</p>
+                        )}
+                        {!isEnd && !isLoadingList && (
+                            <button
+                                type="button"
+                                onClick={loadMore}
+                                className="text-sm font-semibold text-primary py-2 hover:underline"
+                            >
+                                Voir plus d'offres
+                            </button>
                         )}
                     </div>
                 </aside>
 
-                {selected ? (
+                {isLoadingDetail && (
+                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
+                        <p className="text-sm text-primary-dark/60">Chargement de l'offre...</p>
+                    </div>
+                )}
+
+                {!isLoadingDetail && detailError && (
+                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
+                        <p className="font-semibold text-primary-dark">Impossible de charger cette offre</p>
+                        <p className="text-sm text-primary-dark/60">{detailError}</p>
+                    </div>
+                )}
+
+                {!isLoadingDetail && !detailError && selectedDetail && (
                     <JobDetail
-                        job={selected}
-                        isSaved={saved.has(selected.source_id)}
-                        onToggleSave={() => toggleSave(selected.source_id)}
+                        job={selectedDetail}
+                        isSaved={saved.has(selectedDetail.PK_id)}
+                        onToggleSave={() => toggleSave(selectedDetail.PK_id)}
                     />
-                ) : (
+                )}
+
+                {!isLoadingDetail && !detailError && !selectedDetail && !isLoadingList && filtered.length === 0 && (
                     <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
                         <p className="font-semibold text-primary-dark">Aucune offre ne correspond</p>
                         <p className="text-sm text-primary-dark/60">Essaie d'élargir ta recherche.</p>
