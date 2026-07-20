@@ -45,6 +45,40 @@ export class MemberService {
             connection.release();
         }
     }
+/**
+* Supprime le profil du membre et révoque son token actuel.
+* @param memberId L'ID du membre
+* @param currentToken Le token JWT utilisé pour la requête (à blacklister)
+*/
+    async deleteYourProfile(memberId: number, currentToken: string) {
+        const connection = await this.pool.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            const [result] = await connection.execute(
+                "DELETE FROM User_ WHERE PK_id = ?",
+                [memberId]
+            );
+
+            if ((result as any).affectedRows === 0) {
+                throw new NotFoundError("MEMBER_NOT_FOUND");
+            }
+
+            await connection.execute(
+                "INSERT INTO Blacklist (token, blacklisted_at) VALUES (?, NOW())",
+                [currentToken]
+            );
+
+            await connection.commit();
+            return { message: "Profil supprimé et déconnexion réussie." };
+
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    }
 
     /**
      * Met à jour le profil du membre (incluant la sécurité et le mot de passe).
