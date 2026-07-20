@@ -55,7 +55,7 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
         }
 
         const [rows] = await pool.execute<any[]>(
-            "SELECT * FROM Job_Offers WHERE PK_content_hash = ?;",
+            "SELECT PK_id, name, description, url, contract_type, city, country, company, is_remote_job,is_hybride_job,publish_date,salary_max, salary_min,currency FROM Job_Offers WHERE PK_content_hash = ?;",
             [id]
         );
 

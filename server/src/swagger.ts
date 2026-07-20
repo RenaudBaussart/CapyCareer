@@ -2,7 +2,7 @@ import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-open
 import { z } from "zod";
 import { member } from "./modules/members/member.schema";
 import { loginSchema } from "./modules/auth/auth.schema";
-import { jobOfferSchema } from "./modules/job_offers/job.offers.schema"; // Import the new schema
+import { jobOfferSchema, jobOfferDetailSchema } from "./modules/job_offers/job.offers.schema"; // Import the new schema
 
 export const registry = new OpenAPIRegistry();
 
@@ -25,7 +25,7 @@ const errorSchema = z.object({
 
 registry.registerPath({
     method: "get",
-    path: "/api/job-offers",
+    path: "/api/jobs",
     description: "This endpoint retrieves a paginated list of job offers from the database.",
     summary: "Retrieve a list of job offers",
     tags: ["Job Offers"],
@@ -74,7 +74,7 @@ registry.registerPath({
 
 registry.registerPath({
     method: "get",
-    path: "/api/job-offers/{id}",
+    path: "/api/jobs/{id}",
     description: "This endpoint retrieves a single job offer by its unique identifier.",
     summary: "Retrieve a single job offer by ID",
     tags: ["Job Offers"],
@@ -90,7 +90,7 @@ registry.registerPath({
             description: "A single job offer object.",
             content: {
                 "application/json": {
-                    schema: jobOfferSchema,
+                    schema: jobOfferDetailSchema,
                 }
             }
         },

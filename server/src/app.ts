@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import authRouter from './modules/auth/auth.route';
-import jobOffersRouter from './modules/job_offers/job.offers_route'; // Import job offers router
+import jobOfferRouter from './modules/job_offers/job.offers.route'; // Assurez-vous que ce fichier et cette route existent
 import swaggerUi from "swagger-ui-express";
 import { generateOpenAPI } from "./swagger";
 import { errorHandlerMiddleware } from './core/errors/errorHandlerMiddleware';
@@ -22,7 +22,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 app.use('/api/auth', authRouter);
-app.use('/api', jobOffersRouter); // Use job offers router
+app.use('/api/jobs', jobOfferRouter); // Enregistrement des routes pour les offres d'emploi
 
 app.use(errorHandlerMiddleware);
 
