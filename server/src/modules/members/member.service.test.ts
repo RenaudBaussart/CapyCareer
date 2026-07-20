@@ -3,6 +3,7 @@ import { Pool } from "mysql2/promise";
 import bcrypt from "bcrypt";
 import { NotFoundError, ConflictError } from "../../core/errors/HttpError";
 
+
 jest.mock("bcrypt");
 
 describe("MemberService", () => {
@@ -163,4 +164,55 @@ describe("MemberService", () => {
             });
         });
     });
-});
+    describe("deleteYourProfile", () => {
+        beforeEach(() => {
+            mockConnection.execute.mockImplementation(async (query: string) => {
+                if (query.includes("DELETE FROM User_ WHERE PK_id = ?")) return [[{ affectedRows: 1 }]];
+                if (query.includes("INSERT INTO Blacklist")) return [[{ affectedRows: 1 }]];
+                return [[]];
+            });
+        });
+
+        it("devrait supprimer le profil du membre, blacklister son token et faire un commit", async () => {
+            const result = await memberService.deleteYourProfile(1, "faux-token-jwt");
+            
+            expect(result).toEqual({ message: "Profil supprimé et déconnexion réussie." });
+            expect(mockConnection.beginTransaction).toHaveBeenCalled();
+            
+            expect(mockConnection.execute).toHaveBeenCalledWith(
+                "DELETE FROM User_ WHERE PK_id = ?",
+                [1]
+            );
+            
+            expect(mockConnection.execute).toHaveBeenCalledWith(
+                "INSERT INTO Blacklist (token, blacklisted_at) VALUES (?, NOW())",
+                ["faux-token-jwt"]
+            );
+
+            expect(mockConnection.commit).toHaveBeenCalled();
+            expect(mockConnection.rollback).not.toHaveBeenCalled();
+        });
+
+        it("devrait lancer NotFoundError si le profil à supprimer n'existe plus en base (affectedRows = 0)", async () => {
+            mockConnection.execute.mockImplementation(async (query: string) => {
+                if (query.includes("DELETE FROM User_ WHERE PK_id = ?")) {
+                    const result: any = [];
+                    result.affectedRows = 0; 
+                    return [result];
+                }
+                return [[]];
+            });
+
+            await expect(memberService.deleteYourProfile(999, "faux-token-jwt")).rejects.toThrow(NotFoundError);
+            expect(mockConnection.rollback).toHaveBeenCalled();
+        });
+
+        it("devrait faire un rollback si une erreur inattendue survient", async () => {
+            mockConnection.execute.mockRejectedValueOnce(new Error("Crash BDD"));
+
+            await expect(memberService.deleteYourProfile(1, "faux-token-jwt")).rejects.toThrow("Crash BDD");
+            expect(mockConnection.rollback).toHaveBeenCalled();
+            expect(mockConnection.release).toHaveBeenCalled();
+        });
+    });
+})
