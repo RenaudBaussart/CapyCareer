@@ -1,4 +1,5 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
+import bcrypt from "bcrypt";
 import { ConflictError, UnauthorizedError, NotFoundError, InternalServerError, BadRequestError } from '../../core/errors/HttpError';
 
 export class AdminService {
@@ -209,32 +210,41 @@ async unbanMember(email: string) {
         }
     }
 
-    async updateMemberProfile(memberId: number, profileData: Record<string, string | undefined>) {
-        const connection = await this.pool.getConnection();
-        try {
-            const [rows] = await connection.execute<RowDataPacket[]>("SELECT PK_id FROM User_ WHERE PK_id = ?", [memberId]);
-            if (rows.length === 0) throw new NotFoundError("MEMBER_NOT_FOUND");
+    async updateMemberProfile(connection: any, memberId: number, profileData: Record<string, any>) {
+    try {
+        const [rows] = await connection.execute("SELECT PK_id FROM User_ WHERE PK_id = ?", [memberId]);
+        const typedRows = rows as RowDataPacket[];
 
-            const [roleRows] = await connection.execute<RowDataPacket[]>("SELECT FK_role_id FROM User_ WHERE PK_id = ?", [memberId]);
-            if (roleRows[0]?.FK_role_id === "admin") throw new BadRequestError("Impossible de modifier le profil d'un administrateur.");
+        if (typedRows.length === 0) throw new NotFoundError("MEMBER_NOT_FOUND");
 
-            if (profileData.email) {
-                await this.validateAndCheckEmailConflict(connection, memberId, profileData.email);
-            }
+        const [roleRows] = await connection.execute("SELECT FK_role_id FROM User_ WHERE PK_id = ?", [memberId]);
+        const typedRoleRows = roleRows as RowDataPacket[];
 
-            const updateFields = Object.keys(profileData).filter(key => profileData[key as keyof typeof profileData] !== undefined);
-            if (updateFields.length === 0) throw new BadRequestError("Aucun champ à mettre à jour.");
-
-            const setClause = updateFields.map(field => `${field} = ?`).join(", ");
-            const values = updateFields.map(field => profileData[field as keyof typeof profileData]);
-
-            await connection.execute(`UPDATE User_ SET ${setClause} WHERE PK_id = ?`, [...values, memberId] as any[]);
-
-            return { message: "Profil mis à jour avec succès." };
-        } finally {
-            connection.release();
+        if (typedRoleRows[0]?.FK_role_id === "admin") {
+            throw new BadRequestError("Impossible de modifier le profil d'un administrateur.");
         }
+        if (profileData.email) {
+            await this.validateAndCheckEmailConflict(connection, memberId, profileData.email);
+        }
+
+        const excludedKeys = ['newPassword', 'password', 'role'];
+        const updateFields = Object.keys(profileData).filter(
+            key => profileData[key] !== undefined && !excludedKeys.includes(key)
+        );
+
+        if (updateFields.length === 0) {
+            return { message: "Profil mis à jour avec succès." };
+        }
+
+        const setClause = updateFields.map(field => `${field} = ?`).join(", ");
+        const values = updateFields.map(field => profileData[field]);
+
+        await connection.execute(`UPDATE User_ SET ${setClause} WHERE PK_id = ?`, [...values, memberId] as any[]);
+        return { message: "Profil mis à jour avec succès." };
+    } catch (error) {
+        throw error;
     }
+}
 
     private async validateAndCheckEmailConflict(connection: any, memberId: number, newEmail: string) {
     const [bannedRows] = await connection.execute(
@@ -255,5 +265,76 @@ async unbanMember(email: string) {
         throw new ConflictError("Cet email est déjà utilisé par un autre membre.");
     }
 }
+
+    private async changeMemberRole(connection: any, memberId: number, newRole: string) {
+    await this.checkMemberExistsAndIsNotAdmin(connection, memberId);
+
+    if (!this.ROLE_MAP[newRole.toLowerCase()]) {
+        throw new BadRequestError("Rôle invalide.");
+    }
+
+    await connection.execute(
+        "UPDATE User_ SET FK_role_id = ? WHERE PK_id = ?",
+        [newRole, memberId]
+    );
 }
+
+    private async changePassword(connection: any, memberId: number, newPassword: string) {
+    await this.checkMemberExistsAndIsNotAdmin(connection, memberId);
+
+    
+
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+
+    
+     const [result] = await connection.execute(
+        "UPDATE User_ SET hashed_password = ? WHERE PK_id = ?",
+        [hashedPassword, memberId]
+    );
+
+}
+
+    private async checkMemberExistsAndIsNotAdmin(connection: any, memberId: number) {
+    const [rows] = await connection.execute(
+        "SELECT FK_role_id FROM User_ WHERE PK_id = ?", 
+        [memberId] 
+    ) as [RowDataPacket[], any];
+    if (rows.length === 0) throw new NotFoundError("MEMBER_NOT_FOUND");
+    if (rows[0]!.FK_role_id === 'admin') throw new BadRequestError("Impossible de modifier un administrateur.");
+    return rows[0];
+}
+
+    public async performAdminUpdate(memberId: number, data: any) {
+        const connection = await this.pool.getConnection();
+        try {
+            await connection.beginTransaction();
+        
+            await this.checkMemberExistsAndIsNotAdmin(connection, memberId);
+            const passwordToUpdate = data.newPassword || data.password;
+
+            if (passwordToUpdate) {
+                await this.changePassword(connection, memberId, passwordToUpdate);
+            }
+
+            if (data.email || data.firstname || data.lastname || data.biography || data.profil_pic_link) {
+                await this.updateMemberProfile(connection, memberId, data); 
+            }
+
+            if (data.role) {
+                await this.changeMemberRole(connection, memberId, data.role);
+            }
+
+
+            await connection.commit();
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    }
+}
+
 
