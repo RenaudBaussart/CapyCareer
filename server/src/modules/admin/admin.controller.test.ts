@@ -1,6 +1,6 @@
 import request from "supertest";
 import express from "express";
-import { getMembers } from "./admin.controller";
+import { getMembers, updateMembers } from "./admin.controller"; 
 import { middlewareAuthAdmin } from "../../core/middlewares/adminMiddleware";
 import jwtTool from "jsonwebtoken";
 import { AdminService } from "./admin.service";
@@ -19,7 +19,7 @@ jest.mock("../../config/database", () => ({
     pool: { execute: jest.fn().mockResolvedValue([[]]) } 
 }));
 
-describe("AdminController - getMembers", () => {
+describe("AdminController", () => {
     let app: express.Application;
     
     beforeAll(() => {
@@ -27,6 +27,10 @@ describe("AdminController - getMembers", () => {
         app.use(express.json());
 
         app.get("/api/admin/members", middlewareAuthAdmin, getMembers);
+        
+        app.put("/api/admin/members/:id", middlewareAuthAdmin, updateMembers);
+        app.patch("/api/admin/members/:id/role", middlewareAuthAdmin, updateMembers);
+        app.patch("/api/admin/members/:id/password", middlewareAuthAdmin, updateMembers);
         
         app.use(errorHandlerMiddleware);
     });
@@ -137,20 +141,18 @@ describe("AdminController - getMembers", () => {
                 message: "Erreur DB" 
             });
         });
-      it("doit retourner un statut 401 si le token est révoqué", async () => {
- 
-      (require("../../config/database").pool.execute as jest.Mock).mockResolvedValueOnce([[{ 1: 1 }]]);
 
-      (jwtTool.verify as jest.Mock).mockImplementation((token, secret, cb) => cb(null, { id: 1, role: 'admin' }));
+        it("doit retourner un statut 401 si le token est révoqué", async () => {
+            (require("../../config/database").pool.execute as jest.Mock).mockResolvedValueOnce([[{ 1: 1 }]]);
+            (jwtTool.verify as jest.Mock).mockImplementation((token, secret, cb) => cb(null, { id: 1, role: 'admin' }));
 
-    const res = await request(app)
-        .get("/api/admin/members")
-        .set("Authorization", "Bearer token-revoked");
+            const res = await request(app)
+                .get("/api/admin/members")
+                .set("Authorization", "Bearer token-revoked");
 
- 
-    expect(res.status).toBe(401);
-    expect(res.body).toEqual({ error: "Token révoqué. Veuillez vous reconnecter." });
-    });
+            expect(res.status).toBe(401);
+            expect(res.body).toEqual({ error: "Token révoqué. Veuillez vous reconnecter." });
+        });
 
         it("doit retourner un statut 404 si aucun membre n'est trouvé pour le rôle spécifié", async () => {
             (AdminService.prototype.getMemberByRoleName as jest.Mock).mockRejectedValue(new NotFoundError("Aucun membre trouvé pour le rôle spécifié."));
@@ -178,4 +180,77 @@ describe("AdminController - getMembers", () => {
             });
         });
     });
-});
+ 
+    describe("Mise à jour des membres (PUT & PATCH)", () => {
+        
+        beforeEach(() => {
+            (jwtTool.verify as jest.Mock).mockImplementation((token: any, secret: any, cb: any) => cb(null, { id: 1, role: 'admin' }));
+            (require("../../config/database").pool.execute as jest.Mock).mockResolvedValue([[]]); 
+        });
+
+        it("doit mettre à jour le profil avec succès (PUT /members/:id)", async () => {
+            (AdminService.prototype.performAdminUpdate as jest.Mock).mockResolvedValue(undefined);
+
+            const res = await request(app)
+                .put("/api/admin/members/2") 
+                .set("Authorization", "Bearer fake-token")
+                .send({ firstname: "Jean", lastname: "Dupont" });
+
+            expect(res.status).toBe(200);
+            expect(res.body).toEqual({ message: "Profil mis à jour avec succès." });
+            expect(AdminService.prototype.performAdminUpdate).toHaveBeenCalledWith(2, expect.objectContaining({ firstname: "Jean", lastname: "Dupont" }));
+        });
+
+        it("doit mettre à jour le rôle avec succès (PATCH /members/:id/role)", async () => {
+            (AdminService.prototype.performAdminUpdate as jest.Mock).mockResolvedValue(undefined);
+
+            const res = await request(app)
+                .patch("/api/admin/members/2/role")
+                .set("Authorization", "Bearer fake-token")
+                .send({ role: "entreprise" });
+
+            expect(res.status).toBe(200);
+            expect(res.body).toEqual({ message: "Rôle du membre mis à jour avec succès." });
+            expect(AdminService.prototype.performAdminUpdate).toHaveBeenCalledWith(2, { role: "entreprise" });
+        });
+
+        it("doit mettre à jour le mot de passe et le mapper correctement (PATCH /members/:id/password)", async () => {
+            (AdminService.prototype.performAdminUpdate as jest.Mock).mockResolvedValue(undefined);
+
+            const res = await request(app)
+                .patch("/api/admin/members/2/password")
+                .set("Authorization", "Bearer fake-token")
+                .send({ password: "ValidPassword1/" }); 
+
+            expect(res.status).toBe(200);
+            expect(res.body).toEqual({ message: "Mot de passe du membre mis à jour avec succès." });
+            expect(AdminService.prototype.performAdminUpdate).toHaveBeenCalledWith(2, { newPassword: "ValidPassword1/" });
+        });
+
+        it("doit retourner 400 avec les erreurs de validation Zod si le mot de passe est trop faible", async () => {
+            const res = await request(app)
+                .patch("/api/admin/members/2/password")
+                .set("Authorization", "Bearer fake-token")
+                .send({ password: "faible" });
+
+            expect(res.status).toBe(400);
+            expect(res.body.message).toBe("Erreur de validation des données.");
+            expect(res.body.errors).toHaveProperty("newPassword");
+        });
+
+        it("doit retourner 404 si le membre à modifier n'existe pas", async () => {
+            (AdminService.prototype.performAdminUpdate as jest.Mock).mockRejectedValue(new NotFoundError("MEMBER_NOT_FOUND"));
+
+            const res = await request(app)
+                .put("/api/admin/members/999")
+                .set("Authorization", "Bearer fake-token")
+                .send({ firstname: "Jean" });
+
+            expect(res.status).toBe(404);
+            expect(res.body).toEqual({ 
+                success: false, 
+                message: "MEMBER_NOT_FOUND" 
+            });
+        });
+    });
+})
