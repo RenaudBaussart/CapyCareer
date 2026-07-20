@@ -98,11 +98,43 @@ export const updateMemberSchema = baseUpdateSchema.extend({
         .optional(),
         
     password: z.string().optional() 
-}).openapi("UpdateMember");
+}).openapi("AdminUpdateMember");
+
+
+export const updateProfileSchema = createMemberSchema.pick({
+    firstname: true,
+    lastname: true,
+    biography: true,
+    profil_pic_link: true
+}).partial().strict().openapi("UpdateProfile");
+
+
+
+export const updateAccountSchema = createMemberSchema.pick({
+    email: true,
+    username: true
+}).partial().strict().openapi("UpdateAccount");
+
+
+
+export const updatePasswordSchema = z.object({
+    password: z.string()
+        .min(6, "Password length must have at least 6 letters")
+        .regex(/[A-Z]/, "Password must have at least one uppercase")
+        .regex(/[0-9]/, "Password must contain at least one number")
+        .regex(/[^a-zA-Z0-9]/,"Password must contain a special character")
+        .openapi({
+            example: "NewSecurePassword1/",
+            description: "Le nouveau mot de passe sécurisé"
+        })
+}).strict().openapi("UpdatePassword")
 
 export const member = createMemberSchema;
 
 module.exports = {
     member,
-    updateMemberSchema
+    updateMemberSchema,
+    updateProfileSchema,
+    updateAccountSchema,
+    updatePasswordSchema 
 };
