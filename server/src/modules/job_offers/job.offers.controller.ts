@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { pool } from '../../config/database';
+import { z } from "zod";
 import { BadRequestError, NotFoundError } from '../../core/errors/HttpError'; 
+import { createJobFullOffer } from "./job.offers.service";
 
 const getJobOffers = async (req: Request, res: Response, next: NextFunction) => { 
     try {
@@ -72,4 +74,33 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
     }
 };
 
-export { getJobOffers, getJobOfferById };
+const addJobOffer = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        let jobOffer;
+        try {
+            jobOffer = createJobFullOffer(req.body);
+        } catch (error: any) {
+            // Si l'erreur est une erreur de validation Zod, on renvoie un message d'erreur clair au client
+            if (error instanceof z.ZodError) {
+                return res.status(400).json({ 
+                    message: "Erreur de validation des données.", 
+                    errors: error.errors 
+                });
+            }
+            throw error; // throw une erreur si ce n'est pas une erreur de validation zod
+        }
+
+        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency } = jobOffer;
+
+        const [result] = await pool.execute(
+            "INSERT INTO Job_Offers (title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency]
+        );
+
+        res.status(201).json({ message: "Offre d'emploi ajoutée avec succès.", id: (result as any).insertId });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export { getJobOffers, getJobOfferById, addJobOffer };
