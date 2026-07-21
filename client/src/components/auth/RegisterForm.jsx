@@ -11,6 +11,8 @@ import { registerSchema } from "../../schemas/auth.schema";
 import { UserPlus } from "lucide-react";
 // navigation
 import { Link } from "react-router-dom";
+// afficher/masquer mdp
+import PasswordInput from "../ui/PasswordInput";
 
 export default function RegisterForm() {
   // initialisation rhf
@@ -19,7 +21,7 @@ export default function RegisterForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
-    // utilise schema zod poru valider les champs
+    // utilise schema zod pour valider les champs
     resolver: zodResolver(registerSchema),
   });
 
@@ -38,45 +40,68 @@ export default function RegisterForm() {
         onSubmit={handleSubmit(onSubmit)}
         noValidate>
 
-        {/* nom */}
+        {/* informations */}
         <div>
-          <label
-            className="block text-lg font-bold text-primary-dark mb-1"
-            htmlFor="Userinfos" >
+          {/* Ce texte sert de titre de section visuel, on peut lui donner id="Userinfos" pour le lier au groupe si besoin */}
+          <span className="block text-lg font-bold text-primary-dark mb-1" id="Userinfos">
             Informations *
-          </label>
-          <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.lastName ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
-            id="lastName"
-            type="text"
-            autoComplete="family-name"
-            placeholder="Nom"
-            {...register("lastName")}
-            aria-invalid={errors.lastName ? "true" : "false"}
-            aria-describedby={errors.lastName ? "lastName-error" : undefined}
-          />
-          {errors.lastName && <p id="lastName-error" className="text-accent-dark font-medium text-xs mt-1">{errors.lastName.message}</p>}
-        </div>
+          </span>
+          
+          <div className="flex gap-3">
+            {/* nom */}
+            <div className="w-1/2">
+              {/* Label caché visuellement mais lu par les lecteurs d'écran */}
+              <label htmlFor="lastName" className="sr-only">Nom</label>
+              <input
+                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
+                  errors.lastName 
+                    ? "border-2 border-red-600 focus:ring-red-500" 
+                    : "border-primary-light focus:ring-primary"
+                }`}
+                id="lastName"
+                type="text"
+                autoComplete="family-name"
+                placeholder="Nom"
+                {...register("lastName")}
+                aria-invalid={errors.lastName ? "true" : "false"}
+                aria-describedby={errors.lastName ? "lastName-error" : undefined}
+              />
+              {errors.lastName && <p id="lastName-error" className="text-red-700 font-bold text-xs mt-1 ml-2">{errors.lastName.message}</p>}
+            </div>
 
-        {/* prénom */}
-        <div>
-          <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.firstName ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
-            id="firstName"
-            type="text"
-            autoComplete="given-name"
-            placeholder="Prénom"
-            {...register("firstName")}
-            aria-invalid={errors.firstName ? "true" : "false"}
-            aria-describedby={errors.firstName ? "firstName-error" : undefined}
-          />
-          {errors.firstName && <p id="firstName-error" className="text-accent-dark font-medium text-xs mt-1">{errors.firstName.message}</p>}
+            {/* prénom */}
+            <div className="w-1/2">
+              {/* Label caché visuellement */}
+              <label htmlFor="firstName" className="sr-only">Prénom</label>
+              <input
+                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
+                  errors.firstName 
+                    ? "border-2 border-red-600 focus:ring-red-500" 
+                    : "border-primary-light focus:ring-primary"
+                }`}
+                id="firstName"
+                type="text"
+                autoComplete="given-name"
+                placeholder="Prénom"
+                {...register("firstName")}
+                aria-invalid={errors.firstName ? "true" : "false"}
+                aria-describedby={errors.firstName ? "firstName-error" : undefined}
+              />
+              {errors.firstName && <p id="firstName-error" className="text-red-700 font-bold text-xs mt-1 ml-2">{errors.firstName.message}</p>}
+            </div>
+          </div>
         </div>
 
       {/* login/id de connexion */}
         <div>
+          {/* Label caché visuellement */}
+          <label htmlFor="username" className="sr-only">Identifiant de connexion</label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
+              errors.username 
+                ? "border-2 border-red-600 focus:ring-red-500" 
+                : "border-primary-light focus:ring-primary"
+            }`}
             id="username"
             type="text"
             placeholder="Identifiant de connexion"
@@ -84,14 +109,19 @@ export default function RegisterForm() {
             aria-invalid={errors.username ? "true" : "false"}
             aria-describedby={errors.username ? "username-error" : undefined}
           />
-          {errors.username && <p id="username-error" className="text-accent-dark font-medium text-xs mt-1">{errors.username.message}</p>}
+          {errors.username && <p id="username-error" className="text-red-700 font-bold text-xs mt-1 ml-2">{errors.username.message}</p>}
         </div>
         
         {/* email */}
         <div>
-
+          {/* Label caché visuellement */}
+          <label htmlFor="email" className="sr-only">Adresse email</label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.email ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
+              errors.email 
+                ? "border-2 border-red-600 focus:ring-red-500" 
+                : "border-primary-light focus:ring-primary"
+            }`}
             id="email"
             type="email"
             placeholder="Adresse email"
@@ -100,44 +130,29 @@ export default function RegisterForm() {
             aria-invalid={errors.email ? "true" : "false"}
             aria-describedby={errors.email ? "email-error" : undefined}
           />
-          {errors.email && <p id="email-error" className="text-accent-dark font-medium text-xs mt-1">{errors.email.message}</p>}
+          {errors.email && <p id="email-error" className="text-red-700 font-bold text-xs mt-1 ml-2">{errors.email.message}</p>}
         </div>
 
-
-        {/* mdp */}
+        {/* mdp (Le composant PasswordInput gère déjà son propre label de manière visible) */}
         <div>
-          <label
-            className="block text-lg font-bold text-primary-dark mb-1"
-            htmlFor="password" >
-            Mot de passe *
-          </label>
-
-          <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.password ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
-            id="password"
-            type="password"
+          <PasswordInput
+            label="Mot de passe *"
+            name="password"
+            register={register}
+            error={errors.password}
             autoComplete="new-password"
-            placeholder="Mot de passe"
-            {...register("password")}
-            aria-invalid={errors.password ? "true" : "false"}
-            aria-describedby={errors.password ? "password-error" : undefined}
           />
-          {errors.password && <p id="password-error" className="text-accent-dark font-medium text-xs mt-1">{errors.password.message}</p>}
         </div>
 
         {/* confirmation mdp */}
         <div>
-          <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.confirmPassword ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
-            id="confirmPassword"
-            type="password"
+          <PasswordInput
+            label="Confirmer le mot de passe *"
+            name="confirmPassword"
+            register={register}
+            error={errors.confirmPassword}
             autoComplete="new-password"
-            placeholder="Confirmer votre mot de passe"
-            {...register("confirmPassword")}
-            aria-invalid={errors.confirmPassword ? "true" : "false"}
-            aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
           />
-          {errors.confirmPassword && <p id="confirmPassword-error" className="text-accent-dark font-medium text-xs mt-1">{errors.confirmPassword.message}</p>}
         </div>
 
         <button
@@ -151,11 +166,8 @@ export default function RegisterForm() {
         {/* séparateur */}
         <div className="relative flex items-center py-2 mb-6">
           <div className="grow border-t border-primary-light/50"></div>
-
           <span className="shrink-0 mx-4 text-primary-light text-sm">ou</span>
-
           <div className="grow border-t border-primary-light/50"></div>
-
         </div>
 
         {/* btn co google */}
@@ -170,11 +182,10 @@ export default function RegisterForm() {
 
         <Link
           to="/register-company"
-          className="text-primary text-center"
+          className="text-primary text-center block"
         >
           <p>Vous êtes un recruteur ?</p>
         </Link>
-
 
       </form>
     </div>
