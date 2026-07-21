@@ -10,23 +10,32 @@ export const registerSchema = z
     firstName: z
       .string()
       .trim()
-      .min(2, "Le prénom doit contenir au moins 2 caractères"),
+      .min(3, "Le prénom doit contenir au moins 3 caractères")
+      .max(20, "Le prénom ne peut pas dépasser 20 caractères"),
     lastName: z
       .string()
       .trim()
-      .min(2, "Le nom doit contenir au moins 2 caractères"),
+      .min(3, "Le nom doit contenir au moins 3 caractères")
+      .max(20, "Le nom ne peut pas dépasser 20 caractères"),
     username: z
       .string()
       .trim()
-      .min(3, "L'identifiant doit contenir au moins 3 caractères"),
-    email: z.string().email("Adresse email invalide"),
+      .min(3, "L'identifiant doit contenir au moins 3 caractères")
+      .max(20, "L'identifiant ne peut pas dépasser 20 caractères")
+      .regex(/[0-9]/, "L'identifiant doit contenir au moins un chiffre"),
+    email: z
+      .string()
+      .email("Adresse email invalide")
+      .max(100, "L'adresse email ne peut pas dépasser 100 caractères"),
     password: z
       .string()
-      .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+      .min(6, "Le mot de passe doit contenir au moins 6 caractères")
+      .regex(/[A-Z]/, "Le mot de passe doit contenir au moins une majuscule")
+      .regex(/[0-9]/, "Le mot de passe doit contenir au moins un chiffre")
+      .regex(/[^a-zA-Z0-9]/, "Le mot de passe doit contenir au moins un caractère spécial"),
     confirmPassword: z.string(),
-
-    // verif que les 2 mdps soit identiques
   })
+  // verif que les 2 mdps soit identiques
   .refine((data) => data.password === data.confirmPassword, {
     message: "Les mots de passe ne correspondent pas",
     path: ["confirmPassword"],
@@ -54,19 +63,26 @@ export const registerCompanySchema = z
     contactFirstName: z
       .string()
       .trim()
-      .min(2, "Le prénom doit contenir au moins 2 caractères"),
+      .min(3, "Le prénom doit contenir au moins 3 caractères")
+      .max(20, "Le prénom ne peut pas dépasser 20 caractères"),
     contactLastName: z
       .string()
       .trim()
-      .min(2, "Le nom doit contenir au moins 2 caractères"),
-    email: z.string().email("Adresse email invalide"),
+      .min(3, "Le nom doit contenir au moins 3 caractères")
+      .max(20, "Le nom ne peut pas dépasser 20 caractères"),
+    email: z
+      .string()
+      .email("Adresse email invalide")
+      .max(100, "L'adresse email ne peut pas dépasser 100 caractères"),
     password: z
       .string()
-      .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+      .min(6, "Le mot de passe doit contenir au moins 6 caractères")
+      .regex(/[A-Z]/, "Le mot de passe doit contenir au moins une majuscule")
+      .regex(/[0-9]/, "Le mot de passe doit contenir au moins un chiffre")
+      .regex(/[^a-zA-Z0-9]/, "Le mot de passe doit contenir au moins un caractère spécial"),
     confirmPassword: z.string(),
-
-    // verif que les 2 mdps soit identiques
   })
+  // verif que les 2 mdps soit identiques
   .refine((data) => data.password === data.confirmPassword, {
     message: "Les mots de passe ne correspondent pas",
     path: ["confirmPassword"],
