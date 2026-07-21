@@ -15,15 +15,14 @@ export default function PasswordInput({ register, name, label, error, ...props }
       </label>
       <div className="relative">
         <input
-          className={`w-full px-4 py-2 pr-12 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
-            error 
-              ? "border-2 border-red-600 focus:ring-red-500" 
+          className={`w-full px-4 py-2 pr-12 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${error
+              ? "border-2 border-red-600 focus:ring-red-500"
               : "border-primary-light focus:ring-primary"
-          }`}
+            }`}
           id={name}
           type={showPassword ? "text" : "password"}
           {...register(name)}
-          // Ajout des balises ARIA pour le lecteur d'écran
+
           aria-invalid={error ? "true" : "false"}
           aria-describedby={error ? `${name}-error` : undefined}
           {...props}
@@ -38,7 +37,7 @@ export default function PasswordInput({ register, name, label, error, ...props }
           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
         </button>
       </div>
-      {/* id dynamique relié au aria-describedby pour lire l'erreur */}
+
       {error && (
         <p id={`${name}-error`} className="text-red-700 font-bold text-xs mt-1 ml-2">
           {error.message}
