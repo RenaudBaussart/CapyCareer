@@ -24,6 +24,7 @@ import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProfile from "./pages/admin/AdminProfile";
 // pages Entreprise/Recruteur
 import CompanyRegister from "./pages/company/CompanyRegister";
+import CompanyForm from "./pages/CompanyForm";
 import CompanyDashboard from "./pages/CompanyDashboard";
 // permet de communiquer le token a linterface
 import { AuthProvider } from "./context/AuthContext";
@@ -151,7 +152,17 @@ export default function App() {
 
           {/* ROUTES ENTREPRISES */}
 
-          {/*Dashboard entreprise*/}
+          {/* Formulaire dashboard entreprise*/}
+          <Route
+            path="/company/dashboard/form"
+            element={
+              <RequireAuth allowedRoles={["entreprise"]}>
+                <CompanyForm />
+              </RequireAuth>
+            }
+          />
+
+          {/* Dashboard Entreprise */}
           <Route
             path="/company/dashboard"
             element={
