@@ -15,5 +15,10 @@ export const loginSchema = z.object({
         .openapi({
             example: "HelloWorld0/",
             description: "Le mot de passe en clair"
+        }),
+    stayConnected: z.boolean()
+        .openapi({
+            example: "true",
+            description: "Si l'utilisateur veux rester connecter"
         })
 }).openapi("LoginRequest");
