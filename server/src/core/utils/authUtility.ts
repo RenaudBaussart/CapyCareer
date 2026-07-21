@@ -19,14 +19,12 @@ export const generatememberToken = (member: TokenMember ,stayLoggedIn: boolean =
     throw new Error("Erreur critique : JWT_SECRET est manquant dans le fichier .env");
   }
 
- if (stayLoggedIn) {
-    return jwt.sign(payload, secret, {
-      expiresIn: process.env.JWT_LONG_EXPIRATION as string
-    } as jwt.SignOptions);
+  const expiration = stayLoggedIn ? process.env.JWT_LONG_EXPIRATION : process.env.JWT_EXPIRATION;
+  if (!expiration) {
+    throw new Error("Erreur critique : JWT_EXPIRATION ou JWT_LONG_EXPIRATION est manquant dans le fichier .env");
   }
-  else{
-    return jwt.sign(payload, secret, {
-      expiresIn: process.env.JWT_EXPIRATION as string
-    } as jwt.SignOptions);
-  }
+
+return jwt.sign(payload, secret, {
+    expiresIn: expiration
+  } as jwt.SignOptions);
 };
