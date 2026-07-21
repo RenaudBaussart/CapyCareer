@@ -23,6 +23,7 @@ import AdminDuplicates from "./pages/admin/AdminDuplicates";
 import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProfile from "./pages/admin/AdminProfile";
 // pages Entreprise/Recruteur
+import CompanyRegister from "./pages/company/CompanyRegister";
 import CompanyDashboard from "./pages/CompanyDashboard";
 // permet de communiquer le token a linterface
 import { AuthProvider } from "./context/AuthContext";
@@ -79,7 +80,7 @@ export default function App() {
           <Route
             path="/candidate/profile"
             element={
-              <RequireAuth>
+              <RequireAuth allowedRoles={["candidat", "user"]}>
                 <UserProfile />
               </RequireAuth>
             }
@@ -92,7 +93,7 @@ export default function App() {
           <Route
             path="/admin/dashboard"
             element={
-              <RequireAuth>
+              <RequireAuth allowedRoles={["admin"]}>
                 <AdminDashboard />
               </RequireAuth>
             }
@@ -102,7 +103,7 @@ export default function App() {
           <Route
             path="/admin/users"
             element={
-              <RequireAuth>
+              <RequireAuth allowedRoles={["admin"]}>
                 <AdminUsers />
               </RequireAuth>
             }
@@ -112,7 +113,7 @@ export default function App() {
           <Route
             path="/admin/jobs"
             element={
-              <RequireAuth>
+              <RequireAuth allowedRoles={["admin"]}>
                 <AdminJobs />
               </RequireAuth>
             }
@@ -122,7 +123,7 @@ export default function App() {
           <Route
             path="/admin/duplicates"
             element={
-              <RequireAuth>
+              <RequireAuth allowedRoles={["admin"]}>
                 <AdminDuplicates />
               </RequireAuth>
             }
@@ -132,7 +133,7 @@ export default function App() {
           <Route
             path="/admin/logs"
             element={
-              <RequireAuth>
+              <RequireAuth allowedRoles={["admin"]}>
                 <AdminLogs />
               </RequireAuth>
             }
@@ -142,21 +143,28 @@ export default function App() {
           <Route
             path="/admin/profile"
             element={
-              <RequireAuth>
+              <RequireAuth allowedRoles={["admin"]}>
                 <AdminProfile />
               </RequireAuth>
             }
           />
 
           {/* ROUTES ENTREPRISES */}
+
+          {/*Dashboard entreprise*/}
           <Route
-            path="/company-dashboard"
+            path="/company/dashboard"
             element={
-              <RequireAuth>
+              <RequireAuth allowedRoles={["entreprise"]}>
                 <CompanyDashboard />
               </RequireAuth>
             }
           />
+
+          {/*inscription entreprise*/}
+          <Route 
+            path="/register-company" 
+            element={<CompanyRegister />} />
 
         </Routes>
       </BrowserRouter>

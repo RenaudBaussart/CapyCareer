@@ -25,3 +25,20 @@ export const login = async (credentials) => {
     // SI bon return les datas
     return data;
 };
+
+
+// pour blacklist les tokens déconnecté
+export const logoutApi = async (token) => {
+    // clean le token sil commence par bearer pr cibler uniquement JWT
+    const cleanToken = token.replace("Bearer ", "");
+
+    const response = await fetch(`${API_URL}/api/auth/logout`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            // part en blacklist
+            "Authorization": `Bearer ${cleanToken}`
+        }
+    });
+    return response.ok;
+};

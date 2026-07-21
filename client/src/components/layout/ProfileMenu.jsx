@@ -1,14 +1,16 @@
 // fichier gerant le component menu profil
 
 // import
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 // call du hook
 import { useClickOutside } from "../../hook/useClickOutside";
 // icone
 import { ChevronDown, User, LogOut } from "lucide-react";
 // img
 import defaultLogo from "../../assets/logos/CapySquare.png";
+// contexte d'authentification
+import { AuthContext } from "../../context/AuthContext";
 
 export default function ProfileMenu({ 
     roleName = "Profil", 
@@ -18,10 +20,21 @@ export default function ProfileMenu({
     // etat du menu deroulant
     const [isOpen, setIsOpen] = useState(false);
     
+    // cible fonction logout & hook pour navigation
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
+    
     // appel du hook de clic
     const menuRef = useClickOutside(() => {
         setIsOpen(false);
     });
+
+    // fonction qui gere la vraie deconnexion
+    const handleLogout = () => {
+        logout();
+        setIsOpen(false);
+        navigate("/login");
+    };
 
     return (
         // ref retournée par hook
@@ -52,14 +65,13 @@ export default function ProfileMenu({
                     
                     <hr className="border-primary-dark/10 my-1 mx-2" />
                     
-                    <Link
-                        to="/"
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
-                        onClick={() => setIsOpen(false)}
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
                     >
                         <LogOut className="w-4 h-4" />
                         Se déconnecter
-                    </Link>
+                    </button>
                 </div>
             )}
         </div>
