@@ -2,6 +2,8 @@
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+
+// LOGIN
 export const login = async (credentials) => {
     // envoie requete back
     const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -27,8 +29,33 @@ export const login = async (credentials) => {
     return data;
 };
 
+// REGISTER CANDIDAT
+export const registerUser = async (userData) => {
+    // envoie requete back pour new compte
+    const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+    });
 
-// pour blacklist les tokens déconnecté
+    // transforme en JSON
+    const data = await response.json();
+
+    // gere les erreurs du back
+    if (!response.ok) {
+        console.error("Détails complets de l'erreur API d'inscription :", data);
+
+        // passe lerreur au component
+        throw new Error(data.message || "Erreur lors de l'inscription");
+    }
+
+    // SI bon return les datas
+    return data;
+};
+
+// BLACKLIST TOKEN
 export const logoutApi = async (token) => {
     // clean le token sil commence par bearer pr cibler uniquement JWT
     const cleanToken = token.replace("Bearer ", "");
