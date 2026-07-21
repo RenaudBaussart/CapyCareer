@@ -16,8 +16,9 @@ export const login = async (credentials) => {
     const data = await response.json();
 
     // gere les erreurs du back
-    // WARNING: a revoir car peut etre specifié
     if (!response.ok) {
+        console.error("Détails complets de l'erreur API :", data);
+
         // passe lerreur au component
         throw new Error(data.message || "Identifiant ou mot de passe incorrect");
     }
