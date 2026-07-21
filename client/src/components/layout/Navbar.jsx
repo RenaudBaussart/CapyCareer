@@ -1,15 +1,37 @@
 // fichier du component navbar
 
 // import
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { NavLink, Link } from "react-router-dom";
 // component 
 import ProfileMenu from "./ProfileMenu";
+// context
+import { AuthContext } from "../../context/AuthContext";
+import { HandednessContext } from "../../context/HandednessContext";
+// hook
+import { useHandedness } from "../../hook/useHandedness";
 // icone
 import { Home, Building2, UserPlus, LogIn, Menu, X, User, LogOut } from "lucide-react";
 
 export default function Navbar() {
+
   const [isOpen, setIsOpen] = useState(false);
+  // récupère le token pour savoir si l'utilisateur est connecté
+  const { token } = useContext(AuthContext);
+  const isAuthenticated = !!token;
+
+  // cible fonction logout & hook pour navigation
+  const { logout } = useContext(AuthContext);
+
+  // récupère la préférence gaucher/droitier pour inverser la barre mobile
+  const { isRightHanded } = useContext(HandednessContext);
+
+  // fonction qui gere la vraie deconnexion
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+    navigate("/login");
+  };
 
   // SI isActive alors return style
   const navLinkClass = ({ isActive }) =>
@@ -27,7 +49,8 @@ export default function Navbar() {
   return (
     <nav className="bg-primary-dark shadow-sm sticky top-0 z-50 ">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-between items-center h-16 ">
+        {/* flex-row-reverse uniquement sur mobile (md:flex-row la neutralise en desktop) si l'utilisateur est droitier */}
+        <div className={`flex ${isRightHanded ? "flex-row-reverse md:flex-row" : "flex-row"} justify-between items-center h-16 `}>
 
           {/* partie gauche (navigations) */}
           <div className="hidden md:flex items-center gap-8 ">
@@ -41,16 +64,30 @@ export default function Navbar() {
               Entreprises
             </NavLink>
 
-            {/* WARNING: liens à cacher si luser est co */}
-            <NavLink to="/register" className={navLinkClass}>
-              <UserPlus className="w-4 h-4 text-white" />
-              Inscription
-            </NavLink>
+            {isAuthenticated && (
+              <NavLink
+                to="/candidate/profile"
+                className={navLinkClass}
+              >
+                <User className="w-4 h-4" />
+                Mon Profil
+              </NavLink>
+            )}
 
-            <NavLink to="/login" className={navLinkClass}>
-              <LogIn className="w-4 h-4 text-white" />
-              Connexion
-            </NavLink>
+            {/* WARNING: liens à cacher si luser est co */}
+            {!isAuthenticated && (
+              <>
+                <NavLink to="/register" className={navLinkClass}>
+                  <UserPlus className="w-4 h-4 text-white" />
+                  Inscription
+                </NavLink>
+
+                <NavLink to="/login" className={navLinkClass}>
+                  <LogIn className="w-4 h-4 text-white" />
+                  Connexion
+                </NavLink>
+              </>
+            )}
           </div>
 
           {/* btn burger (visible sous md) */}
@@ -62,6 +99,7 @@ export default function Navbar() {
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
+
 
           {/* partie droite menu profile */}
           <ProfileMenu
@@ -87,36 +125,46 @@ export default function Navbar() {
               Entreprises
             </NavLink>
 
-            <NavLink to="/register" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
-              <UserPlus className="w-4 h-4 text-white" />
-              Inscription
-            </NavLink>
+            {isAuthenticated && (
+              <NavLink
+                to="/candidate/profile"
+                className={mobileNavLinkClass}
+              >
+                <User className="w-4 h-4" />
+                Mon Profil
+              </NavLink>
+            )}
 
-            <NavLink to="/login" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
-              <LogIn className="w-4 h-4 text-white" />
-              Connexion
-            </NavLink>
+            {!isAuthenticated && (
+              <>
+                <NavLink to="/register" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
+                  <UserPlus className="w-4 h-4 text-white" />
+                  Inscription
+                </NavLink>
+
+                <NavLink to="/login" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
+                  <LogIn className="w-4 h-4 text-white" />
+                  Connexion
+                </NavLink>
+              </>
+            )}
 
             <hr className="border-light-bone/10 my-2" />
 
             {/* link (profil & deconnexion) mobile */}
-            <Link
-              to="/candidate/profile"
-              className="flex items-center gap-2 py-3 px-2 rounded-md font-medium text-white hover:bg-primary-light/10 transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              <User className="w-4 h-4" />
-              Mon Profil
-            </Link>
+            {isAuthenticated && (
+              <>
 
-            <Link
-              to="/"
-              className="flex items-center gap-2 py-3 px-2 rounded-md font-medium text-red-400 hover:bg-red-500/10 transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              <LogOut className="w-4 h-4" />
-              Se déconnecter
-            </Link>
+                <NavLink
+                  to="/"
+                  className="flex items-center gap-2 py-3 px-2 rounded-md font-medium text-red-400 hover:bg-red-500/10 transition-colors"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-4 h-4" />
+                  Se déconnecter
+                </NavLink>
+              </>
+            )}
           </div>
         </div>
       </div>
