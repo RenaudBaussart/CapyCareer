@@ -45,18 +45,27 @@ export default function LoginForm() {
     setApiError("");
 
     try {
-      // appel au service externe pour se co
-      const result = await login(data);
+      // isole rememberMe des autres datas
+      const { rememberMe, ...apiData } = data;
+
+      // prepare payload pour lenvoi en back
+      const payloadForBackend = {
+        ...apiData,
+        stayConnected: rememberMe
+      };
+
+      // call back externe pour se co avec le bon payload
+      const result = await login(payloadForBackend);
 
       // SI token alors il est stocké
       if (result.token) {
         // decode  token pour cbiler le role
         const decodedToken = jwtDecode(result.token);
 
-        // transmet la value du token au contexte (on inclut le roleId décodé)
+        // transmet la value du token au contexte
         contextLogin(result.token, {
           username: data.username,
-          rememberMe: data.rememberMe,
+          rememberMe: rememberMe,
           roleId: decodedToken.role
         });
 
@@ -110,11 +119,10 @@ export default function LoginForm() {
             Identifiant de connexion *
           </label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
-              errors.username 
-                ? "border-2 border-red-600 focus:ring-red-500" 
-                : "border-primary-light focus:ring-primary"
-            }`}
+            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
+              ? "border-2 border-red-600 focus:ring-red-500"
+              : "border-primary-light focus:ring-primary"
+              }`}
             id="username"
             type="text"
             autoComplete="username"
