@@ -24,7 +24,7 @@ export const middlewareGuest = async (req: Request, res: Response, next: NextFun
         jwtTool.verify(token, process.env.JWT_SECRET as string);
 
         const [blacklistedTokens]: any = await pool.execute(
-            "SELECT 1 FROM BlacklistedTokens WHERE token = ?",
+            "SELECT 1 FROM Blacklist WHERE token = ?",
             [token]
         );
 

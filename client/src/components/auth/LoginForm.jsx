@@ -13,8 +13,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../../schemas/auth.schema";
 // navigation
 import { Link, useNavigate } from "react-router-dom";
+// lire jwt 
+import { jwtDecode } from "jwt-decode";
 // icone
 import { LogIn } from "lucide-react";
+// utilitaire d'erreurs
+import { getFriendlyErrorMessage } from "../../utils/errorHandler";
+// afficher/masquer mdp
+import PasswordInput from "../ui/PasswordInput";
 
 export default function LoginForm() {
   // recupere la fonction login contexte
@@ -35,6 +41,7 @@ export default function LoginForm() {
 
   // fonction appelee quand le formulaire est valide
   const onSubmit = async (data) => {
+    // efface ancienne valeur
     setApiError("");
 
     try {
@@ -43,19 +50,39 @@ export default function LoginForm() {
 
       // SI token alors il est stocké
       if (result.token) {
-        contextLogin(result.token, { username: data.username });
+        // decode  token pour cbiler le role
+        const decodedToken = jwtDecode(result.token);
+
+        // transmet la value du token au contexte (on inclut le roleId décodé)
+        contextLogin(result.token, {
+          username: data.username,
+          rememberMe: data.rememberMe,
+          roleId: decodedToken.role
+        });
+
+        console.log("Connexion réussie !", result);
+
+        // redirection selon le role (FK_role_id)
+        switch (decodedToken.role) {
+          case "admin":
+            navigate("/admin/dashboard");
+            break;
+          case "entreprise":
+            navigate("/company/dashboard");
+            break;
+          case "user":
+            navigate("/");
+            break;
+          default:
+            navigate("/");
+            break;
+        }
       }
 
-      console.log("Connexion réussie !", result);
-      
-      // redirection vers home ou dashboard
-      // WARNING: selon role à voir
-      navigate("/"); 
-
     } catch (error) {
-      console.error("Erreur de connexion :", error.message);
-      // affiche erreur pour luser
-      setApiError(error.message);
+      console.error("Erreur brute :", error.message);
+      // affiche erreur a luser
+      setApiError(getFriendlyErrorMessage(error.message));
     }
   };
 
@@ -68,9 +95,9 @@ export default function LoginForm() {
         onSubmit={handleSubmit(onSubmit)}
         noValidate>
 
-        {/* affichage des erreurs api) */}
+        {/* affichage des erreurs api traduites */}
         {apiError && (
-          <div className="p-3 bg-accent-dark/10 border border-accent-dark text-accent-dark rounded-xl text-sm font-medium text-center">
+          <div className="p-3 bg-accent-light/20 border border-accent-dark text-accent-deep rounded-xl text-sm font-semibold text-center">
             {apiError}
           </div>
         )}
@@ -97,27 +124,32 @@ export default function LoginForm() {
         {/* mdp */}
         <div>
           <div className="flex justify-between items-center mb-1">
-            <label
-              className="block text-lg font-bold text-primary-dark"
-              htmlFor="password" >
-              Mot de passe *
-            </label>
-            {/* WARNING: mdp oublié à faire */}
-            <Link to="/forgot-password" className="text-xs text-accent font-medium hover:text-accent-dark hover:underline">
+            <span className="hidden">Label géré dans le composant</span>
+            <Link to="/forgot-password" className="text-xs text-accent font-medium hover:text-accent-dark hover:underline ml-auto">
               Mot de passe oublié ?
             </Link>
           </div>
 
-          <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.password ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
-            id="password"
-            type="password"
+          <PasswordInput
+            label="Mot de passe *"
+            name="password"
+            register={register}
+            error={errors.password}
             autoComplete="current-password"
-            {...register("password")}
-            aria-invalid={errors.password ? "true" : "false"}
-            aria-describedby={errors.password ? "password-error" : undefined}
           />
-          {errors.password && <p id="password-error" className="text-accent-dark font-medium text-xs mt-1">{errors.password.message}</p>}
+        </div>
+
+        {/* rester connecté */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="rememberMe"
+            {...register("rememberMe")}
+            className="accent-primary w-4 h-4 cursor-pointer"
+          />
+          <label htmlFor="rememberMe" className="text-sm font-medium text-primary-dark cursor-pointer">
+            Rester connecté
+          </label>
         </div>
 
         <button

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { generatememberToken } from "../../core/utils/authUtility"; 
 import { Pool } from "mysql2/promise";
 import jwtTool from "jsonwebtoken";
+import { ConflictError, UnauthorizedError, InternalServerError } from "../../core/errors/HttpError";
 
 jest.mock('jsonwebtoken');
 jest.mock("bcrypt");
@@ -14,17 +15,8 @@ describe("AuthService - Méthode Register", () => {
     let mockPool: any;
 
     beforeEach(() => {
-        mockConnection = {
-            execute: jest.fn(),
-            release: jest.fn(),
-        };
-        
-        // simule Pool MySQL
-        mockPool = {
-            getConnection: jest.fn().mockResolvedValue(mockConnection),
-        };
-
-        // injecte la bdd fictive dans le service via l'injection de dépendances
+        mockConnection = { execute: jest.fn().mockResolvedValue([[]]), release: jest.fn() };
+        mockPool = { getConnection: jest.fn().mockResolvedValue(mockConnection) };
         authService = new AuthService(mockPool as unknown as Pool);
     });
 
@@ -33,8 +25,10 @@ describe("AuthService - Méthode Register", () => {
     });
 
     describe("Cas d'erreurs", () => {
-        it("doit rejeter l'inscription et lever une erreur si l'email existe déjà", async () => {
-            mockConnection.execute.mockResolvedValueOnce([[{ PK_id: 1 }]]); 
+        it("doit rejeter l'inscription et lever une ConflictError si l'email existe déjà", async () => {
+            mockConnection.execute
+                .mockResolvedValueOnce([[]]) 
+                .mockResolvedValueOnce([[{ PK_id: 1 }]]); 
             
             const userData = {
                 email: "jojo@gmail.com",
@@ -45,11 +39,8 @@ describe("AuthService - Méthode Register", () => {
                 username: "Jojodu59"
             };
 
-            await expect(authService.register(userData as any)).rejects.toThrow("EMAIL_EXISTS");  
-
+            await expect(authService.register(userData as any)).rejects.toThrow(ConflictError);  
             expect(mockConnection.release).toHaveBeenCalledTimes(1);
-            
-            // verifie que bcrypt n'a pas été appelé puisque ça a planté avant
             expect(bcrypt.hash).not.toHaveBeenCalled(); 
         });
     });
@@ -58,9 +49,10 @@ describe("AuthService - Méthode Register", () => {
         it("doit inscrire un nouvel utilisateur, hacher son mot de passe et retourner un token", async () => {
             mockConnection.execute
                 .mockResolvedValueOnce([[]]) 
+                .mockResolvedValueOnce([[]]) 
+                .mockResolvedValueOnce([[]]) 
                 .mockResolvedValueOnce([{ insertId: 42 }]); 
             
-            // donne mdp à hacher et token à générer
             (bcrypt.hash as jest.Mock).mockResolvedValue("hashedPassword123");
             (generatememberToken as jest.Mock).mockReturnValue("fake-jwt-token-123");
 
@@ -73,26 +65,16 @@ describe("AuthService - Méthode Register", () => {
                 username: "Jojodu59"
             };
 
-            // typage strict
             const result = await authService.register(userData as any);
 
-            
-            // attendu du token généré
             expect(result).toBe("fake-jwt-token-123");
-            
-            // attendu de la connexion obtenue depuis le pool
-            expect(mockConnection.execute).toHaveBeenCalledTimes(2); 
-            
-            // attendu du mdp haché avec les bons paramètres
+            expect(mockConnection.execute).toHaveBeenCalledTimes(4); // 4 requêtes maintenant
             expect(bcrypt.hash).toHaveBeenCalledWith("HelloWorld0/", 10);
-            
-            // attendu du token généré avec les bonnes informations
             expect(generatememberToken).toHaveBeenCalledWith({
                 id: 42,
                 role: "candidat",
                 isFirstLogin: true
             });
-            // attendu que la connexion a été relâchée après l'opération
             expect(mockConnection.release).toHaveBeenCalledTimes(1);
         });
     });
@@ -104,17 +86,8 @@ describe("AuthService - Méthode Login", () => {
     let mockPool: any;
 
     beforeEach(() => {
-        mockConnection = {
-            execute: jest.fn(),
-            release: jest.fn(),
-        };
-        
-        // simule Pool MySQL
-        mockPool = {
-            getConnection: jest.fn().mockResolvedValue(mockConnection),
-        };
-
-        // injecte dans bdd fictive dans le service via l'injection de dépendances
+        mockConnection = { execute: jest.fn().mockResolvedValue([[]]), release: jest.fn() };
+        mockPool = { getConnection: jest.fn().mockResolvedValue(mockConnection) };
         authService = new AuthService(mockPool as unknown as Pool);
     });
 
@@ -123,34 +96,38 @@ describe("AuthService - Méthode Login", () => {
     });
 
     describe("Cas d'erreurs", () => {
-        
-        it("devrait jeter l'erreur USER_NOT_FOUND si le pseudonyme n'existe pas", async () => {
-            mockConnection.execute.mockResolvedValueOnce([[]]);
+        it("devrait jeter l'erreur UnauthorizedError si le pseudonyme n'existe pas", async () => {
+            mockConnection.execute
+                .mockResolvedValueOnce([[]])  
+                .mockResolvedValueOnce([[]]);
 
             await expect(authService.login("Inconnu", "Password123!"))
-                .rejects.toThrow("USER_NOT_FOUND");
+                .rejects.toThrow(UnauthorizedError);
             
             expect(mockConnection.release).toHaveBeenCalled();
         });
 
-        it("devrait jeter l'erreur INVALID_PASSWORD si le mot de passe est faux", async () => {
-            const fakeUser = [{ PK_id: 1, hashed_password: "hash-bdd", FK_role_id: "candidat" }];
-            mockConnection.execute.mockResolvedValueOnce([fakeUser]);
-
+        it("devrait jeter l'erreur UnauthorizedError si le mot de passe est faux", async () => {
+            const fakeUser = [{ PK_id: 1, username: "Jojodu59", hashed_password: "hash-bdd", FK_role_id: "candidat" }];
+            mockConnection.execute
+                .mockResolvedValueOnce([[]])
+                .mockResolvedValueOnce([fakeUser]); 
+            
             (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
 
             await expect(authService.login("Jojodu59", "MauvaisMotDePasse"))
-                .rejects.toThrow("INVALID_PASSWORD");
+                .rejects.toThrow(UnauthorizedError);
 
             expect(mockConnection.release).toHaveBeenCalled();
         });
     });
 
     describe("Cas de succès", () => {
-        
         it("devrait retourner un token si les identifiants sont corrects", async () => {
-            const fakeUser = [{ PK_id: 1, hashed_password: "hash-bdd", FK_role_id: "candidat" }];
-            mockConnection.execute.mockResolvedValueOnce([fakeUser]);
+            const fakeUser = [{ PK_id: 1, username: "Jojodu59", hashed_password: "hash-bdd", FK_role_id: "candidat" }];
+            mockConnection.execute
+                .mockResolvedValueOnce([[]]) 
+                .mockResolvedValueOnce([fakeUser]); 
 
             (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
 
@@ -169,23 +146,16 @@ describe("AuthService - Méthode Login", () => {
         });
     });
 });
+
 describe("AuthService - Méthode Logout", () => {
     let authService: AuthService;
     let mockConnection: any;
     let mockPool: any;
 
     beforeEach(() => {
-        mockConnection = {
-            execute: jest.fn(),
-            release: jest.fn(),
-        };
-        
-        mockPool = {
-            getConnection: jest.fn().mockResolvedValue(mockConnection),
-        };
-
+        mockConnection = { execute: jest.fn(), release: jest.fn() };
+        mockPool = { getConnection: jest.fn().mockResolvedValue(mockConnection) };
         authService = new AuthService(mockPool as unknown as Pool);
-
         (jwtTool.verify as jest.Mock).mockReturnValue({ id: 1, role: 'member' });
     });
 
@@ -194,10 +164,10 @@ describe("AuthService - Méthode Logout", () => {
     });
 
     describe("Cas d'erreurs", () => {
-        it("devrait rejeter la déconnexion si une erreur survient dans la base de données", async () => {
-            mockConnection.execute.mockRejectedValueOnce(new Error("Erreur DB"));
+        it("devrait rejeter la déconnexion avec InternalServerError si une erreur survient dans la base de données", async () => {
+            mockConnection.execute.mockRejectedValueOnce({ errno: 9999, message: "Erreur DB" });
 
-            await expect(authService.logout("fauxToken")).rejects.toThrow("Erreur DB");
+            await expect(authService.logout("fauxToken")).rejects.toThrow(InternalServerError);
             
             expect(mockConnection.release).toHaveBeenCalled();
         });
@@ -217,7 +187,7 @@ describe("AuthService - Méthode Logout", () => {
             );
 
             expect(mockConnection.execute).toHaveBeenNthCalledWith(2,
-                "INSERT INTO BlacklistedTokens (token, blacklisted_at) VALUES (?, NOW())",
+                "INSERT INTO Blacklist (token, blacklisted_at) VALUES (?, NOW())",
                 ["fauxToken"]
             );
 

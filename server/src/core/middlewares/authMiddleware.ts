@@ -16,29 +16,35 @@ declare global {
  * Si le token est invalide ou absent, renvoie une réponse 401 Unauthorized.
  */
 export const middlewareAuth = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split(' ')[1];
+ const token = req.headers.authorization?.split(' ')[1];
   
   if (!token) {
     return res.status(401).json({ error: 'No token provided' });
   }
 
   try {
-      const [blacklistedTokens]: any = await pool.execute(
-          "SELECT 1 FROM BlacklistedTokens WHERE token = ?",
-          [token]
-      );
+    const decoded = jwtTool.verify(token, process.env.JWT_SECRET as string) as any;
+    req.member = decoded;
 
-      if (blacklistedTokens.length > 0) {
-          return res.status(401).json({ error: 'Token révoqué. Veuillez vous reconnecter.' });
-      }
+    const [blacklistedTokens]: any = await pool.execute(
+        "SELECT 1 FROM Blacklist WHERE token = ?",
+        [token]
+    );
 
-      jwtTool.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
-        if (err) {
-          return res.status(401).json({ error: 'Invalid token' });
-        }
-        req.member = decoded;
-        next();
-      });
+    if (blacklistedTokens.length > 0) {
+        return res.status(401).json({ error: 'Token révoqué. Veuillez vous reconnecter.' });
+    }
+
+    const [banned]: any = await pool.execute(
+        "SELECT 1 FROM Banned WHERE email = (SELECT email FROM User_ WHERE PK_id = ?)",
+        [decoded.id] 
+    );
+
+    if (banned.length > 0) {
+        return res.status(401).json({ error: 'Ce compte a été banni.' });
+    }
+
+    next();
 
   } catch (error) {
       console.error("Erreur dans le middleware d'authentification :", error);

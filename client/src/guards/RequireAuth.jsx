@@ -7,8 +7,8 @@ import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 // verifie si luser est co avant lacces a une page specifique
-export default function RequireAuth({ children }) {
-    const { token, isLoading } = useContext(AuthContext);
+export default function RequireAuth({ children, allowedRoles }) {
+    const { token, user, isLoading } = useContext(AuthContext);
 
     // durant la verification affiche chargement
     if (isLoading) {
@@ -20,6 +20,23 @@ export default function RequireAuth({ children }) {
         return <Navigate to="/login" replace />;
     }
 
-    // SI token alors acces a la page
+    // SI des roles sont exigés pour la route & que luser na pas le bon role
+    if (allowedRoles && !allowedRoles.includes(user?.roleId)) {
+        // alors redirige luser selon son espace
+        switch (user?.roleId) {
+            case "admin":
+                return <Navigate to="/admin/dashboard" replace />;
+            case "entreprise":
+                return <Navigate to="/company/dashboard" replace />;
+            case "candidat":
+            case "user":
+                return <Navigate to="/" replace />;
+            default:
+                // pour les autres cas de non role par défaut sur laccueil du site
+                return <Navigate to="/" replace />;
+        }
+    }
+
+    // SI token & bon role alors acces a son espace
     return children;
 }

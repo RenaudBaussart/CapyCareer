@@ -26,7 +26,7 @@ function StatusBadge({ status }) {
 
 function ApplicantRow({ applicant, onUpdateStatus }) {
     return (
-        <li className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4 border-b border-primary-light/30 last:border-none">
+        <li className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4 border-b border-primary-light/30 last:border-none max-h-135 overflow-auto scrollbar-thumb-primary">
             <div className="min-w-0">
                 <p className="font-semibold text-sm text-primary-dark">{applicant.name}</p>
                 <p className="text-xs flex items-center gap-1 mt-0.5 text-primary-dark/60">
