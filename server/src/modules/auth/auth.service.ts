@@ -11,7 +11,7 @@ type ValidatedMemberData = z.infer<typeof member>;
 export class AuthService {
     private pool: Pool;
 
-    // Depedance Injection du pool de connexion à la base de données pour permettre l'accès aux méthodes de la classe AuthService.
+    // Dépendance Injection du pool de connexion à la base de données pour permettre l'accès aux méthodes de la classe AuthService.
     constructor(dbPool: Pool) {
         this.pool = dbPool;
     }
@@ -100,7 +100,7 @@ export class AuthService {
      * @throws UnauthorizedError si les identifiants sont incorrects.
      * @throws InternalServerError si une erreur survient lors de l'authentification.
      */
-    async login(username: string, password: string) {
+    async login(username: string, password: string,stayConnected:boolean) {
     const connection = await this.pool.getConnection();
 
     try {
@@ -138,7 +138,7 @@ export class AuthService {
             isFirstLogin: false
         };
 
-        return generatememberToken(tokenPayload);
+        return generatememberToken(tokenPayload,stayConnected);
 
     } finally {
         if(connection) {
