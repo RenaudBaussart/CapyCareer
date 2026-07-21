@@ -72,7 +72,7 @@ CREATE TABLE `Banned` (
 CREATE TABLE `Blacklist` (
   `PK_blacklist_id` INT PRIMARY KEY AUTO_INCREMENT,
   `token` VARCHAR(2048) NOT NULL,
-  `blacklist_at` date NOT NULL
+  `blacklisted_at` date NOT NULL
 );
 
 CREATE UNIQUE INDEX `User__index_0` ON `User_` (`email`);
