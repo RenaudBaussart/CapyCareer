@@ -11,7 +11,7 @@ type ValidatedMemberData = z.infer<typeof member>;
 export class AuthService {
     private pool: Pool;
 
-    // DI
+    // Depedance Injection du pool de connexion à la base de données pour permettre l'accès aux méthodes de la classe AuthService.
     constructor(dbPool: Pool) {
         this.pool = dbPool;
     }
