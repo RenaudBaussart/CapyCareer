@@ -32,7 +32,7 @@ const loginMember = async (req: Request, res: Response, next: NextFunction) => {
         const loginData = loginSchema.parse(req.body);
         
         const authService = new AuthService(pool);
-        const token = await authService.login(loginData.username, loginData.password);
+        const token = await authService.login(loginData.username, loginData.password,loginData.stayConnected);
 
         res.status(200).json({ message: "Connexion réussie.", token });
     } catch (error: any) {
