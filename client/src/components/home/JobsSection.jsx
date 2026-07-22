@@ -422,9 +422,8 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                 </aside>
 
                 {/*
-                  colonne détail : toujours visible en desktop (lg), dans le flux normal de la grille.
-                  en mobile, elle est masquée par défaut et devient une modal plein écran (fixed inset-0)
-                  uniquement quand isMobileDetailOpen est vrai (offre cliquée dans la liste).
+                  colonne détail : toujours visible en desktop.
+                  En mobile : elle est masquée par défaut et devient une modal plein écran
                 */}
                 <div
                     className={`${isMobileDetailOpen ? "fixed inset-0 z-50 bg-bone overflow-y-auto p-4" : "hidden"} lg:static lg:z-auto lg:bg-transparent lg:p-0 lg:block lg:overflow-visible`}
