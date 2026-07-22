@@ -8,9 +8,10 @@ export default function UserDataGrid({ users, activeTab, handleBanUser, handleUn
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse" aria-label="Liste des utilisateurs">
                 <thead>
-                    <tr className="border-b border-white/40 text-primary-dark/70 text-sm">
+                    <tr className="border-b border-white/40 text-font-primary-dark/70 text-sm">
                         <th scope="col" className="py-4 px-4 font-semibold">Utilisateur</th>
                         <th scope="col" className="py-4 px-4 font-semibold">Email</th>
+                        <th scope="col" className="py-4 px-4 font-semibold">Rôle</th>
                         <th scope="col" className="py-4 px-4 font-semibold">Statut</th>
                         <th scope="col" className="py-4 px-4 font-semibold text-right">Actions</th>
                     </tr>
@@ -18,16 +19,19 @@ export default function UserDataGrid({ users, activeTab, handleBanUser, handleUn
                 <tbody>
                     {users.length > 0 ? (
                         users.map((user) => (
-                            <tr key={user.id || user.email} className="border-b border-white/20 hover:bg-white/30 transition-colors">
+                            <tr key={user.id || user.email} className="border-b border-white/20 hover:bg-bone-light/30 transition-colors">
 
-                                <th scope="row" className="py-4 px-4 font-medium text-primary-dark">
+                                <th scope="row" className="py-4 px-4 font-medium text-font-primary-dark">
                                     {user.name}
                                 </th>
-                                <td className="py-4 px-4 text-primary-dark">
+                                <td className="py-4 px-4 text-font-primary-dark">
                                     <div className="flex items-center gap-2">
-                                        <Mail className="w-4 h-4 text-primary-dark/50" aria-hidden="true" />
+                                        <Mail className="w-4 h-4 text-font-primary-dark/50" aria-hidden="true" />
                                         {user.email}
                                     </div>
+                                </td>
+                                <td className="py-4 px-4 text-font-primary-dark/80">
+                                    {user.role}
                                 </td>
                                 <td className="py-4 px-4">
                                     <span
@@ -64,7 +68,8 @@ export default function UserDataGrid({ users, activeTab, handleBanUser, handleUn
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="4" className="py-8 text-center text-primary-dark/60">
+                            {/* colSpan passe de 4 à 5 à cause de la nouvelle colonne Rôle */}
+                            <td colSpan="5" className="py-8 text-center text-font-primary-dark/60">
                                 {activeTab === 'actifs' 
                                     ? "Aucun utilisateur trouvé avec cette adresse email." 
                                     : "Aucun utilisateur banni."}

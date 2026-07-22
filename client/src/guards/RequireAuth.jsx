@@ -12,7 +12,7 @@ export default function RequireAuth({ children, allowedRoles }) {
 
     // durant la verification affiche chargement
     if (isLoading) {
-        return <div className="min-h-screen bg-bone flex items-center justify-center text-primary-dark">Chargement...</div>;
+        return <div className="min-h-screen bg-bone flex items-center justify-center text-font-primary-dark">Chargement...</div>;
     }
 
     // SI pas de token, redigirer vers login

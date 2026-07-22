@@ -14,13 +14,13 @@ function formatLocation(job) {
 const BADGE_STYLES = {
     CDI: "bg-accent/15 text-accent-dark",
     CDD: "bg-orange-100 text-orange-700",
-    Stage: "bg-primary-light/20 text-primary-dark",
-    Alternance: "bg-primary/15 text-primary-dark",
+    Stage: "bg-primary-light/20 text-font-primary-dark",
+    Alternance: "bg-primary/15 text-font-primary-dark",
 };
 
 function Badge({ label }) {
     if (!label) return null;
-    const style = BADGE_STYLES[label] || "bg-primary-light/10 text-primary-dark";
+    const style = BADGE_STYLES[label] || "bg-primary-light/10 text-font-primary-dark";
     return (
         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${style}`}>
             {label}
@@ -50,11 +50,11 @@ function CompanyJobCard({ job, isSelected, onSelect, onEdit, onDelete, onToggleS
         >
             <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                    <p className="font-semibold text-sm leading-snug text-primary-dark">{job.title}</p>
-                    <p className="text-xs flex items-center gap-1 mt-0.5 text-primary-dark/60">
+                    <p className="font-semibold text-sm leading-snug text-font-primary-dark">{job.title}</p>
+                    <p className="text-xs flex items-center gap-1 mt-0.5 text-font-primary-dark/60">
                         <MapPin size={11} aria-hidden="true" /> {formatLocation(job)}
                     </p>
-                    <p className="text-xs flex items-center gap-1 mt-0.5 text-primary-dark/60">
+                    <p className="text-xs flex items-center gap-1 mt-0.5 text-font-primary-dark/60">
                         <Users size={11} aria-hidden="true" /> {job.applicants.length} candidature
                         {job.applicants.length > 1 ? "s" : ""}
                     </p>
@@ -73,7 +73,7 @@ function CompanyJobCard({ job, isSelected, onSelect, onEdit, onDelete, onToggleS
                     >
                         <Power
                             size={14}
-                            className={job.status === "active" ? "text-accent-dark" : "text-primary-dark/40"}
+                            className={job.status === "active" ? "text-accent-dark" : "text-font-primary-dark/40"}
                             aria-hidden="true"
                         />
                     </button>
@@ -87,7 +87,7 @@ function CompanyJobCard({ job, isSelected, onSelect, onEdit, onDelete, onToggleS
                         aria-label="Modifier l'offre"
                         title="Modifier l'offre"
                     >
-                        <Pencil size={14} className="text-primary-dark" aria-hidden="true" />
+                        <Pencil size={14} className="text-font-primary-dark" aria-hidden="true" />
                     </button>
                     <button
                         type="button"
@@ -107,7 +107,7 @@ function CompanyJobCard({ job, isSelected, onSelect, onEdit, onDelete, onToggleS
             <div className="flex items-center gap-2 mt-3">
                 <Badge label={job.contractType} />
                 {job.status === "closed" && (
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary-dark/10 text-primary-dark/60">
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary-dark/10 text-font-primary-dark/60">
                         Clôturée
                     </span>
                 )}
@@ -125,7 +125,7 @@ export default function CompanyJobsList({ jobs, onEditJob, onDeleteJob, onToggle
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-6">
             <aside aria-label="Liste de vos offres">
-                <h3 className="flex items-center gap-2 font-bold text-primary-dark mb-3">
+                <h3 className="flex items-center gap-2 font-bold text-font-primary-dark mb-3">
                     <Sparkles size={16} className="text-primary" aria-hidden="true" /> Vos offres publiées
                 </h3>
                 <div className="flex flex-col gap-3 max-h-130 overflow-auto scrollbar-thumb-primary">
@@ -141,7 +141,7 @@ export default function CompanyJobsList({ jobs, onEditJob, onDeleteJob, onToggle
                         />
                     ))}
                     {jobs.length === 0 && (
-                        <p className="text-sm text-center py-6 text-primary-dark/60">
+                        <p className="text-sm text-center py-6 text-font-primary-dark/60">
                             Vous n'avez publié aucune offre pour le moment.
                         </p>
                     )}

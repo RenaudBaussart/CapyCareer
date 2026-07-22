@@ -1,18 +1,22 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* --font-sans: remplace police par défaut */
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
 
   /* tonalités de verts */
-   /* vert sapin profond */
+  /* vert sapin profond */
   --color-primary-dark: #157A6E;
   /* vert végétal */
   --color-primary: #499F68;
-   /* vert végétal + foncé */
-   --color-deep-primary: #33704A;
-   /* vert sauge doux */ 
-  --color-primary-light: #77B28C; 
+  /* vert végétal + foncé */
+  --color-deep-primary: #33704A;
+  /* vert sauge doux */
+  --color-primary-light: #77B28C;
+  /* pour le texte */
+  --color-font-primary-dark: #157A6E;
 
   /* couleur de fond */
   /* blanc cassé plus clair */
@@ -21,6 +25,7 @@
   --color-bone: #EDE3D3;
   /* Blanc cassé plus clair */
   --color-bone-light: #F1EDE5;
+  --color-light: #FFFFFF;
 
 
   /* terracottas (accentuation) */
@@ -34,22 +39,64 @@
   --color-accent-light: #C78C77;
 }
 
+.dark {
+  --color-bone: #14181A;
+  --color-bone-light: #1C2124;
+  --color-light: #FFFFFF;
+
+  --color-accent-dark: #E29579;
+  --color-accent-deep: #D3775C;
+  --color-accent: #D99B84;
+  --color-accent-light: #F0C4B0;
+  --color-font-primary-dark: #FFFFFF;
+}
+
 @layer base {
   body {
-    @apply bg-bone text-primary-dark font-sans;
+    @apply bg-bone text-primary-dark font-sans dark:text-light-bone transition-colors duration-300;
+  }
+
+  .dark [class*="text-primary-dark"],
+  .dark [class*="text-deep-primary"] {
+    color: var(--color-light-bone);
+  }
+
+  /* placeholders utilisant text-primary-dark/40 */
+  .dark [class*="placeholder:text-primary-dark"]::placeholder {
+    color: color-mix(in oklab, var(--color-light-bone) 55%, transparent);
   }
 }
 
 @layer utilities {
- .bg-main-layout {
-    background-image: url('./assets/images/Leaves.png'), url('./assets/images/BackgroundLeavesCream.png');
-    background-repeat: no-repeat, repeat;
-    background-size: 100%, 100%;
-    background-position: top, top;
+  .bg-main-layout {
+    position: relative;
+    background-image: url('./assets/images/Leaves.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: top;
     min-height: 100vh;
     display: grid;
     grid-template-rows: auto 1fr auto;
-}
+  }
+
+  /* feuilles de fond répétées pour pouvoir
+   contrôler leur opacité en mode sombre */
+  .bg-main-layout::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url('./assets/images/BackgroundLeavesCream.png');
+    background-repeat: repeat;
+    background-size: 100%;
+    background-position: top;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .dark .bg-main-layout::before {
+    opacity: 0.25;
+  }
 }
 
 
@@ -100,6 +147,3 @@
   font-weight: 700;
   font-style: italic;
 }
-
-
-

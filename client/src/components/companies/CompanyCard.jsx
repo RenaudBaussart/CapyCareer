@@ -7,18 +7,18 @@ import { Link } from "react-router-dom";
 
 export default function CompanyCard({ company }) {
   return (
-    <div className="bg-light-bone border border-primary-light/20 rounded-2xl p-6 hover:shadow-md hover:border-primary-light/50 transition-all duration-300 group">
+    <div className="bg-bone-light border border-primary-light/20 rounded-2xl p-6 hover:shadow-md hover:border-primary-light/50 transition-all duration-300 group">
       <div className="flex items-start gap-4 mb-4">
         {/* logo entreprise */}
         <div className="w-12 h-12 rounded-lg bg-bone-light border border-primary-light/30 flex items-center justify-center shrink-0 group-hover:border-primary transition-colors">
-          <span className="text-xl font-bold text-primary-dark">
+          <span className="text-xl font-bold text-font-primary-dark">
             {company.logoInitial}
           </span>
         </div>
         
         {/* nom entreprise */}
         <div>
-          <h3 className="text-lg font-bold text-primary-dark group-hover:text-primary transition-colors">
+          <h3 className="text-lg font-bold text-font-primary-dark group-hover:text-primary transition-colors">
             {company.name}
           </h3>
           
@@ -32,7 +32,7 @@ export default function CompanyCard({ company }) {
                 />
               ))}
             </div>
-            <Link to={`/companies/${company.id}/reviews`} className="text-sm font-medium text-primary-dark hover:underline">
+            <Link to={`/companies/${company.id}/reviews`} className="text-sm font-medium text-font-primary-dark hover:underline">
               {company.reviewsCount.toLocaleString('fr-FR')} avis
             </Link>
           </div>
@@ -40,7 +40,7 @@ export default function CompanyCard({ company }) {
       </div>
 
       {/* link */}
-      <div className="flex items-center gap-4 mt-6 pt-4 border-t border-primary-light/20 text-sm font-medium text-primary-dark">
+      <div className="flex items-center gap-4 mt-6 pt-4 border-t border-primary-light/20 text-sm font-medium text-font-primary-dark">
         <Link to={`/companies/${company.id}/salaries`} className="hover:text-accent-deep hover:underline transition-colors">
           Salaires
         </Link>

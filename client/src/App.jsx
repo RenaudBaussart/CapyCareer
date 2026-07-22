@@ -28,13 +28,20 @@ import CompanyRegister from "./pages/company/CompanyRegister";
 import CompanyForm from "./pages/CompanyForm";
 import CompanyDashboard from "./pages/CompanyDashboard";
 // permet de communiquer le token a linterface
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext"; 
+// pour gérer la préférence d'affichage de l'utilisateur en mobile
+import { HandednessProvider } from "./context/HandednessContext";
+// pour gérer le thème choisi
+import { ThemeProvider } from "./context/ThemeContext";
+
 // sécurité des routes
 import RequireAuth from "./guards/RequireAuth";
 
 export default function App() {
   return (
     <AuthProvider>
+      <ThemeProvider>
+      <HandednessProvider>
       <BrowserRouter>
         <Routes>
 
@@ -190,6 +197,8 @@ export default function App() {
 
         </Routes>
       </BrowserRouter>
+      </HandednessProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

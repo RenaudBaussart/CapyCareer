@@ -64,11 +64,11 @@ export default function AdminDashboard() {
             <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
 
                 {/* conteneur principal*/}
-                <div className="bg-white/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1">
+                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1">
 
                     {/* haut de page */}
                     <div className="mb-10">
-                        <h1 className="text-3xl font-bold text-primary-dark">Vue d'ensemble</h1>
+                        <h1 className="text-3xl font-bold text-font-primary-dark">Vue d'ensemble</h1>
                         <p className="text-deep-primary mt-1">Gérez la collecte de données et surveillez l'activité de CapyCareer.</p>
                     </div>
 
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
                                     value={stats.candidats}
                                     icon={Users}
                                     trendText="Inscrits sur la plateforme"
-                                    trendColor="text-primary-dark"
+                                    trendColor="text-font-primary-dark"
                                     colorClass="bg-primary/10 text-primary-deep"
                                 />
                             </Link>
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
                                     value={stats.entreprises}
                                     icon={Building}
                                     trendText="Recruteurs actifs"
-                                    trendColor="text-primary-dark"
+                                    trendColor="text-font-primary-dark"
                                     colorClass="bg-primary/10 text-primary-deep"
                                 />
                             </Link>
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
                                     value={stats.offresActives}
                                     icon={Briefcase}
                                     trendText="Synchronisées ajd"
-                                    trendColor="text-primary-dark"
+                                    trendColor="text-font-primary-dark"
                                     colorClass="bg-accent-deep/10 text-accent-dark"
                                 />
                             </Link>
@@ -124,7 +124,7 @@ export default function AdminDashboard() {
                                     value={stats.doublons}
                                     icon={Copy}
                                     trendText="En attente de validation"
-                                    trendColor="text-accent-deep"
+                                    trendColor="text-font-accent-deep"
                                     colorClass="bg-accent-deep/10 text-accent-deep"
                                 />
                             </Link>

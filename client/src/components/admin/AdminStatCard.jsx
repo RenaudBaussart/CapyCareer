@@ -11,12 +11,12 @@ export default function AdminStatCard({
 }) {
 
   return (
-    <article className="bg-white/70 backdrop-blur-md p-5 rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.05)] border border-white/50 transition-all">
+    <article className="bg-bone-light/70 backdrop-blur-md p-5 rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.05)] border border-white/50 transition-all">
       <div className="flex justify-between items-start">
 
         <div>
-         <h3 className="text-primary-dark text-sm font-medium">{title}</h3>
-          <p className="text-2xl font-bold text-primary-dark mt-1" aria-label={`${value} ${title}`}>
+         <h3 className="text-font-primary-dark text-sm font-medium">{title}</h3>
+          <p className="text-2xl font-bold text-font-primary-dark mt-1" aria-label={`${value} ${title}`}>
             {value}
           </p>
         </div>
