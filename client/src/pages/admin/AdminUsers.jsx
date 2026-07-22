@@ -1,4 +1,4 @@
-// fichier gerant la page de moderation des utilisateurs (liste, bannissement, suppression)
+// fichier gérant la page de modération des candidats
 
 // import
 import { useAdminUsers } from "../../hook/useAdminUsers";
@@ -6,30 +6,31 @@ import { useAdminUsers } from "../../hook/useAdminUsers";
 import AdminNavbar from "../../components/admin/layout/AdminNavbar";
 import UserDataGrid from "../../components/admin/UseDataGrid";
 import AdminActionModal from "../../components/admin/modals/AdminActionModal";
-import Leaves from "../../assets/images/Leaves.png";
+import SearchBar from "../../components/admin/SearchBar";
 // icone
-import { Search, Users, Ban, Trash2 } from "lucide-react";
+import { Users, Ban, ShieldCheck, Building } from "lucide-react";
 
-export default function AdminUsers() {
-    // call le hook 
+// passe le role en prop
+export default function AdminUsers({ roleToManage = "candidat" }) {
     const {
         users,
+        activeTab,
+        setActiveTab,
         searchQuery,
         setSearchQuery,
         isModalOpen,
         setIsModalOpen,
         modalConfig,
         requestBanUser,
-        requestDeleteUser,
+        requestUnbanUser,
         executeAction
-    } = useAdminUsers();
+    } = useAdminUsers(roleToManage);
 
-    // config dynamique (text, color modale selon action)
     const isBanAction = modalConfig.actionType === 'ban';
+    const isCandidate = roleToManage === "candidat";
 
     return (
-        <div
-            className="bg-main-layout">
+        <div className="bg-main-layout">
             <AdminNavbar />
 
             <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
@@ -37,61 +38,70 @@ export default function AdminUsers() {
 
                     <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
+                            {/* titre selon role */}
                             <h1 className="text-3xl font-bold text-primary-dark flex items-center gap-3">
-                                <Users className="w-8 h-8 text-primary" />
-                                Modération Utilisateurs
+                                {isCandidate ? <Users className="w-8 h-8 text-primary" aria-hidden="true" /> : <Building className="w-8 h-8 text-primary" aria-hidden="true" />}
+                                Modération {isCandidate ? "Candidats" : "Entreprises"}
                             </h1>
                             <p className="text-deep-primary mt-1">
-                                Recherchez, bloquez ou supprimez des comptes pour maintenir la sécurité.
+                                Recherchez, bloquez ou débloquez des comptes {isCandidate ? "candidats" : "recruteurs"} pour maintenir la sécurité.
                             </p>
                         </div>
 
-                        <div className="relative w-full md:w-72">
-                            <input
-                                type="text"
-                                placeholder="Rechercher par email..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-white/50 border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-primary-dark placeholder-primary-dark/50 transition-all"
-                            />
-                            <Search className="w-5 h-5 text-primary-dark/50 absolute left-3 top-1/2 -translate-y-1/2" />
-                        </div>
+                        {/* recherche component */}
+                        <SearchBar
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            placeholder="Rechercher par email..."
+                        />
+                    </div>
+
+                    {/* gestion des onglets */}
+                    <div className="flex gap-4 mb-4 border-b border-white/40">
+                        <button
+                            onClick={() => setActiveTab("actifs")}
+                            className={`pb-2 px-2 font-medium transition-colors ${activeTab === 'actifs' ? 'text-primary border-b-2 border-primary' : 'text-primary-dark/60 hover:text-primary-dark'}`}
+                        >
+                            Comptes Actifs
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("bannis")}
+                            className={`pb-2 px-2 font-medium transition-colors ${activeTab === 'bannis' ? 'text-red-500 border-b-2 border-red-500' : 'text-primary-dark/60 hover:text-primary-dark'}`}
+                        >
+                            Comptes Bannis
+                        </button>
                     </div>
 
                     <div className="bg-white/40 rounded-2xl p-2 border border-white/50 flex-1">
                         <UserDataGrid
                             users={users}
-                            // transmet ces fonctions a la grille via des props
+                            activeTab={activeTab}
                             handleBanUser={requestBanUser}
-                            handleDeleteUser={requestDeleteUser}
+                            handleUnbanUser={requestUnbanUser}
                         />
                     </div>
-
                 </div>
             </main>
 
-            {/* modale */}
+            {/* modale action */}
             <AdminActionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={executeAction}
-
-                // props dynamiques selon action
-                title={isBanAction ? "Bannir cet utilisateur ?" : "Supprimer définitivement ?"}
+                title={isBanAction ? "Bannir cet utilisateur ?" : "Débannir cet utilisateur ?"}
                 message={isBanAction
-                    ? "L'utilisateur ne pourra plus se connecter. Cette action est réversible."
-                    : "Toutes les données de l'utilisateur seront effacées. Cette action est irréversible."
+                    ? "L'utilisateur sera supprimé et placé sur liste noire. Cette action est réversible."
+                    : "L'email sera retiré de la liste noire. L'utilisateur devra recréer un compte."
                 }
-                confirmText={isBanAction ? "Oui, bannir" : "Oui, supprimer"}
-                icon={isBanAction ? Ban : Trash2}
-
+                confirmText={isBanAction ? "Oui, bannir" : "Oui, débannir"}
+                icon={isBanAction ? Ban : ShieldCheck}
                 confirmBtnClass={isBanAction
-                    ? "bg-orange-500 hover:bg-orange-600 shadow-orange-500/30"
-                    : "bg-red-500 hover:bg-red-600 shadow-red-500/30"
+                    ? "bg-orange-500 hover:bg-orange-600 focus:ring-orange-500 shadow-orange-500/30"
+                    : "bg-green-600 hover:bg-green-700 focus:ring-green-600 shadow-green-600/30"
                 }
                 iconColorClass={isBanAction
                     ? "text-orange-600 bg-orange-100"
-                    : "text-red-600 bg-red-100"
+                    : "text-green-600 bg-green-100"
                 }
             />
         </div>
