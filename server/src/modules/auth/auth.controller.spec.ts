@@ -9,7 +9,7 @@ import { errorHandlerMiddleware } from "../../core/errors/errorHandlerMiddleware
 import { ConflictError, UnauthorizedError, InternalServerError } from "../../core/errors/HttpError";
 
 jest.mock("./auth.service");
-jest.mock('jsonwebtoken');
+jest.mock("jsonwebtoken");
 
 jest.mock("../../core/errors/ErrorsLogger", () => ({
     logErrorToFile: jest.fn()
@@ -106,9 +106,11 @@ describe("AuthController - loginMember", () => {
     });
 
     describe("POST /api/auth/login", () => {
+        // Ajout de stayConnected pour respecter la validation Zod du loginSchema
         const validLoginData = {
             username: "Jojodu59",
-            password: "HelloWorld0/"
+            password: "HelloWorld0/",
+            stayConnected: false
         };
 
         it("doit retourner un statut 200 et un token en cas de succès", async () => {
@@ -118,6 +120,11 @@ describe("AuthController - loginMember", () => {
             const response = await request(app).post("/api/auth/login").send(validLoginData);
 
             expect(response.status).toBe(200);
+            expect(response.body).toEqual({
+                message: "Connexion réussie.",
+                token: fauxToken
+            });
+            expect(AuthService.prototype.login).toHaveBeenCalledWith("Jojodu59", "HelloWorld0/", false);
         });
 
         it("doit retourner un statut 401 si les identifiants sont incorrects", async () => {
@@ -135,34 +142,33 @@ describe("AuthController - loginMember", () => {
         it("doit retourner un statut 400 si la validation Zod échoue", async () => {
             const response = await request(app).post("/api/auth/login").send({ username: "", password: "" });
             expect(response.status).toBe(400);
+            expect(response.body.message).toBe("Erreur de validation des données.");
         });
     });
 });
 
 describe("AuthController - logoutMember", () => {
     let app: express.Application;
-    let logoutSpy: jest.SpyInstance;
+
     beforeAll(() => {
         app = express();
         app.use(express.json());
         app.post("/api/auth/logout", middlewareAuth, logoutMember);
         app.use(errorHandlerMiddleware);
-        logoutSpy = jest.spyOn(AuthService.prototype, 'logout');
     });
     
     beforeEach(() => {
-    jest.clearAllMocks();
-    
-    (jwtTool.verify as jest.Mock).mockImplementation((token, secret) => {
-        return { id: 1, role: 'candidat' }; 
+        jest.clearAllMocks();
+        
+        (jwtTool.verify as jest.Mock).mockImplementation(() => {
+            return { id: 1, role: "candidat" }; 
+        });
     });
-});
 
     describe("POST /api/auth/logout", () => {
         
         it("doit retourner un statut 200 et invalider le token", async () => {
-            const mockLogout = jest.fn().mockResolvedValue({ message: "Déconnexion réussie." });
-            (AuthService as jest.Mock).mockImplementation(() => ({ logout: mockLogout }));
+            AuthService.prototype.logout = jest.fn().mockResolvedValue({ message: "Déconnexion réussie." });
 
             const monFauxToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.faux.token";
 
@@ -172,6 +178,7 @@ describe("AuthController - logoutMember", () => {
 
             expect(response.status).toBe(200);
             expect(response.body).toEqual({ message: "Déconnexion réussie." });
+            expect(AuthService.prototype.logout).toHaveBeenCalledWith(monFauxToken);
         });
 
         it("doit retourner une erreur 401 si aucun token n'est fourni", async () => {
@@ -181,17 +188,17 @@ describe("AuthController - logoutMember", () => {
         });
 
         it("doit retourner une erreur 500 si le service échoue", async () => {
-        logoutSpy.mockRejectedValue(new InternalServerError("Erreur DB"));
+            AuthService.prototype.logout = jest.fn().mockRejectedValue(new InternalServerError("Erreur DB"));
 
-        const response = await request(app)
-            .post("/api/auth/logout")
-            .set("Authorization", "Bearer fake-token");
+            const response = await request(app)
+                .post("/api/auth/logout")
+                .set("Authorization", "Bearer fake-token");
 
-        expect(response.status).toBe(500);
-        expect(response.body).toEqual({
-            success: false,
-            message: "Erreur DB"
+            expect(response.status).toBe(500);
+            expect(response.body).toEqual({
+                success: false,
+                message: "Erreur DB"
+            });
         });
     });
-});
 });
