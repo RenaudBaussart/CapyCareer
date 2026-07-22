@@ -121,5 +121,18 @@ const updateMembers = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
-export { getMembers, banMember, unbanMember, updateMembers };
+
+// pour gerer la requete HTTP des stats des users
+const getStats = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const adminService = new AdminService(pool);
+        const stats = await adminService.getUserStats();
+        
+        res.status(200).json(stats);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+export { getMembers, banMember, unbanMember, updateMembers, getStats };
 
