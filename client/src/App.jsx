@@ -22,6 +22,7 @@ import AdminJobs from "./pages/admin/AdminJobs";
 import AdminDuplicates from "./pages/admin/AdminDuplicates";
 import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProfile from "./pages/admin/AdminProfile";
+import AdminCompanies from "./pages/admin/AdminCompanies"
 // pages Entreprise/Recruteur
 import CompanyRegister from "./pages/company/CompanyRegister";
 import CompanyForm from "./pages/CompanyForm";
@@ -100,12 +101,22 @@ export default function App() {
             }
           />
 
-          {/* Pages Admin Users */}
+          {/* Pages Admin Candidat */}
           <Route
-            path="/admin/users"
+            path="/admin/candidat"
             element={
               <RequireAuth allowedRoles={["admin"]}>
                 <AdminUsers />
+              </RequireAuth>
+            }
+          />
+
+          {/* Pages Admin Entreprise */}
+          <Route
+            path="/admin/entreprise"
+            element={
+              <RequireAuth allowedRoles={["admin"]}>
+                <AdminCompanies />
               </RequireAuth>
             }
           />
@@ -173,8 +184,8 @@ export default function App() {
           />
 
           {/*inscription entreprise*/}
-          <Route 
-            path="/register-company" 
+          <Route
+            path="/register-company"
             element={<CompanyRegister />} />
 
         </Routes>
