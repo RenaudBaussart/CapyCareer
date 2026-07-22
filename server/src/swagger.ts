@@ -2,7 +2,7 @@ import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-open
 import { z } from "zod";
 import { member, updateMemberSchema, updateProfileSchema, updatePasswordSchema, updateAccountSchema } from "./modules/members/member.schema";
 import { loginSchema } from "./modules/auth/auth.schema";
-import { jobOfferSchema, jobOfferDetailSchema } from "./modules/job_offers/job.offers.schema"; // Import the new schema
+import { jobOfferSchema, jobOfferDetailSchema, jobOfferFullSchema } from "./modules/job_offers/job.offers.schema"; // Import the new schema
 export const registry = new OpenAPIRegistry();
 
 const bearerAuthName = 'bearerAuth';
@@ -124,6 +124,198 @@ registry.registerPath({
     }
 });
 
+registry.registerPath({
+    method: "post",
+    path: "/api/jobs",
+    description: "This endpoint creates a new job offer.",
+    summary: "Create a new job offer",
+    tags: ["Job Offers"],
+    request: {
+        body: {
+            description: "Job offer data to create.",
+            content: {
+                "application/json": {
+                    schema: jobOfferFullSchema.omit({ PK_id: true }),
+                },
+            },
+        },
+    },
+    responses: {
+        201: {
+            description: "Job offer created successfully.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Offre d'emploi ajoutée avec succès." }),
+                        id: z.number().int(),
+                    }),
+                },
+            },
+        },
+        400: {
+            description: "Bad request, e.g., validation error.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Erreur de validation des données." }),
+                        errors: z.record(z.string(), z.array(z.string())).optional(),
+                    }),
+                },
+            },
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        },
+    },
+});
+
+registry.registerPath({
+    method: "put",
+    path: "/api/jobs/{id}",
+    description: "This endpoint updates an existing job offer.",
+    summary: "Update a job offer",
+    tags: ["Job Offers"],
+    parameters: [{
+        in: 'path',
+        name: 'id',
+        schema: { type: 'string' },
+        required: true,
+        description: 'Unique identifier of the job offer to update.',
+    }],
+    request: {
+        body: {
+            description: "Job offer data to update.",
+            content: {
+                "application/json": {
+                    schema: jobOfferFullSchema.omit({ PK_id: true }),
+                },
+            },
+        },
+    },
+    responses: {
+        200: {
+            description: "Job offer updated successfully.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Offre d'emploi mise à jour avec succès." }),
+                    }),
+                },
+            },
+        },
+        400: {
+            description: "Bad request, e.g., invalid ID or validation error.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Identifiant d'offre invalide." }),
+                        errors: z.record(z.string(), z.array(z.string())).optional(),
+                    }),
+                },
+            },
+        },
+        404: {
+            description: "Not Found, e.g., job offer with the specified ID does not exist.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "L'offre d'emploi à mettre à jour n'existe pas." }) })
+                }
+            }
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        },
+    },
+});
+
+registry.registerPath({
+    method: "delete",
+    path: "/api/jobs/{id}",
+    description: "This endpoint deletes a job offer by its unique identifier.",
+    summary: "Delete a job offer by ID",
+    tags: ["Job Offers"],
+    parameters: [{
+        in: 'path',
+        name: 'id',
+        schema: { type: 'string' },
+        required: true,
+        description: 'Unique identifier of the job offer to delete.',
+    }],
+    responses: {
+        200: {
+            description: "Job offer deleted successfully.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Offre d'emploi supprimée avec succès." }),
+                    }),
+                },
+            },
+        },
+        400: {
+            description: "Bad request, e.g., missing or invalid job offer ID.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Identifiant d'offre manquant." }) })
+                }
+            }
+        },
+        404: {
+            description: "Not Found, e.g., job offer with the specified ID does not exist.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "L'offre d'emploi à supprimer n'existe pas." }) })
+                }
+            }
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        }
+    }
+});
+
+registry.registerPath({
+    method: "get",
+    path: "/api/jobs/count",
+    description: "This endpoint retrieves the total number of active job offers.",
+    summary: "Get total number of active job offers",
+    tags: ["Job Offers"],
+    responses: {
+        200: {
+            description: "Total number of active job offers.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        total: z.number().int(),
+                    }),
+                }
+            }
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        }
+    }
+});
 
 registry.registerPath({
     method: "post",
