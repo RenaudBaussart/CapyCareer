@@ -35,8 +35,8 @@ function StatCard({ icon: Icon, label, value, accent }) {
                 <Icon size={20} aria-hidden="true" />
             </div>
             <div>
-                <p className="text-2xl font-bold text-primary-dark">{value}</p>
-                <p className="text-sm text-primary-dark/60">{label}</p>
+                <p className="text-2xl font-bold text-font-primary-dark">{value}</p>
+                <p className="text-sm text-font-primary-dark/60">{label}</p>
             </div>
         </div>
     );
@@ -49,8 +49,8 @@ function RecentJobRow({ job }) {
     return (
         <div className="flex items-center justify-between gap-4 py-3 border-b border-primary-light/20 last:border-0">
             <div className="min-w-0">
-                <p className="font-semibold text-sm text-primary-dark truncate">{job.title}</p>
-                <p className="text-xs text-primary-dark/60">
+                <p className="font-semibold text-sm text-font-primary-dark truncate">{job.title}</p>
+                <p className="text-xs text-font-primary-dark/60">
                     {job.city}, {job.country} · {job.contractType}
                 </p>
             </div>
@@ -59,12 +59,12 @@ function RecentJobRow({ job }) {
                 <span
                     className={`text-xs font-semibold px-2.5 py-1 rounded-full ${job.status === "active"
                         ? "bg-accent/15 text-accent-dark"
-                        : "bg-primary-light/20 text-primary-dark/60"
+                        : "bg-primary-light/20 text-font-primary-dark/60"
                         }`}
                 >
                     {job.status === "active" ? "Active" : "Clôturée"}
                 </span>
-                <span className="text-xs font-medium text-primary-dark/70">
+                <span className="text-xs font-medium text-font-primary-dark/70">
                     {job.applicants.length} candidature{job.applicants.length > 1 ? "s" : ""}
                     {pendingCount > 0 && (
                         <span className="text-accent-dark"> ({pendingCount} nouvelle{pendingCount > 1 ? "s" : ""})</span>
@@ -82,7 +82,7 @@ export default function CompanyDashboard() {
     const recentJobs = jobs.slice(0, 5);
 
     return (
-        <main className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans">
+        <main className="flex flex-col min-h-screen bg-bone text-font-primary-dark font-sans">
             <Navbar />
 
             <section className="bg-main-layout">
@@ -91,10 +91,10 @@ export default function CompanyDashboard() {
                         {/* en-tête */}
                         <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)] mb-10">
                             <div className="w-full h-auto p-6 sm:p-8 bg-primary">
-                                <h1 className="text-3xl sm:text-4xl font-bold text-bone">
+                                <h1 className="text-3xl sm:text-4xl font-bold text-light">
                                     Tableau de bord
                                 </h1>
-                                <p className="text-bone/80 mt-2 max-w-2xl mx-auto">
+                                <p className="text-light/80 mt-2 max-w-2xl mx-auto">
                                     Vue d'ensemble de vos offres et de vos candidatures.
                                 </p>
                             </div>
@@ -112,19 +112,19 @@ export default function CompanyDashboard() {
                                 icon={Users}
                                 label="Candidatures reçues"
                                 value={stats.applicantsCount}
-                                accent="bg-primary/15 text-primary-dark"
+                                accent="bg-primary/15 text-font-primary-dark"
                             />
                             <StatCard
                                 icon={Sparkles}
                                 label="Nouvelles candidatures"
                                 value={stats.newApplicantsCount}
-                                accent="bg-orange-100 text-orange-700"
+                                accent="bg-orange-500/15 text-orange-700"
                             />
                             <StatCard
                                 icon={XCircle}
                                 label="Offres clôturées"
                                 value={stats.closedCount}
-                                accent="bg-primary-light/20 text-primary-dark/70"
+                                accent="bg-primary-light/20 text-font-primary-dark/70"
                             />
                         </div>
 
@@ -139,7 +139,7 @@ export default function CompanyDashboard() {
                             </Link>
                             <Link
                                 to="/company/dashboard/form?tab=manage"
-                                className="flex items-center justify-center gap-2 flex-1 font-bold text-sm py-3 px-5 rounded-3xl bg-bone-light text-primary-dark border border-primary-light/40 hover:bg-primary-light/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                                className="flex items-center justify-center gap-2 flex-1 font-bold text-sm py-3 px-5 rounded-3xl bg-bone-light text-font-primary-dark border border-primary-light/40 hover:bg-primary-light/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
                             >
                                 <LayoutList size={16} aria-hidden="true" />
                                 Gérer mes offres & candidatures
@@ -149,7 +149,7 @@ export default function CompanyDashboard() {
                         {/* offres récentes */}
                         <div className="backdrop-blur-2xl bg-bone-light/40 rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-5 sm:p-8">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-bold text-primary-dark">Offres récentes</h2>
+                                <h2 className="text-lg font-bold text-font-primary-dark">Offres récentes</h2>
                                 <Link
                                     to="/entreprise/offres?tab=manage"
                                     className="text-sm font-semibold text-primary hover:underline"
@@ -165,7 +165,7 @@ export default function CompanyDashboard() {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-sm text-primary-dark/60 text-center py-6">
+                                <p className="text-sm text-font-primary-dark/60 text-center py-6">
                                     Aucune offre publiée pour le moment.
                                 </p>
                             )}

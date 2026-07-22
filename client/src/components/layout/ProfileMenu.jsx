@@ -50,23 +50,22 @@ export default function ProfileMenu({
                     onClick={() => setIsOpen(!isOpen)}
                     className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none"
                     >
-                    <span className="text-xl font-bold text-bone tracking-tight hidden sm:block">
+                    <span className="text-xl font-bold text-light tracking-tight hidden sm:block">
                         {roleName}
                     </span>
                     <img src={logoSrc} alt={`Logo ${roleName}`} width={40} height={40} className="h-10 w-auto" />
 
                     {isAuthenticated && (
-                        <ChevronDown className={`w-4 h-4 text-bone transition-transform duration-200 hidden lg:inline md:inline ${isOpen ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`w-4 h-4 text-light transition-transform duration-200 hidden lg:inline md:inline ${isOpen ? "rotate-180" : ""}`} />
                     )}
                 </button>
 
             {/* menu profil */}
             {isOpen && isAuthenticated && (
-                <div className="absolute hidden lg:flex md:flex right-0 top-full mt-3 w-48 bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.15)] border border-white/50 py-2 flex-col z-50">
-
+                <div className="absolute hidden lg:flex md:flex right-0 top-full mt-3 w-48 bg-bone-light/95 dark:bg-bone-light/95 backdrop-blur-md rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.15)] border border-white/50 dark:border-white/10 py-2 flex-col z-50">
                     <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors text-left"
                     >
                         <LogOut className="w-4 h-4" />
                         Se déconnecter

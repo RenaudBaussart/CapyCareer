@@ -9,7 +9,7 @@ export default function UserDataGrid({ users, handleBanUser, handleDeleteUser })
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
                 <thead>
-                    <tr className="border-b border-white/40 text-primary-dark/70 text-sm">
+                    <tr className="border-b border-white/40 text-font-primary-dark/70 text-sm">
                         <th className="py-4 px-4 font-semibold">Utilisateur</th>
                         <th className="py-4 px-4 font-semibold">Email</th>
                         <th className="py-4 px-4 font-semibold">Rôle</th>
@@ -22,16 +22,16 @@ export default function UserDataGrid({ users, handleBanUser, handleDeleteUser })
                         users.map((user) => (
                             <tr
                                 key={user.id}
-                                className="border-b border-white/20 hover:bg-white/30 transition-colors"
+                                className="border-b border-white/20 hover:bg-bone-light/30 transition-colors"
                             >
-                                <td className="py-4 px-4 font-medium text-primary-dark">
+                                <td className="py-4 px-4 font-medium text-font-primary-dark">
                                     {user.name}
                                 </td>
-                                <td className="py-4 px-4 text-primary-dark flex items-center gap-2">
-                                    <Mail className="w-4 h-4 text-primary-dark/50" />
+                                <td className="py-4 px-4 text-font-primary-dark flex items-center gap-2">
+                                    <Mail className="w-4 h-4 text-font-primary-dark/50" />
                                     {user.email}
                                 </td>
-                                <td className="py-4 px-4 text-primary-dark/80">
+                                <td className="py-4 px-4 text-font-primary-dark/80">
                                     {user.role}
                                 </td>
                                 <td className="py-4 px-4">
@@ -64,7 +64,7 @@ export default function UserDataGrid({ users, handleBanUser, handleDeleteUser })
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5" className="py-8 text-center text-primary-dark/60">
+                            <td colSpan="5" className="py-8 text-center text-font-primary-dark/60">
                                 Aucun utilisateur trouvé avec cette adresse email.
                             </td>
                         </tr>

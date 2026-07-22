@@ -23,7 +23,7 @@ export default function LogDataGrid({ logs, handleDelete }) {
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
                 <thead>
-                    <tr className="border-b border-white/40 text-primary-dark/70 text-sm">
+                    <tr className="border-b border-white/40 text-font-primary-dark/70 text-sm">
                         <th className="py-4 px-4 font-semibold">Date</th>
                         <th className="py-4 px-4 font-semibold">Type</th>
                         <th className="py-4 px-4 font-semibold">Message</th>
@@ -39,9 +39,9 @@ export default function LogDataGrid({ logs, handleDelete }) {
                             return (
                                 <tr
                                     key={log.id}
-                                    className="border-b border-white/20 hover:bg-white/30 transition-colors"
+                                    className="border-b border-white/20 hover:bg-bone-light/30 transition-colors"
                                 >
-                                    <td className="py-4 px-4 text-sm font-medium text-primary-dark/70 whitespace-nowrap">
+                                    <td className="py-4 px-4 text-sm font-medium text-font-primary-dark/70 whitespace-nowrap">
                                         {log.date}
                                     </td>
                                     <td className="py-4 px-4">
@@ -50,7 +50,7 @@ export default function LogDataGrid({ logs, handleDelete }) {
                                             {log.type}
                                         </span>
                                     </td>
-                                    <td className="py-4 px-4 text-primary-dark font-medium flex items-center gap-2">
+                                    <td className="py-4 px-4 text-font-primary-dark font-medium flex items-center gap-2">
                                         {log.message}
                                     </td>
                                     <td className="py-4 px-4 text-right">
@@ -67,7 +67,7 @@ export default function LogDataGrid({ logs, handleDelete }) {
                         })
                     ) : (
                         <tr>
-                            <td colSpan="4" className="py-8 text-center text-primary-dark/60">
+                            <td colSpan="4" className="py-8 text-center text-font-primary-dark/60">
                                 Aucun log trouvé. Le système est propre !
                             </td>
                         </tr>

@@ -13,11 +13,11 @@ export default function Privacy() {
       <Navbar />
 
       <div className="grow flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-4xl backdrop-blur-2xl bg-white/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
+        <div className="w-full max-w-4xl backdrop-blur-2xl bg-bone-light/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
 
           <div className="flex items-center gap-3 mb-2">
             <Lock className="w-8 h-8 text-primary" aria-hidden="true" />
-            <h1 className="text-3xl md:text-4xl font-bold text-primary-dark">
+            <h1 className="text-3xl md:text-4xl font-bold text-font-primary-dark">
               Politique de Confidentialité
             </h1>
           </div>

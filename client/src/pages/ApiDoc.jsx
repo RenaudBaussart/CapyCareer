@@ -20,12 +20,12 @@ export default function ApiDoc() {
 
       <div className="grow flex items-center justify-center p-6 lg:p-12">
         {/* grande card */}
-        <div className="w-full max-w-4xl backdrop-blur-2xl bg-white/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
+        <div className="w-full max-w-4xl backdrop-blur-2xl bg-bone-light/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
 
           {/* haut de page */}
           <div className="flex items-center gap-3 mb-2">
             <Terminal className="w-8 h-8 text-primary" aria-hidden="true" />
-            <h1 className="text-3xl md:text-4xl font-bold text-primary-dark">
+            <h1 className="text-3xl md:text-4xl font-bold text-font-primary-dark">
               Documentation API
             </h1>
           </div>
@@ -40,7 +40,7 @@ export default function ApiDoc() {
             </p>
             <div className="bg-bone-light/80 p-4 rounded-xl border border-primary-light/20 space-y-2">
               <p className="text-sm font-medium"><strong>Format d'échange :</strong> JSON uniquement</p>
-              <p className="text-sm font-medium"><strong>URL de base :</strong> <code className="bg-white/80 px-1.5 py-0.5 rounded border text-primary-dark font-mono text-xs">https://api.capycareer.com/api/v1</code></p>
+              <p className="text-sm font-medium"><strong>URL de base :</strong> <code className="bg-bone-light/80 px-1.5 py-0.5 rounded border text-font-primary-dark font-mono text-xs">https://api.capycareer.com/api/v1</code></p>
             </div>
           </section>
 
@@ -52,7 +52,7 @@ export default function ApiDoc() {
             <p className="leading-relaxed">
               Certaines routes nécessitent que l'utilisateur soit authentifié. Les requêtes sur ces points d'accès doivent inclure un token d'accès JWT dans l'en-tête de la requête HTTP :
             </p>
-            <pre className="bg-bone-light p-4 rounded-xl border border-primary-light/20 overflow-x-auto text-xs font-mono text-primary-dark">
+            <pre className="bg-bone-light p-4 rounded-xl border border-primary-light/20 overflow-x-auto text-xs font-mono text-font-primary-dark">
               Authorization: Bearer YOUR_ACCESS_TOKEN
             </pre>
           </section>
@@ -113,7 +113,7 @@ export default function ApiDoc() {
             <h2 className="text-2xl font-bold text-deep-primary border-b-2 border-primary-light/30 pb-2 flex items-center gap-2">
               <Code2 className="w-6 h-6" /> Exemple de réponse (GET /companies/1)
             </h2>
-            <pre className="bg-bone-light p-4 rounded-xl border border-primary-light/20 overflow-x-auto text-xs font-mono text-primary-dark">
+            <pre className="bg-bone-light p-4 rounded-xl border border-primary-light/20 overflow-x-auto text-xs font-mono text-font-primary-dark">
               {`{
   "status": "success",
   "data": {
