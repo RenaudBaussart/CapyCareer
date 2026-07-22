@@ -93,7 +93,7 @@ export default function CompanyForm() {
     }
 
     return (
-        <main className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans">
+        <main className="flex flex-col min-h-screen bg-bone text-font-primary-dark font-sans">
             <Navbar />
 
             <section className="bg-main-layout">
@@ -102,10 +102,10 @@ export default function CompanyForm() {
                         {/* en-tête */}
                         <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)] mb-10">
                             <div className="w-full h-auto p-6 sm:p-8 bg-primary">
-                                <h1 className="text-3xl sm:text-4xl font-bold text-bone">
+                                <h1 className="text-3xl sm:text-4xl font-bold text-light">
                                     Espace recruteur
                                 </h1>
-                                <p className="text-bone/80 mt-2 max-w-2xl mx-auto">
+                                <p className="text-light/80 mt-2 max-w-2xl mx-auto">
                                     Publiez vos offres et suivez les candidatures reçues, le tout au
                                     même endroit.
                                 </p>
@@ -115,7 +115,7 @@ export default function CompanyForm() {
 
                             <Link
                                 to="/company/dashboard/"
-                                className=" mb-5 flex items-center justify-center gap-2 flex-1 font-bold text-sm text-primary-dark hover:text-primary"
+                                className=" mb-5 flex items-center justify-center gap-2 flex-1 font-bold text-sm text-font-primary-dark hover:text-primary"
                             >
                             <ArrowLeft/>    Retour
                             </Link>
@@ -135,7 +135,7 @@ export default function CompanyForm() {
                                     onClick={() => handleTabChange(id)}
                                     className={`flex items-center justify-center gap-2 flex-1 font-bold text-sm py-3 px-5 rounded-3xl border transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${activeTab === id
                                         ? "bg-deep-primary text-white border-deep-primary"
-                                        : "bg-bone-light text-primary-dark border-primary-light/40 hover:bg-primary-light/10"
+                                        : "bg-bone-light text-font-primary-dark border-primary-light/40 hover:bg-primary-light/10"
                                         }`}
                                 >
                                     <Icon size={16} aria-hidden="true" />

@@ -25,13 +25,13 @@ export default function Home() {
 
                         <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)] flex flex-col">
                             <div className="w-full h-auto p-5 relative bg-primary">
-                                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-bone mb-4">
+                                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-light mb-4">
                                     Bienvenue sur CapyCareer !
                                 </h1>
                             </div>
 
                             <div className="bg-bone-light p-6 sm:p-8 grow flex flex-col justify-center">
-                                <p className="text-primary-dark/70 mb-6 text-start">
+                                <p className="text-font-primary/70 mb-6 text-start">
                                     Explorez des offres adaptées à votre profil, développez votre réseau professionnel
                                     et avancez dans votre carrière à votre rythme. Que vous soyez étudiant,
                                     jeune diplômé ou professionnel confirmé, CapyCareer vous accompagne à

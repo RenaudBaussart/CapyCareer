@@ -119,12 +119,12 @@ export default function LoginForm() {
         {/* identifiant de connexion */}
         <div>
           <label
-            className="block text-lg font-bold text-primary-dark mb-1"
+            className="block text-lg font-bold text-font-primary mb-1"
             htmlFor="username" >
             Identifiant de connexion *
           </label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
+            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
               ? "border-2 border-red-600 focus:ring-red-500"
               : "border-primary-light focus:ring-primary"
               }`}
@@ -164,7 +164,7 @@ export default function LoginForm() {
             className="accent-primary w-4 h-4 cursor-pointer"
           />
 
-          <label htmlFor="rememberMe" className="text-sm font-medium text-primary-dark cursor-pointer">
+          <label htmlFor="rememberMe" className="text-sm font-medium text-font-primary cursor-pointer">
             Rester connecté
           </label>
         </div>
@@ -187,7 +187,7 @@ export default function LoginForm() {
         {/* btn co google */}
         <button
           type="button"
-          className="w-full mb-6 flex items-center justify-center gap-2 bg-white text-primary-dark border border-primary-light font-semibold py-3 px-4 rounded-3xl transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
+          className="w-full mb-6 flex items-center justify-center gap-2 bg-bone-light text-font-primary border border-primary-light font-semibold py-3 px-4 rounded-3xl transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
           aria-label="Se connecter avec Google"
         >
           <LogIn className="w-5 h-5" />
@@ -197,7 +197,7 @@ export default function LoginForm() {
       </form>
 
       {/* link vers inscription */}
-      <p className="text-center mt-6 text-sm text-primary-dark/80">
+      <p className="text-center mt-6 text-sm text-font-primary/80">
         Pas encore de compte ?{" "}
         <Link to="/register" className="text-accent-dark font-bold hover:underline">
           S'inscrire

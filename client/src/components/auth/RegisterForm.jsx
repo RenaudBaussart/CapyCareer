@@ -99,7 +99,7 @@ export default function RegisterForm() {
         {/* informations */}
         <div>
 
-          <span className="block text-lg font-bold text-primary-dark mb-1" id="Userinfos">
+          <span className="block text-lg font-bold text-font-primary-dark mb-1" id="Userinfos">
             Informations *
           </span>
 
@@ -109,7 +109,7 @@ export default function RegisterForm() {
 
               <label htmlFor="lastName" className="sr-only">Nom</label>
               <input
-                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.lastName
+                className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.lastName
                     ? "border-2 border-red-600 focus:ring-red-500"
                     : "border-primary-light focus:ring-primary"
                   }`}
@@ -129,7 +129,7 @@ export default function RegisterForm() {
 
               <label htmlFor="firstName" className="sr-only">Prénom</label>
               <input
-                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.firstName
+                className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.firstName
                     ? "border-2 border-red-600 focus:ring-red-500"
                     : "border-primary-light focus:ring-primary"
                   }`}
@@ -151,7 +151,7 @@ export default function RegisterForm() {
 
           <label htmlFor="username" className="sr-only">Identifiant de connexion</label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
+            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
                 ? "border-2 border-red-600 focus:ring-red-500"
                 : "border-primary-light focus:ring-primary"
               }`}
@@ -170,7 +170,7 @@ export default function RegisterForm() {
 
           <label htmlFor="email" className="sr-only">Adresse email</label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.email
+            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.email
                 ? "border-2 border-red-600 focus:ring-red-500"
                 : "border-primary-light focus:ring-primary"
               }`}
@@ -210,7 +210,7 @@ export default function RegisterForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-deep-primary text-white font-bold py-3 px-4 rounded-3xl mt-6 hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none disabled:opacity-50"
+          className="w-full bg-deep-primary text-light-bone font-bold py-3 px-4 rounded-3xl mt-6 hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none disabled:opacity-50"
         >
           {isSubmitting ? "Inscription..." : "S'inscrire"}
         </button>
@@ -225,7 +225,7 @@ export default function RegisterForm() {
         {/* btn co google */}
         <button
           type="button"
-          className="w-full mb-6 flex items-center justify-center gap-2 bg-white text-primary-dark border border-primary-light font-semibold py-3 px-4 rounded-3xl transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
+          className="w-full mb-6 flex items-center justify-center gap-2 bg-bone-light text-font-primary-dark border border-primary-light font-semibold py-3 px-4 rounded-3xl transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
           aria-label="S'inscrire avec Google"
         >
           <UserPlus className="w-5 h-5" />
