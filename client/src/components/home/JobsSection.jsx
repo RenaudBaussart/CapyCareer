@@ -3,7 +3,7 @@
 // import
 import { useEffect, useMemo, useRef, useState } from "react";
 // icone
-import { Search, MapPin, Bookmark, Share2, Briefcase, Sparkles } from "lucide-react";
+import { Search, MapPin, Bookmark, Share2, Briefcase, Sparkles, X } from "lucide-react";
 
 /* affichage */
 
@@ -46,6 +46,7 @@ function Badge({ label }) {
 /* carte liste offres */
 
 function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
+    
     return (
         <div
             onClick={onSelect}
@@ -100,9 +101,10 @@ function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
 
 /*detail offre selectionnée */
 
-function JobDetail({ job, isSaved, onToggleSave }) {
+// onClose n'est utilisé que sur mobile (bouton fermeture de la modal plein écran)
+function JobDetail({ job, isSaved, onToggleSave, onClose }) {
     return (
-        <article className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-5 sm:p-7">
+        <article className="bg-bone-light rounded-2xl lg:shadow-[0_0_15px_rgba(0,0,0,0.08)] lg:border border-primary-light/40 p-5 sm:p-7">
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <h2 className="text-lg sm:text-xl font-bold text-primary-dark">{job.name}</h2>
@@ -133,6 +135,15 @@ function JobDetail({ job, isSaved, onToggleSave }) {
                         aria-label="Partager l'offre"
                     >
                         <Share2 size={17} className="text-primary-dark" aria-hidden="true" />
+                    </button>
+                    {/* bouton fermeture, visible uniquement en modal mobile */}
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="lg:hidden p-2 rounded-full hover:bg-primary-light/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                        aria-label="Fermer le détail de l'offre"
+                    >
+                        <X size={17} className="text-primary-dark" aria-hidden="true" />
                     </button>
                 </div>
             </div>
@@ -191,6 +202,32 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
     const [detailError, setDetailError] = useState(null);
     // évite de refetch si loffre a déjà été consultée
     const detailsCache = useRef(new Map());
+
+    // pilote l'affichage de la modal plein écran en mobile (n'a pas d'effet en desktop)
+    const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false);
+
+    // empêche le scroll de la page tant que la modal mobile est ouverte (ignoré en desktop, où il n'y a pas de modal)
+    useEffect(() => {
+        const mediaQuery = window.matchMedia("(max-width: 1023px)"); // en dessous du breakpoint lg de Tailwind
+
+        // applique ou retire le blocage de scroll selon l'état de la modal ET la taille d'écran actuelle
+        function updateScrollLock() {
+            if (isMobileDetailOpen && mediaQuery.matches) {
+                document.body.style.overflow = "hidden";
+            } else {
+                document.body.style.overflow = "";
+            }
+        }
+
+        updateScrollLock();
+        // réagit si l'utilisateur redimensionne la fenêtre pendant que la modal est ouverte
+        mediaQuery.addEventListener("change", updateScrollLock);
+
+        return () => {
+            mediaQuery.removeEventListener("change", updateScrollLock);
+            document.body.style.overflow = "";
+        };
+    }, [isMobileDetailOpen]);
 
     const [saved, setSaved] = useState(() => new Set());
 
@@ -284,6 +321,12 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
         };
     }, [selectedId, fetchJobOfferDetail]);
 
+    // sélectionne une offre depuis la liste et ouvre la modal (mobile uniquement, ignoré en desktop)
+    function handleSelectJob(id) {
+        setSelectedId(id);
+        setIsMobileDetailOpen(true);
+    }
+
     function toggleSave(id) {
         setSaved((prev) => {
             const next = new Set(prev);
@@ -349,14 +392,14 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                     <h3 className="flex items-center gap-2 font-bold text-primary-dark mb-3">
                         <Sparkles size={16} className="text-primary" aria-hidden="true" /> Emplois recommandés
                     </h3>
-                    <div className="flex flex-col gap-3 overflow-auto max-h-150 scrollbar-thumb-primary-dark rounded-2xl">
+                    <div className="flex flex-col gap-3 overflow-auto max-h-150 scrollbar-auto md:scrollbar-thumb-primary-dark lg:scrollbar-thumb-primary-dark rounded-2xl box-border">
                         {filtered.map((job) => (
                             <JobCard
                                 key={job.PK_id}
                                 job={job}
                                 isSelected={selectedId === job.PK_id}
                                 isSaved={saved.has(job.PK_id)}
-                                onSelect={() => setSelectedId(job.PK_id)}
+                                onSelect={() => handleSelectJob(job.PK_id)}
                                 onToggleSave={() => toggleSave(job.PK_id)}
                             />
                         ))}
@@ -378,33 +421,43 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                     </div>
                 </aside>
 
-                {isLoadingDetail && (
-                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
-                        <p className="text-sm text-primary-dark/60">Chargement de l'offre...</p>
-                    </div>
-                )}
+                {/*
+                  colonne détail : toujours visible en desktop (lg), dans le flux normal de la grille.
+                  en mobile, elle est masquée par défaut et devient une modal plein écran (fixed inset-0)
+                  uniquement quand isMobileDetailOpen est vrai (offre cliquée dans la liste).
+                */}
+                <div
+                    className={`${isMobileDetailOpen ? "fixed inset-0 z-50 bg-bone overflow-y-auto p-4" : "hidden"} lg:static lg:z-auto lg:bg-transparent lg:p-0 lg:block lg:overflow-visible`}
+                >
+                    {isLoadingDetail && (
+                        <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
+                            <p className="text-sm text-primary-dark/60">Chargement de l'offre...</p>
+                        </div>
+                    )}
 
-                {!isLoadingDetail && detailError && (
-                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
-                        <p className="font-semibold text-primary-dark">Impossible de charger cette offre</p>
-                        <p className="text-sm text-primary-dark/60">{detailError}</p>
-                    </div>
-                )}
+                    {!isLoadingDetail && detailError && (
+                        <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
+                            <p className="font-semibold text-primary-dark">Impossible de charger cette offre</p>
+                            <p className="text-sm text-primary-dark/60">{detailError}</p>
+                        </div>
+                    )}
 
-                {!isLoadingDetail && !detailError && selectedDetail && (
-                    <JobDetail
-                        job={selectedDetail}
-                        isSaved={saved.has(selectedDetail.PK_id)}
-                        onToggleSave={() => toggleSave(selectedDetail.PK_id)}
-                    />
-                )}
+                    {!isLoadingDetail && !detailError && selectedDetail && (
+                        <JobDetail
+                            job={selectedDetail}
+                            isSaved={saved.has(selectedDetail.PK_id)}
+                            onToggleSave={() => toggleSave(selectedDetail.PK_id)}
+                            onClose={() => setIsMobileDetailOpen(false)}
+                        />
+                    )}
 
-                {!isLoadingDetail && !detailError && !selectedDetail && !isLoadingList && filtered.length === 0 && (
-                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
-                        <p className="font-semibold text-primary-dark">Aucune offre ne correspond</p>
-                        <p className="text-sm text-primary-dark/60">Essaie d'élargir ta recherche.</p>
-                    </div>
-                )}
+                    {!isLoadingDetail && !detailError && !selectedDetail && !isLoadingList && filtered.length === 0 && (
+                        <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
+                            <p className="font-semibold text-primary-dark">Aucune offre ne correspond</p>
+                            <p className="text-sm text-primary-dark/60">Essaie d'élargir ta recherche.</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

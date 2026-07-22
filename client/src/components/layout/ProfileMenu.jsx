@@ -53,7 +53,7 @@ export default function ProfileMenu({
                     <span className="text-xl font-bold text-bone tracking-tight hidden sm:block">
                         {roleName}
                     </span>
-                    <img src={logoSrc} alt={`Logo ${roleName}`} className="h-10 w-auto" />
+                    <img src={logoSrc} alt={`Logo ${roleName}`} width={40} height={40} className="h-10 w-auto" />
 
                     {isAuthenticated && (
                         <ChevronDown className={`w-4 h-4 text-bone transition-transform duration-200 hidden lg:inline md:inline ${isOpen ? "rotate-180" : ""}`} />
