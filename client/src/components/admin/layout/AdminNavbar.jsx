@@ -6,7 +6,7 @@ import { NavLink, Link } from "react-router-dom";
 // component
 import ProfileMenu from "../../layout/ProfileMenu";
 // icone
-import { LayoutDashboard, Users, Briefcase, Copy, Terminal, Menu, X, LogOut, User } from "lucide-react";
+import { LayoutDashboard, Users, Building, Briefcase, Copy, Terminal, Menu, X, LogOut, User } from "lucide-react";
 
 export default function AdminNavbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -35,9 +35,13 @@ export default function AdminNavbar() {
                             <LayoutDashboard className="w-4 h-4 text-white" />
                             Dashboard
                         </NavLink>
-                        <NavLink to="/admin/users" className={navLinkClass}>
+                        <NavLink to="/admin/candidat" className={navLinkClass}>
                             <Users className="w-4 h-4 text-white" />
-                            Utilisateurs
+                            Candidats
+                        </NavLink>
+                        <NavLink to="/admin/entreprise" className={navLinkClass}>
+                            <Building className="w-4 h-4 text-white" />
+                            Entreprises
                         </NavLink>
                         <NavLink to="/admin/jobs" className={navLinkClass}>
                             <Briefcase className="w-4 h-4 text-white" />
@@ -81,9 +85,13 @@ export default function AdminNavbar() {
                             <LayoutDashboard className="w-4 h-4 text-white" />
                             Dashboard
                         </NavLink>
-                        <NavLink to="/admin/users" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
+                        <NavLink to="/admin/candidat" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
                             <Users className="w-4 h-4 text-white" />
-                            Utilisateurs
+                            Candidats
+                        </NavLink>
+                        <NavLink to="/admin/entreprise" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
+                            <Building className="w-4 h-4 text-white" />
+                            Entreprises
                         </NavLink>
                         <NavLink to="/admin/jobs" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
                             <Briefcase className="w-4 h-4 text-white" />
