@@ -6,7 +6,8 @@ import { useState, useEffect } from "react";
 import AdminNavbar from "../../components/admin/layout/AdminNavbar";
 import AdminStatCard from "../../components/admin/AdminStatCard";
 import N8nSyncCard from "../../components/admin/N8nSyncCard";
-import Leaves from "../../assets/images/Leaves.png"
+import SearchBar from "../../components/admin/SearchBar";
+
 // icone
 import { Users, Briefcase, Copy, Terminal, Building } from "lucide-react";
 // navigation
@@ -81,7 +82,7 @@ export default function AdminDashboard() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
 
                             {/* nbr de candidats */}
-                            <Link to="/admin/users" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
+                            <Link to="/admin/candidat" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
                                 <AdminStatCard
                                     title="Candidats"
                                     value={stats.candidats}
@@ -93,7 +94,7 @@ export default function AdminDashboard() {
                             </Link>
 
                             {/* nbr d'entreprises */}
-                            <Link to="/admin/users" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
+                            <Link to="/admin/entreprise" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
                                 <AdminStatCard
                                     title="Entreprises"
                                     value={stats.entreprises}
