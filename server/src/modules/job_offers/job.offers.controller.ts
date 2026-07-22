@@ -73,7 +73,7 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
 
         // cherche l'offre correspondante en base de données
         const [rows] = await pool.execute<any[]>(
-            "SELECT PK_id, title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE PK_id = ?;",
+            "SELECT PK_id, title, description, url, contract_type, city, country, company, remote, hybride, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE PK_id = ?;",
             [id]
         );
 
@@ -166,7 +166,7 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
 
         //exécute la requête de mise à jour sql
         const [result] = await pool.execute(
-            "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, is_remote_job = ?, is_hybride_job = ?, user_id = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ? WHERE PK_content_hash = ?;",
+            "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, is_remote_job = ?, is_hybride_job = ?, user_id = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ? WHERE PK_id = ?;",
             [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency, id]
         );
 
@@ -200,7 +200,7 @@ const deleteJobOffer = async (req: Request, res: Response, next: NextFunction) =
 
         // change la valeur active à 0 pour marquer la suppression
         const [result] = await pool.execute(
-            "UPDATE Job_Offers SET active = 0 WHERE PK_content_hash = ?;",
+            "UPDATE Job_Offers SET active = 0 WHERE PK_id = ?;",
             [id]
         );
 
