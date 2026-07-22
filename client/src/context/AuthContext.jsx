@@ -2,6 +2,8 @@
 import { createContext, useState, useEffect } from "react";
 // fonction blacklist
 import { logoutApi } from "../services/auth.service";
+// importer jwtDecode pour verif date expiration
+import { jwtDecode } from "jwt-decode";
 
 // creation contexte dauthentification
 export const AuthContext = createContext();
@@ -23,12 +25,32 @@ export function AuthProvider({ children }) {
 
         if (storedToken && storedUser) {
             try {
-                setToken(storedToken);
-                setUser(JSON.parse(storedUser));
-                // en cas derreur ou corruption, met luser en etat deconnexion
+                // lis le token pour connaitre date expiration
+                const decodedToken = jwtDecode(storedToken);
+                // date actuelle en sec
+                const currentTime = Date.now() / 1000;
+
+                // SI token est expiré
+                if (decodedToken.exp < currentTime) {
+                    // compte déconnecté token supprimé
+                    console.warn("Le token est expiré. Déconnexion automatique.");
+                    localStorage.removeItem("capy_token");
+                    localStorage.removeItem("capy_user");
+                    sessionStorage.removeItem("capy_token");
+                    sessionStorage.removeItem("capy_user");
+                    // SINON SI token encore valide
+                } else {
+                    // alors connecte luser
+                    setToken(storedToken);
+                    setUser(JSON.parse(storedUser));
+                }
+                // SI token corrompu alors clean
             } catch (e) {
-                console.error("Erreur lors du parsing des infos utilisateur", e);
-                logout();
+                console.error("Erreur lors du parsing ou de la vérification du token", e);
+                localStorage.removeItem("capy_token");
+                localStorage.removeItem("capy_user");
+                sessionStorage.removeItem("capy_token");
+                sessionStorage.removeItem("capy_user");
             }
         }
         setIsLoading(false);
@@ -38,7 +60,7 @@ export function AuthProvider({ children }) {
     const login = (newToken, userData) => {
         const { rememberMe, ...userInfos } = userData;
 
-        // SI luser a coché rememberMe ALORS met en localStorage (soit conservation)
+        // SI luser a coché rememberMe ALORS met en localStorage (soit permanent)
         const storage = rememberMe ? localStorage : sessionStorage;
 
         storage.setItem("capy_token", newToken);
@@ -52,10 +74,9 @@ export function AuthProvider({ children }) {
     const logout = async () => {
         try {
             if (token) {
-                // call api
+                // call api pour blacklister le token
                 await logoutApi(token);
             }
-            // en cas derreur
         } catch (error) {
             console.error("Erreur lors du blacklistage", error);
         } finally {
@@ -67,9 +88,9 @@ export function AuthProvider({ children }) {
 
             setToken(null);
             setUser(null);
-        };
+        }
+    };
 
-    }
     return (
         <AuthContext.Provider value={{ token, user, login, logout, isLoading }}>
             {children}

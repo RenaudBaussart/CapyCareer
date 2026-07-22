@@ -44,6 +44,9 @@ services:
       - OVH_DB_PORT=${OVH_DB_PORT} # port de connexion à la base de données
       - WLD_API_KEY=${WLD_API_KEY} # clé secrète pour récupérer les offres WLD
       - JWT_SECRET=${JWT_SECRET} # clé secrète pour signer les tokens JWT
+      - JWT_EXPIRATION=${JWT_EXPIRATION} # durée de validité des tokens JWT
+      - JWT_LONG_EXPIRATION=${JWT_LONG_EXPIRATION} # durée de validité des tokens JWT pour les sessions prolongées
+      - SALTROUNDS=${SALTROUNDS} # nombre de tours de salage pour le hachage des mots de passe
     networks:
       - app-network 
       # Connecte le backend au réseau virtuel privé.

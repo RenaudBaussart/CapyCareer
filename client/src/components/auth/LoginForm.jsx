@@ -45,18 +45,27 @@ export default function LoginForm() {
     setApiError("");
 
     try {
-      // appel au service externe pour se co
-      const result = await login(data);
+      // isole rememberMe des autres datas
+      const { rememberMe, ...apiData } = data;
+
+      // prepare payload pour lenvoi en back
+      const payloadForBackend = {
+        ...apiData,
+        stayConnected: rememberMe
+      };
+
+      // call back externe pour se co avec le bon payload
+      const result = await login(payloadForBackend);
 
       // SI token alors il est stocké
       if (result.token) {
         // decode  token pour cbiler le role
         const decodedToken = jwtDecode(result.token);
 
-        // transmet la value du token au contexte (on inclut le roleId décodé)
+        // transmet la value du token au contexte
         contextLogin(result.token, {
           username: data.username,
-          rememberMe: data.rememberMe,
+          rememberMe: rememberMe,
           roleId: decodedToken.role
         });
 
@@ -97,7 +106,7 @@ export default function LoginForm() {
 
         {/* affichage des erreurs api traduites */}
         {apiError && (
-          <div className="p-3 bg-accent-light/20 border border-accent-dark text-accent-deep rounded-xl text-sm font-semibold text-center">
+          <div role="alert" className="p-3 bg-red-50 border-2 border-red-600 text-red-700 rounded-xl text-sm font-bold text-center">
             {apiError}
           </div>
         )}
@@ -110,7 +119,10 @@ export default function LoginForm() {
             Identifiant de connexion *
           </label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
+              ? "border-2 border-red-600 focus:ring-red-500"
+              : "border-primary-light focus:ring-primary"
+              }`}
             id="username"
             type="text"
             autoComplete="username"
@@ -118,14 +130,13 @@ export default function LoginForm() {
             aria-invalid={errors.username ? "true" : "false"}
             aria-describedby={errors.username ? "username-error" : undefined}
           />
-          {errors.username && <p id="username-error" className="text-accent-dark font-medium text-xs mt-1">{errors.username.message}</p>}
+          {errors.username && <p id="username-error" className="text-red-700 font-bold text-xs mt-1 ml-2">{errors.username.message}</p>}
         </div>
 
         {/* mdp */}
         <div>
-          <div className="flex justify-between items-center mb-1">
-            <span className="hidden">Label géré dans le composant</span>
-            <Link to="/forgot-password" className="text-xs text-accent font-medium hover:text-accent-dark hover:underline ml-auto">
+          <div className="flex justify-end mb-1">
+            <Link to="/forgot-password" className="text-xs text-accent font-medium hover:text-accent-dark hover:underline">
               Mot de passe oublié ?
             </Link>
           </div>
@@ -147,6 +158,7 @@ export default function LoginForm() {
             {...register("rememberMe")}
             className="accent-primary w-4 h-4 cursor-pointer"
           />
+
           <label htmlFor="rememberMe" className="text-sm font-medium text-primary-dark cursor-pointer">
             Rester connecté
           </label>

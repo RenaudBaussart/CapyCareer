@@ -1366,6 +1366,76 @@ registry.registerPath({
         }
     }
 });
+registry.registerPath({
+    method: "get",
+    path: "/api/candidates/redirect/{jobId}",
+    description: "Rediriger vers le site de l'offre d'emploi",
+    summary: "Rediriger vers le site de l'offre d'emploi",
+    tags: ["Candidats"],
+    security: [{ [bearerAuthName]: [] }],
+    request: {
+        params: z.object({
+            jobId: z.int().openapi({ description: "L'ID de l'offre d'emploi pour laquelle rediriger" })
+        })
+    },
+    responses: {
+        200: {
+            description: "Redirection vers le site de l'offre.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Redirection vers le site de l'offre." }),
+                        url: z.string().openapi({ example: "https://example.com/job/123" })
+                    })
+                }
+            }
+        },
+        400: {
+            description: "Requête invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Requête invalide." })
+                    })
+                }
+            }
+        },
+        401: {
+            description: "Non autorisé. Le token JWT est manquant ou invalide.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Non autorisé. Le token JWT est manquant ou invalide." })
+                    })
+                }
+            }
+        },
+        404: {
+            description: "Offre d'emploi non trouvée.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Offre d'emploi non trouvée." })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        success: z.boolean().openapi({ example: false }),
+                        message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
 
 export function generateOpenAPI() {
     const generator = new OpenApiGeneratorV3(registry.definitions);
