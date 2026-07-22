@@ -104,6 +104,11 @@ export default function LoginForm() {
         onSubmit={handleSubmit(onSubmit)}
         noValidate>
 
+        {/* titre */}
+        <h1 className="text-3xl font-bold text-white bg-bone/20 p-5 rounded-2xl text-center mb-6 tracking-normal shadow-[0_0_15px_rgba(0,0,0,0.05)]">
+          Connexion
+        </h1>
+
         {/* affichage des erreurs api traduites */}
         {apiError && (
           <div role="alert" className="p-3 bg-red-50 border-2 border-red-600 text-red-700 rounded-xl text-sm font-bold text-center">

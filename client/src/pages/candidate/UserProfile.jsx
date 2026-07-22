@@ -1,7 +1,9 @@
 // fichier gerant la page de profil candidat
 
 // import
-// call le hook
+import { useContext } from "react";
+// hooks
+import { HandednessContext } from "../../context/HandednessContext";
 import { useUserProfile } from "../../hook/useUserProfile";
 // component
 import Navbar from "../../components/layout/Navbar";
@@ -14,7 +16,10 @@ import {
     Cat
 } from "lucide-react";
 
+
+
 export default function UserProfile() {
+
     // on recupere la logique depuis le hook
     const {
         profileData,
@@ -24,6 +29,9 @@ export default function UserProfile() {
         disableNotifications,
         requestAccountDeletion
     } = useUserProfile();
+
+    // préférence gaucher/droitier pour l'affichage mobile
+    const { handedness, setHandedness } = useContext(HandednessContext);
 
     return (
         <div
@@ -115,6 +123,38 @@ export default function UserProfile() {
                                 </button>
                             </div>
 
+                        </div>
+
+                        {/* préférences d'affichage mobile */}
+                        <div className="space-y-4 pt-6 border-t border-primary-dark/10">
+                            <h2 className="text-lg font-semibold text-primary-dark">Préférences d'affichage (mobile)</h2>
+                            <p className="text-sm text-primary-dark/60">
+                                Choisissez la position du menu pour l'adapter à votre main.
+                            </p>
+                            <div className="flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setHandedness("left")}
+                                    aria-pressed={handedness === "left"}
+                                    className={`flex-1 px-4 py-2.5 rounded-xl font-medium border transition-colors ${handedness === "left"
+                                        ? "bg-primary text-white border-primary"
+                                        : "bg-white/50 border-white/60 text-primary-dark hover:bg-primary/10"
+                                        }`}
+                                >
+                                    Gaucher
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setHandedness("right")}
+                                    aria-pressed={handedness === "right"}
+                                    className={`flex-1 px-4 py-2.5 rounded-xl font-medium border transition-colors ${handedness === "right"
+                                        ? "bg-primary text-white border-primary"
+                                        : "bg-white/50 border-white/60 text-primary-dark hover:bg-primary/10"
+                                        }`}
+                                >
+                                    Droitier
+                                </button>
+                            </div>
                         </div>
 
                         {/* -zone suppression */}

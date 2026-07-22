@@ -85,7 +85,7 @@ export default function RegisterForm() {
         noValidate>
 
         {/* titre */}
-        <h1 className="text-3xl font-bold text-white text-center mb-6 tracking-normal">
+        <h1 className="text-3xl font-bold text-white bg-bone/20 p-5 rounded-2xl text-center mb-6 tracking-normal shadow-[0_0_15px_rgba(0,0,0,0.05)]">
           Inscription
         </h1>
 
