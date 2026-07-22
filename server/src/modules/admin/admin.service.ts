@@ -363,6 +363,19 @@ export class AdminService {
             connection.release();
         }
     }
+
+    // methode pour cibler les users banned
+    async getBannedMembers() {
+        const connection = await this.pool.getConnection();
+        try {
+            const [rows] = await connection.execute<RowDataPacket[]>(
+                "SELECT PK_banned_id, email, username, banned_at FROM Banned ORDER BY banned_at DESC"
+            );
+            return rows;
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 
