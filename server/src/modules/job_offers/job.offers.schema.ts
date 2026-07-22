@@ -21,7 +21,7 @@ export const jobOfferDetailSchema = jobOfferSchema.extend({
 }).openapi('JobOfferDetail');
 
 export const jobOfferFullSchema = z.object({
-    PK_id: z.number().int().openapi({ description: "Primary key of the job offer." }),
+    PK_id: z.number().int().optional().openapi({ description: "Primary key of the job offer." }),
     title: z.string().nullable().openapi({ description: "Title of the job offer." }),
     description: z.string().nullable().openapi({ description: "Full description of the job offer." }),
     url: z.string().url().nullable().openapi({ description: "URL to the original job offer." }),

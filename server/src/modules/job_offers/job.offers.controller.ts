@@ -73,7 +73,7 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
 
         // cherche l'offre correspondante en base de données
         const [rows] = await pool.execute<any[]>(
-            "SELECT PK_id, title, description, url, contract_type, city, country, company, remote, hybride, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE PK_id = ?;",
+            "SELECT PK_id, title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE PK_id = ?;",
             [id]
         );
 
@@ -120,7 +120,7 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
 
         //insère la nouvelle offre en base de données
         const [result] = await pool.execute(
-            "INSERT INTO Job_Offers (title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            "INSERT INTO Job_Offers (title, description, url, contract_type, city, country, company, remote, hybrid, user_id, publish_date, salary_max, salary_min, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
             [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency]
         );
 
@@ -166,8 +166,8 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
 
         //exécute la requête de mise à jour sql
         const [result] = await pool.execute(
-            "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, is_remote_job = ?, is_hybride_job = ?, user_id = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ? WHERE PK_id = ?;",
-            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency, id]
+            "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, remote = ?, hybrid = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ? WHERE PK_id = ?;",
+            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency, id]
         );
 
         if ((result as any).affectedRows === 0) {
