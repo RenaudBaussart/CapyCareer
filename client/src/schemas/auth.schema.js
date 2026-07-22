@@ -45,6 +45,7 @@ export const registerSchema = z
 export const loginSchema = z.object({
   username: z.string().min(3, "L'identifiant est requis"),
   password: z.string().min(1, "Le mot de passe est requis"),
+  rememberMe: z.boolean().optional(),
 });
 
 // validation pour l'inscription entreprise
