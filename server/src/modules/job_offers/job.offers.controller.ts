@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { pool } from '../../config/database';
 import { z } from "zod";
-import { BadRequestError, NotFoundError, InternalServerError } from '../../core/errors/HttpError'; 
+import { BadRequestError, NotFoundError, InternalServerError } from '../../core/errors/HttpError';
 import { createJobFullOffer } from "./job.offers.service";
 
 /**
@@ -10,10 +10,10 @@ import { createJobFullOffer } from "./job.offers.service";
  * @param res la réponse HTTP renvoyant les offres et l'indicateur de fin
  * @param next la fonction pour transmettre les erreurs au middleware d'erreur
  */
-const getJobOffers = async (req: Request, res: Response, next: NextFunction) => { 
+const getJobOffers = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const page = parseInt(req.query.page as string) || 1;
-        
+
         // vérifie si la page est un nombre positif valide
         if (page < 1) {
             throw new BadRequestError("Le numéro de page doit être un entier positif.");
@@ -22,20 +22,20 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
         const limit = 50;
         //calcule le décalage pour la pagination
         const offset = (page - 1) * limit;
-        
+
         // récupère 51 offres au lieu de 50 pour anticiper la page suivante
         const [rows] = await pool.query(
-            "SELECT PK_id, title, contract_type, city, country, company FROM Job_Offers ORDER BY publish_date DESC LIMIT ? OFFSET ?;", 
+            "SELECT PK_id, title, contract_type, city, country, company FROM Job_Offers ORDER BY publish_date DESC LIMIT ? OFFSET ?;",
             [limit + 1, offset]
         );
 
         //typage du tableau de résultats
-        const offers = rows as any[]; 
+        const offers = rows as any[];
 
         if (offers.length === 0 && page > 1) {
             throw new NotFoundError("Aucune offre d'emploi trouvée pour cette page.");
         }
-        
+
         // détermine si la fin de la table est atteinte
         const isTheEnd = offers.length <= limit;
 
@@ -43,7 +43,7 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
             //vire le 51ème élément bonus si il existe
             offers.pop();
         }
-        
+
         // renvoie la réponse bien structurée au client
         res.status(200).json({
             job_offers: offers,
@@ -107,8 +107,8 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
         } catch (error: any) {
             //si c'est une erreur zod renvoie les détails de validation en 400
             if (error instanceof z.ZodError) {
-                return res.status(400).json({ 
-                    message: "Erreur de validation des données.", 
+                return res.status(400).json({
+                    message: "Erreur de validation des données.",
                     errors: error.flatten().fieldErrors
                 });
             }
@@ -116,12 +116,20 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
         }
 
         // déstructure les champs nécessaires
-        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency } = jobOffer;
-
+        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency } = jobOffer;
+        const formattedPublishDate = publish_date ? new Date(publish_date).toISOString().slice(0, 19).replace('T', ' ') : null;
+        const rawString = `${title}-${city}-${contract_type}-${company}-${publish_date}`.toLowerCase();
+        let contentHash = 0;
+        for (let i = 0; i < rawString.length; i++) {
+            const char = rawString.charCodeAt(i);
+            contentHash = ((contentHash << 5) - contentHash) + char;
+            contentHash = contentHash & contentHash;
+        }
+        const finalHash = Math.abs(contentHash).toString(16)
         //insère la nouvelle offre en base de données
         const [result] = await pool.execute(
-            "INSERT INTO Job_Offers (title, description, url, contract_type, city, country, company, remote, hybrid, user_id, publish_date, salary_max, salary_min, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency]
+            "INSERT INTO Job_Offers (content_hash ,title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            [finalHash, title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency]
         );
 
         // confirme la création avec l'id généré
@@ -153,8 +161,8 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
         } catch (error: any) {
             // si l'erreur est une validation zod renvoie une réponse 400
             if (error instanceof z.ZodError) {
-                return res.status(400).json({ 
-                    message: "Erreur de validation des données.", 
+                return res.status(400).json({
+                    message: "Erreur de validation des données.",
                     errors: error.flatten().fieldErrors
                 });
             }
@@ -162,12 +170,12 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
         }
 
         // déstructure les données validées
-        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, user_id, publish_date, salary_max, salary_min, currency } = jobOffer;
-
+        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency } = jobOffer;
+        const formattedPublishDate = publish_date ? new Date(publish_date).toISOString().slice(0, 19).replace('T', ' ') : null;
         //exécute la requête de mise à jour sql
         const [result] = await pool.execute(
             "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, remote = ?, hybrid = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ? WHERE PK_id = ?;",
-            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency, id]
+            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, id]
         );
 
         if ((result as any).affectedRows === 0) {
@@ -276,4 +284,4 @@ const refreshJobOffers = async (req: Request, res: Response, next: NextFunction)
         next(error);
     }
 };
-export { getJobOffers, getJobOfferById, createJobOffer, updateJobOffer, deleteJobOffer, totalJobOffersCount,refreshJobOffers};
+export { getJobOffers, getJobOfferById, createJobOffer, updateJobOffer, deleteJobOffer, totalJobOffersCount, refreshJobOffers };
