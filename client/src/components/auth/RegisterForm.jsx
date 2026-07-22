@@ -1,6 +1,8 @@
 // fichier du component qui gere validation, accessibilité champs & erreurs
 
 // import
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 // hook gere les formulaire react
 import { useForm } from "react-hook-form";
 // permet de co react hook form avec la validation zod
@@ -10,11 +12,21 @@ import { registerSchema } from "../../schemas/auth.schema";
 // icone
 import { UserPlus } from "lucide-react";
 // navigation
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // afficher/masquer mdp
 import PasswordInput from "../ui/PasswordInput";
+// communication API & gestion des erreurs
+import { registerUser } from "../../services/auth.service";
+import { getFriendlyErrorMessage } from "../../utils/errorHandler";
 
 export default function RegisterForm() {
+  // recupere fonction login du contexte pour se co apres l inscription
+  const { login: contextLogin } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // etat pour gerer les erreurs renvoyees par API
+  const [apiError, setApiError] = useState("");
+
   // initialisation rhf
   const {
     register,
@@ -27,8 +39,40 @@ export default function RegisterForm() {
 
   // fonction appelée si le form est valide
   const onSubmit = async (data) => {
-    // WARNING: connecter a lAPI
-    console.log("Form data :", data);
+    // reset des erreurs api avant chaque tentative
+    setApiError("");
+
+    try {
+      // retire confirmation mdp & isole aux datas
+      const { confirmPassword, ...formData } = data;
+
+      // structure data pour back
+      const registerData = {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        firstname: formData.firstName,
+        lastname: formData.lastName,
+        role: "candidat"
+      };
+
+      // call service externe inscription
+      const result = await registerUser(registerData);
+
+      // SI un token est renvoyé 
+      if (result.token) {
+        // alors il est stocké & luser est co
+        contextLogin(result.token, { username: data.username });
+      }
+
+      console.log("Inscription réussie !", result);
+      navigate("/");
+
+    } catch (error) {
+      console.error("Erreur d'inscription :", error.message);
+
+      setApiError(getFriendlyErrorMessage(error.message));
+    }
   };
 
   return (
@@ -40,24 +84,35 @@ export default function RegisterForm() {
         onSubmit={handleSubmit(onSubmit)}
         noValidate>
 
+        {/* titre */}
+        <h1 className="text-3xl font-bold text-white text-center mb-6 tracking-normal">
+          Inscription
+        </h1>
+
+        {/* affichage des erreurs api traduites */}
+        {apiError && (
+          <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl text-sm font-semibold text-center mb-4">
+            {apiError}
+          </div>
+        )}
+
         {/* informations */}
         <div>
-          {/* Ce texte sert de titre de section visuel, on peut lui donner id="Userinfos" pour le lier au groupe si besoin */}
+
           <span className="block text-lg font-bold text-primary-dark mb-1" id="Userinfos">
             Informations *
           </span>
-          
+
           <div className="flex gap-3">
             {/* nom */}
             <div className="w-1/2">
-              {/* Label caché visuellement mais lu par les lecteurs d'écran */}
+
               <label htmlFor="lastName" className="sr-only">Nom</label>
               <input
-                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
-                  errors.lastName 
-                    ? "border-2 border-red-600 focus:ring-red-500" 
+                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.lastName
+                    ? "border-2 border-red-600 focus:ring-red-500"
                     : "border-primary-light focus:ring-primary"
-                }`}
+                  }`}
                 id="lastName"
                 type="text"
                 autoComplete="family-name"
@@ -71,14 +126,13 @@ export default function RegisterForm() {
 
             {/* prénom */}
             <div className="w-1/2">
-              {/* Label caché visuellement */}
+
               <label htmlFor="firstName" className="sr-only">Prénom</label>
               <input
-                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
-                  errors.firstName 
-                    ? "border-2 border-red-600 focus:ring-red-500" 
+                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.firstName
+                    ? "border-2 border-red-600 focus:ring-red-500"
                     : "border-primary-light focus:ring-primary"
-                }`}
+                  }`}
                 id="firstName"
                 type="text"
                 autoComplete="given-name"
@@ -92,16 +146,15 @@ export default function RegisterForm() {
           </div>
         </div>
 
-      {/* login/id de connexion */}
+        {/* login/id de connexion */}
         <div>
-          {/* Label caché visuellement */}
+
           <label htmlFor="username" className="sr-only">Identifiant de connexion</label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
-              errors.username 
-                ? "border-2 border-red-600 focus:ring-red-500" 
+            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
+                ? "border-2 border-red-600 focus:ring-red-500"
                 : "border-primary-light focus:ring-primary"
-            }`}
+              }`}
             id="username"
             type="text"
             placeholder="Identifiant de connexion"
@@ -111,17 +164,16 @@ export default function RegisterForm() {
           />
           {errors.username && <p id="username-error" className="text-red-700 font-bold text-xs mt-1 ml-2">{errors.username.message}</p>}
         </div>
-        
+
         {/* email */}
         <div>
-          {/* Label caché visuellement */}
+
           <label htmlFor="email" className="sr-only">Adresse email</label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${
-              errors.email 
-                ? "border-2 border-red-600 focus:ring-red-500" 
+            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.email
+                ? "border-2 border-red-600 focus:ring-red-500"
                 : "border-primary-light focus:ring-primary"
-            }`}
+              }`}
             id="email"
             type="email"
             placeholder="Adresse email"
@@ -133,7 +185,7 @@ export default function RegisterForm() {
           {errors.email && <p id="email-error" className="text-red-700 font-bold text-xs mt-1 ml-2">{errors.email.message}</p>}
         </div>
 
-        {/* mdp (Le composant PasswordInput gère déjà son propre label de manière visible) */}
+        {/* mdp */}
         <div>
           <PasswordInput
             label="Mot de passe *"
