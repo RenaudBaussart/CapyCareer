@@ -10,7 +10,7 @@ import { Banana, Apple, Citrus } from "lucide-react";
 // img
 import CapyGlasses from "../assets/images/CapyGlasses.png";
 // data
-import { fetchJobOffersMock, fetchJobOfferDetailMock } from "../data/jobsMock";
+import { fetchJobOffers, fetchJobOfferDetail } from "../services/jobs.service";
 
 export default function Home() {
     return (
@@ -56,9 +56,9 @@ export default function Home() {
                         </div>
 
                     </div>
-
-                    {/* WARNING: JOBS_MOCK à remplacer par les offres récupérées via N8N */}
-                    <JobsSection fetchJobOffers={fetchJobOffersMock} fetchJobOfferDetail={fetchJobOfferDetailMock} />
+                    
+                    {/* offres récupérées via l'API */}
+                    <JobsSection fetchJobOffers={fetchJobOffers} fetchJobOfferDetail={fetchJobOfferDetail} />
 
                 </div>
             </section>

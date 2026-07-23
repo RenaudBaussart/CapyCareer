@@ -10,7 +10,7 @@ import ProfileMenu from "./ProfileMenu";
 import { AuthContext } from "../../context/AuthContext";
 import { HandednessContext } from "../../context/HandednessContext";
 // hook
-import { useHandedness } from "../../hook/useHandedness";
+import { useHandedness } from "../../hook/useHandedness.js";
 // icone
 import { Home, Building2, UserPlus, LogIn, Menu, X, User, LogOut, Sun, Moon } from "lucide-react";
 import { useTheme } from "../../hook/useTheme";
@@ -43,13 +43,13 @@ export default function Navbar() {
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 h-16 px-2 border-b-2 font-medium transition-colors ${isActive
       ? "border-primary text-light-bone"
-      : "border-transparent text-light-bone hover:text-color-white hover:border-primary-light/50"
+      : "border-transparent text-light-bone hover:text-light hover:border-primary-light/50"
     }`;
 
   const mobileNavLinkClass = ({ isActive }) =>
     `flex items-center gap-2 py-3 px-2 rounded-md font-medium transition-colors ${isActive
       ? "bg-primary/20 text-light-bone"
-      : "text-color-white hover:text-color-white hover:bg-primary-light/10"
+      : "text-light-bone hover:text-light hover:bg-primary-light/10"
     }`;
 
   return (
