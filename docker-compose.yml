@@ -64,14 +64,12 @@ services:
       - N8N_PORT=${N8N_APP_PORT} # Indique à n8n d'utiliser le port 5678 pour son interface web.
       - N8N_PROTOCOL=${N8N_APP_PROTOCOL} # Spécifie que n8n utilisera le protocole HTTP pour les communications.
       - NODE_ENV=${N8N_APP_NODE_ENV} # Indique que n8n fonctionne en mode production, optimisant ainsi les performances et la sécurité.
-      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE} # Active l'authentification de base pour sécuriser l'accès à l'interface web de n8n.
-      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER} # Définit le nom d'utilisateur pour l'authentification de base, garantissant que seuls les utilisateurs autorisés peuvent accéder à n8n.
-      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD} # Définit le mot de passe pour l'authentification de base, renforçant ainsi la sécurité de l'accès à n8n.
       - N8N_DIAGNOSTICS_ENABLED=false # Désactive l'envoi de données de diagnostic à n8n, protégeant ainsi la confidentialité des informations de l'utilisateur.
-      - N8N_VERSION_NOTIFICATIONS_ENABLED=false # Désactive les notifications de mise à jour de n8n, évitant ainsi les interruptions ou distractions pour l'utilisateur.
-      - N8N_RUNNERS_MODE=external # Indique que n8n utilisera des runners externes pour exécuter les tâches, permettant ainsi une meilleure répartition de la charge et une exécution plus rapide des workflows.
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=true # Désactive les notifications de mise à jour de n8n, évitant ainsi les interruptions ou distractions pour l'utilisateur.
+      - N8N_RUNNERS_ENABLED=true
       - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN} # Définit le jeton d'authentification pour sécuriser la communication entre n8n et les runners externes, garantissant que seules les instances autorisées peuvent exécuter des tâches.
       - N8N_RUNNERS_BROKER_LISTEN_ADDRESS=0.0.0.0 # Configure n8n pour écouter sur toutes les interfaces réseau du conteneur pour les communications avec les runners.
+      - N8N_RUNNERS_TASK_REQUEST_TIMEOUT=${N8N_RUNNERS_TASK_REQUEST_TIMEOUT}
     restart: always
     # Assure que le conteneur n8n redémarre automatiquement en cas de plantage ou d'arrêt, garantissant ainsi une disponibilité continue.
     depends_on:
