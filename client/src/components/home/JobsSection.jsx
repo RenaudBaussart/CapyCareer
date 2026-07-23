@@ -2,10 +2,12 @@
 
 // import
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSavedJobs } from "../../hook/useSavedJobs";
 // icone
-import { Search, MapPin, Bookmark, Share2, Briefcase, Sparkles, X, Tag } from "lucide-react";
+import { Search, MapPin, Bookmark, Share2, Briefcase, Sparkles, X, Tag, Apple, Banana, Citrus } from "lucide-react";
 
-/* affichage */
+
+// affichage 
 
 function formatLocation(job) {
     if (job.city && job.country) return `${job.city}, ${job.country}`;
@@ -24,7 +26,7 @@ function truncate(text, maxLength) {
 }
 
 
-/* badge type de contrat */
+// badge type de contrat 
 
 const BADGE_STYLES = {
     CDI: "bg-accent/15 text-accent-dark",
@@ -43,7 +45,7 @@ function Badge({ label }) {
     );
 }
 
-/* tag filtrable (type de contrat) */
+// tag filtrable (type de contrat)
 
 function TagChip({ label, isActive, onToggle }) {
     return (
@@ -61,7 +63,7 @@ function TagChip({ label, isActive, onToggle }) {
     );
 }
 
-/* tag mot-clé libre (avec bouton de suppression) */
+// tag mot-clé libre (avec bouton de suppression) 
 
 function KeywordChip({ label, onRemove }) {
     return (
@@ -79,7 +81,7 @@ function KeywordChip({ label, onRemove }) {
     );
 }
 
-/* saisie libre pour ajouter des mots-clés (front-end, back-end, etc.) */
+// saisie libre pour ajouter des mots-clés (front-end, back-end, etc.) 
 
 function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
     const [inputValue, setInputValue] = useState("");
@@ -125,7 +127,7 @@ function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
     );
 }
 
-/* carte liste offres */
+// carte liste offres 
 
 function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
 
@@ -181,7 +183,7 @@ function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
     );
 }
 
-/*detail offre selectionnée */
+//detail offre selectionnée 
 
 // onClose n'est utilisé que sur mobile (bouton fermeture de la modal plein écran)
 function JobDetail({ job, isSaved, onToggleSave, onClose }) {
@@ -265,7 +267,7 @@ function JobDetail({ job, isSaved, onToggleSave, onClose }) {
     );
 }
 
-/* section principale */
+// section principale 
 
 export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
     const [query, setQuery] = useState("");
@@ -286,8 +288,15 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
     const [selectedDetail, setSelectedDetail] = useState(null);
     const [isLoadingDetail, setIsLoadingDetail] = useState(false);
     const [detailError, setDetailError] = useState(null);
+
+    const [mode, setMode] = useState("feed");
+    const [savedDetails, setSavedDetails] = useState([]);
+    const [isLoadingSaved, setIsLoadingSaved] = useState(false);
+    const [savedError, setSavedError] = useState(null);
+
     // évite de refetch si loffre a déjà été consultée
     const detailsCache = useRef(new Map());
+    const { saved, toggleSave } = useSavedJobs();
 
     // pilote l'affichage de la modal plein écran en mobile (n'a pas d'effet en desktop)
     const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false);
@@ -315,7 +324,6 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
         };
     }, [isMobileDetailOpen]);
 
-    const [saved, setSaved] = useState(() => new Set());
 
     // récupère la première page d'offres au montage
     useEffect(() => {
@@ -343,23 +351,55 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
         };
     }, [fetchJobOffers]);
 
-    // charge la page suivante d'offres
-    function loadMore() {
-        const nextPage = page + 1;
-        setIsLoadingList(true);
-        fetchJobOffers({ page: nextPage })
-            .then((data) => {
-                setJobs((prev) => [...prev, ...data.job_offers]);
-                setIsEnd(data.is_the_end);
-                setPage(nextPage);
+    // charge le détail de chaque offre sauvegardée quand on ouvre l'onglet "saved"
+    useEffect(() => {
+        if (mode !== "saved") return;
+        if (saved.size === 0) {
+            setSavedDetails([]);
+            setSavedError(null);
+            return;
+        }
+
+        let cancelled = false;
+        setIsLoadingSaved(true);
+        setSavedError(null);
+
+        const ids = Array.from(saved);
+
+        Promise.allSettled(
+            ids.map((id) => {
+                const cached = detailsCache.current.get(id);
+                if (cached) return Promise.resolve(cached);
+                return fetchJobOfferDetail(id).then((data) => {
+                    detailsCache.current.set(id, data);
+                    return data;
+                });
             })
-            .catch((err) => setListError(err.message))
-            .finally(() => setIsLoadingList(false));
-    }
+        ).then((results) => {
+            if (cancelled) return;
+            const ok = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
+            const failedCount = results.length - ok.length;
+            setSavedDetails(ok);
+            // certaines offres sauvegardées peuvent avoir été supprimées côté back depuis
+            setSavedError(failedCount > 0 ? `${failedCount} offre(s) sauvegardée(s) ne sont plus disponibles.` : null);
+        }).finally(() => {
+            if (!cancelled) setIsLoadingSaved(false);
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [mode, saved, fetchJobOfferDetail]);
 
     // liste des types de contrat réellement présents dans les offres chargées (pas de doublons)
     const availableTags = useMemo(() => {
-        return Array.from(new Set(jobs.map((job) => job.contract_type).filter(Boolean)));
+        return Array.from(
+            new Set(
+                jobs
+                    .map((job) => job.contract_type)
+                    .filter(Boolean)
+            )
+        );
     }, [jobs]);
 
     // ajoute/retire un tag de la sélection
@@ -401,16 +441,31 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
         });
     }, [jobs, query, lieu, selectedTags, keywords]);
 
-    // sélectionne automatiquement la première offre de la liste filtrée
+    // liste effectivement affichée selon l'onglet actif
+    const visibleJobs = mode === "feed" ? filtered : savedDetails;
+
+    // ajuste la sélection quand les résultats affichés changent
     useEffect(() => {
-        if (!selectedId && filtered.length > 0) {
-            setSelectedId(filtered[0].PK_id);
+        if (visibleJobs.length === 0) {
+            setSelectedId(null);
+            return;
         }
-    }, [filtered, selectedId]);
+
+        const stillVisible = visibleJobs.some(
+            (job) => job.PK_id === selectedId
+        );
+
+        if (!stillVisible) {
+            setSelectedId(visibleJobs[0].PK_id);
+        }
+    }, [visibleJobs, selectedId]);
 
     // récupère le détail de l'offre sélectionnée (avec cache)
     useEffect(() => {
-        if (selectedId == null) return;
+        if (selectedId == null) {
+            setSelectedDetail(null);
+            return;
+        }
 
         const cached = detailsCache.current.get(selectedId);
         if (cached) {
@@ -447,12 +502,18 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
         setIsMobileDetailOpen(true);
     }
 
-    function toggleSave(id) {
-        setSaved((prev) => {
-            const next = new Set(prev);
-            next.has(id) ? next.delete(id) : next.add(id);
-            return next;
-        });
+    // charge la page suivante d'offres
+    function loadMore() {
+        const nextPage = page + 1;
+        setIsLoadingList(true);
+        fetchJobOffers({ page: nextPage })
+            .then((data) => {
+                setJobs((prev) => [...prev, ...data.job_offers]);
+                setIsEnd(data.is_the_end);
+                setPage(nextPage);
+            })
+            .catch((err) => setListError(err.message))
+            .finally(() => setIsLoadingList(false));
     }
 
     return (
@@ -462,54 +523,91 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                 <h2 className="text-2xl font-bold text-font-primary-dark pt-1">Fil d'offres</h2>
             </div>
 
-            {/* barre de recherche */}
-            <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light flex flex-col sm:flex-row sm:items-center px-4 py-3 gap-3 mb-4 transition-colors focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
-
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <Search size={18} className="text-font-primary-dark/50 shrink-0" aria-hidden="true" />
-                    <label htmlFor="job-query" className="sr-only">Intitulé de poste, mots clés</label>
-                    <input
-                        id="job-query"
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Intitulé de poste, mots clés..."
-                        className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
-                    />
-                </div>
-
-                <div className="hidden sm:block w-px h-6 bg-primary-light/50 shrink-0" aria-hidden="true" />
-                <div className="sm:hidden border-t border-primary-light/30" aria-hidden="true" />
-
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <MapPin size={18} className="text-font-primary-dark/50 shrink-0" aria-hidden="true" />
-                    <label htmlFor="job-location" className="sr-only">Localisation</label>
-                    <input
-                        id="job-location"
-                        type="text"
-                        value={lieu}
-                        onChange={(e) => setLieu(e.target.value)}
-                        placeholder="Localisation"
-                        className="flex-1 min-w-0 sm:w-40 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
-                    />
-                </div>
-
+            {/* onglets */}
+            <div className="flex items-center gap-2 mb-4">
                 <button
                     type="button"
-                    className="w-full sm:w-auto bg-primary text-light font-bold text-sm px-5 py-2 rounded-xl hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none shrink-0"
+                    onClick={() => setMode("feed")}
+                    aria-pressed={mode === "feed"}
+                    className={`text-sm font-semibold px-4 py-2 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${mode === "feed"
+                        ? "bg-primary text-light"
+                        : "bg-bone-light text-font-primary-dark hover:bg-primary-light/10"
+                        }`}
                 >
-                    Rechercher
+                    Fil d'offres
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setMode("saved")}
+                    aria-pressed={mode === "saved"}
+                    className={`flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${mode === "saved"
+                        ? "bg-primary text-light"
+                        : "bg-bone-light text-font-primary-dark hover:bg-primary-light/10"
+                        }`}
+                >
+                    <Bookmark size={14} fill={mode === "saved" ? "currentColor" : "none"} aria-hidden="true" />
+                    Offres sauvegardées
+                    {saved.size > 0 && (
+                        <span className={`text-xs rounded-full px-1.5 ${mode === "saved" ? "bg-light/20" : "bg-primary/15 text-primary"}`}>
+                            {saved.size}
+                        </span>
+                    )}
                 </button>
             </div>
 
-            {/* mots-clés libres (front-end, back-end...) */}
-            <div className="mb-4">
-                <KeywordTagInput
-                    keywords={keywords}
-                    onAddKeyword={addKeyword}
-                    onRemoveKeyword={removeKeyword}
-                />
-            </div>
+            {mode === "feed" && (
+                <>
+                    {/* barre de recherche */}
+                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light flex flex-col sm:flex-row sm:items-center px-4 py-3 gap-3 mb-4 transition-colors focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <Search size={18} className="text-font-primary-dark/50 shrink-0" aria-hidden="true" />
+
+                            <label htmlFor="job-query" className="sr-only">Intitulé de poste, mots clés</label>
+                            <input
+                                id="job-query"
+                                type="text"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Intitulé de poste, mots clés..."
+                                className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
+                            />
+                        </div>
+
+                        <div className="hidden sm:block w-px h-6 bg-primary-light/50 shrink-0" aria-hidden="true" />
+                        <div className="sm:hidden border-t border-primary-light/30" aria-hidden="true" />
+
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <MapPin size={18} className="text-font-primary-dark/50 shrink-0" aria-hidden="true" />
+                            <label htmlFor="job-location" className="sr-only">Localisation</label>
+                            <input
+                                id="job-location"
+                                type="text"
+                                value={lieu}
+                                onChange={(e) => setLieu(e.target.value)}
+                                placeholder="Localisation"
+                                className="flex-1 min-w-0 sm:w-40 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
+                            />
+                        </div>
+
+                        <button
+                            type="button"
+                            className="w-full sm:w-auto bg-primary text-light font-bold text-sm px-5 py-2 rounded-xl hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none shrink-0"
+                        >
+                            Rechercher
+                        </button>
+                    </div>
+
+                    {/* mots-clés libres (front-end, back-end...) */}
+                    <div className="mb-4">
+                        <KeywordTagInput
+                            keywords={keywords}
+                            onAddKeyword={addKeyword}
+                            onRemoveKeyword={removeKeyword}
+                        />
+                    </div>
+                </>
+            )}
 
             {listError && (
                 <p className="text-sm text-accent-dark mb-4">Impossible de charger les offres : {listError}</p>
@@ -522,7 +620,7 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                         <Sparkles size={16} className="text-primary" aria-hidden="true" /> Emplois recommandés
                     </h3>
                     <div className="flex flex-col gap-3 overflow-auto max-h-150 scrollbar-auto md:scrollbar-thumb-primary-dark lg:scrollbar-thumb-primary-dark rounded-2xl box-border">
-                        {filtered.map((job) => (
+                        {visibleJobs.map((job) => (
                             <JobCard
                                 key={job.PK_id}
                                 job={job}
@@ -532,13 +630,37 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                                 onToggleSave={() => toggleSave(job.PK_id)}
                             />
                         ))}
-                        {!isLoadingList && filtered.length === 0 && (
+
+                        {mode === "feed" && !isLoadingList && visibleJobs.length === 0 && (
                             <p className="text-sm text-center py-6 text-font-primary-dark/60">Aucun résultat.</p>
                         )}
-                        {isLoadingList && (
-                            <p className="text-sm text-center py-6 text-font-primary-dark/60">Chargement des offres...</p>
+
+                        {mode === "saved" && !isLoadingSaved && visibleJobs.length === 0 && (
+                            <p className="text-sm text-center py-6 text-font-primary-dark/60">
+                                Tu n'as pas encore sauvegardé d'offre. Clique sur l'icône 🔖 sur une offre pour la retrouver ici.
+                            </p>
                         )}
-                        {!isEnd && !isLoadingList && (
+
+                        {mode === "feed" && isLoadingList && (
+                            <>
+                                <p className="text-sm text-center py-6 text-font-primary-dark">Chargement des offres...</p>
+                                <div className="flex items-center gap-4 justify-center text-3xl">
+                                    <Apple className="animate-bounce" aria-hidden="true" />
+                                    <Citrus className="animate-bounce [animation-delay:100ms]" aria-hidden="true" />
+                                    <Banana className="animate-bounce [animation-delay:200ms]" aria-hidden="true" />
+                                </div>
+                            </>
+                        )}
+
+                        {mode === "saved" && isLoadingSaved && (
+                            <p className="text-sm text-center py-6 text-font-primary-dark">Chargement des offres sauvegardées...</p>
+                        )}
+
+                        {mode === "saved" && savedError && (
+                            <p className="text-xs text-center text-accent-dark">{savedError}</p>
+                        )}
+
+                        {mode === "feed" && !isEnd && !isLoadingList && (
                             <button
                                 type="button"
                                 onClick={loadMore}
@@ -559,7 +681,14 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                 >
                     {isLoadingDetail && (
                         <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
-                            <p className="text-sm text-font-primary-dark/60">Chargement de l'offre...</p>
+                            <p className="text-sm text-font-primary-dark">Chargement de l'offre...</p>
+                            <>
+                                <div className="flex items-center gap-4 justify-center text-3xl">
+                                    <Apple className="animate-bounce" aria-hidden="true" />
+                                    <Citrus className="animate-bounce [animation-delay:100ms]" aria-hidden="true" />
+                                    <Banana className="animate-bounce [animation-delay:200ms]" aria-hidden="true" />
+                                </div>
+                            </>
                         </div>
                     )}
 
@@ -579,10 +708,14 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                         />
                     )}
 
-                    {!isLoadingDetail && !detailError && !selectedDetail && !isLoadingList && filtered.length === 0 && (
+                    {!isLoadingDetail && !detailError && !selectedDetail && visibleJobs.length === 0 && (
                         <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
-                            <p className="font-semibold text-font-primary-dark">Aucune offre ne correspond</p>
-                            <p className="text-sm text-font-primary-dark/60">Essaie d'élargir ta recherche.</p>
+                            <p className="font-semibold text-font-primary-dark">
+                                {mode === "feed" ? "Aucune offre ne correspond" : "Aucune offre sauvegardée"}
+                            </p>
+                            <p className="text-sm text-font-primary-dark/60">
+                                {mode === "feed" ? "Essaie d'élargir ta recherche." : "Sauvegarde une offre pour la retrouver ici."}
+                            </p>
                         </div>
                     )}
                 </div>
