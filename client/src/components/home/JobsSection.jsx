@@ -7,7 +7,7 @@ import { useSavedJobs } from "../../hook/useSavedJobs";
 import { Search, MapPin, Bookmark, Share2, Briefcase, Sparkles, X, Tag, Apple, Banana, Citrus } from "lucide-react";
 
 
-// affichage 
+/* affichage */
 
 function formatLocation(job) {
     if (job.city && job.country) return `${job.city}, ${job.country}`;
@@ -15,8 +15,8 @@ function formatLocation(job) {
 }
 
 function getWorkMode(job) {
-    if (job.is_remote_job) return "Télétravail";
-    if (job.is_hybride_job) return "Hybride";
+    if (job.remote) return "Télétravail";
+    if (job.hybrid) return "Hybride";
     return "Sur site";
 }
 
@@ -26,7 +26,7 @@ function truncate(text, maxLength) {
 }
 
 
-// badge type de contrat 
+/* badge type de contrat */
 
 const BADGE_STYLES = {
     CDI: "bg-accent/15 text-accent-dark",
@@ -45,7 +45,7 @@ function Badge({ label }) {
     );
 }
 
-// tag filtrable (type de contrat)
+/* tag filtrable (type de contrat) */
 
 function TagChip({ label, isActive, onToggle }) {
     return (
@@ -63,7 +63,7 @@ function TagChip({ label, isActive, onToggle }) {
     );
 }
 
-// tag mot-clé libre (avec bouton de suppression) 
+/* tag mot-clé libre (avec bouton de suppression) */
 
 function KeywordChip({ label, onRemove }) {
     return (
@@ -81,7 +81,7 @@ function KeywordChip({ label, onRemove }) {
     );
 }
 
-// saisie libre pour ajouter des mots-clés (front-end, back-end, etc.) 
+/* saisie libre pour ajouter des mots-clés (front-end, back-end, etc.) */
 
 function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
     const [inputValue, setInputValue] = useState("");
@@ -127,7 +127,7 @@ function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
     );
 }
 
-// carte liste offres 
+/* carte liste offres */
 
 function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
 
@@ -150,7 +150,7 @@ function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
         >
             <div className="flex items-start justify-between gap-2">
                 <div>
-                    <p className="font-semibold text-sm leading-snug text-font-primary-dark">{job.name}</p>
+                    <p className="font-semibold text-sm leading-snug text-font-primary-dark">{job.title}</p>
                     <p className="text-xs mt-0.5 text-font-primary-dark/60">{job.company}</p>
                     <p className="text-xs flex items-center gap-1 mt-0.5 text-font-primary-dark/60">
                         <MapPin size={11} aria-hidden="true" /> {formatLocation(job)}
@@ -183,7 +183,7 @@ function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
     );
 }
 
-//detail offre selectionnée 
+/*detail offre selectionnée */
 
 // onClose n'est utilisé que sur mobile (bouton fermeture de la modal plein écran)
 function JobDetail({ job, isSaved, onToggleSave, onClose }) {
@@ -191,7 +191,7 @@ function JobDetail({ job, isSaved, onToggleSave, onClose }) {
         <article className="bg-bone-light rounded-2xl lg:shadow-[0_0_15px_rgba(0,0,0,0.08)] lg:border border-primary-light/40 p-5 sm:p-7">
             <div className="flex items-start justify-between gap-4">
                 <div>
-                    <h2 className="text-lg sm:text-xl font-bold text-font-primary-dark">{job.name}</h2>
+                    <h2 className="text-lg sm:text-xl font-bold text-font-primary-dark">{job.title}</h2>
                     <p className="mt-1 font-medium text-font-primary-dark/70">{job.company}</p>
                     <p className="text-sm mt-0.5 flex items-center gap-1 text-font-primary-dark/70">
                         <MapPin size={14} aria-hidden="true" /> {formatLocation(job)}
@@ -267,7 +267,7 @@ function JobDetail({ job, isSaved, onToggleSave, onClose }) {
     );
 }
 
-// section principale 
+/* section principale */
 
 export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
     const [query, setQuery] = useState("");
@@ -429,14 +429,14 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
         const q = query.trim().toLowerCase();
         const l = lieu.trim().toLowerCase();
         return jobs.filter((job) => {
-            const matchQ = !q || job.name.toLowerCase().includes(q) || job.company.toLowerCase().includes(q);
+            const matchQ = !q || job.title.toLowerCase().includes(q) || job.company.toLowerCase().includes(q);
             const matchL = !l || formatLocation(job).toLowerCase().includes(l);
             // aucun tag sélectionné = pas de filtre ; sinon l'offre doit correspondre à l'un des tags actifs
             const matchTags = selectedTags.size === 0 || selectedTags.has(job.contract_type);
             // aucun mot-clé = pas de filtre ; sinon le titre doit contenir au moins un des mots-clés (OR)
             const matchKeywords =
                 keywords.length === 0 ||
-                keywords.some((keyword) => job.name.toLowerCase().includes(keyword.toLowerCase()));
+                keywords.some((keyword) => job.title.toLowerCase().includes(keyword.toLowerCase()));
             return matchQ && matchL && matchTags && matchKeywords;
         });
     }, [jobs, query, lieu, selectedTags, keywords]);

@@ -25,7 +25,7 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
 
         // récupère 51 offres au lieu de 50 pour anticiper la page suivante
         const [rows] = await pool.query(
-            "SELECT PK_id, title AS name, contract_type, city, country, company FROM Job_Offers ORDER BY publish_date DESC LIMIT ? OFFSET ?;", 
+            "SELECT PK_id, title, contract_type, city, country, company FROM Job_Offers ORDER BY publish_date DESC LIMIT ? OFFSET ?;",
             [limit + 1, offset]
         );
 
@@ -68,15 +68,15 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
         const jobId = Number(id);
 
         if (!id) throw new BadRequestError("Identifiant d'offre manquant.");
-        if (!id || Number.isNaN(jobId)) {
+        if (typeof id !== 'string' || id.trim() === '') {
             //lève une erreur si le paramètre est vide ou invalide
             throw new BadRequestError("Identifiant d'offre invalide.");
         }
 
         // cherche l'offre correspondante en base de données
         const [rows] = await pool.execute<any[]>(
-            "SELECT PK_id, title AS name, description, url, contract_type, city, country, company, remote AS is_remote_job, hybrid AS is_hybride_job, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE PK_id = ?;",
-            [jobId]
+            "SELECT PK_id, title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE PK_id = ?;",
+            [id]
         );
 
         const offer = (rows as any[])[0] as any;
