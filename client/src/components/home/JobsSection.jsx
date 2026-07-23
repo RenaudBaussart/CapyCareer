@@ -351,7 +351,7 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
         };
     }, [fetchJobOffers]);
 
-    // charge le détail de chaque offre sauvegardée quand on ouvre l'onglet "saved"
+    // charge le détail de chaque offre sauvegardée si luser ouvre longlet "saved"
     useEffect(() => {
         if (mode !== "saved") return;
         if (saved.size === 0) {
