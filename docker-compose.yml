@@ -47,6 +47,11 @@ services:
       - JWT_EXPIRATION=${JWT_EXPIRATION} # durée de validité des tokens JWT
       - JWT_LONG_EXPIRATION=${JWT_LONG_EXPIRATION} # durée de validité des tokens JWT pour les sessions prolongées
       - SALTROUNDS=${SALTROUNDS} # nombre de tours de salage pour le hachage des mots de passe
+      - ATTACK_DB_HOST=${ATTACK_DB_HOST} # adresse de la base de données d'attaque distante chez OVH
+      - ATTACK_DB_USER=${ATTACK_DB_USER} # identifiant de connexion OVH
+      - ATTACK_DB_PASSWORD=${ATTACK_DB_PASSWORD} # mot de passe OVH
+      - ATTACK_DB_NAME=${ATTACK_DB_NAME} # nom exact de la base de données d'attaque.
+      - ATTACK_DB_PORT=${ATTACK_DB_PORT} # port de connexion à la base de données d'attaque
     networks:
       - app-network 
       # Connecte le backend au réseau virtuel privé.
