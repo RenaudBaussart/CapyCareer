@@ -2,7 +2,7 @@ import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-open
 import { z } from "zod";
 import { member, updateMemberSchema, updateProfileSchema, updatePasswordSchema, updateAccountSchema } from "./modules/members/member.schema";
 import { loginSchema } from "./modules/auth/auth.schema";
-import { jobOfferSchema, jobOfferDetailSchema } from "./modules/job_offers/job.offers.schema"; // Import the new schema
+import { jobOfferSchema, jobOfferDetailSchema, jobOfferFullSchema } from "./modules/job_offers/job.offers.schema"; // Import the new schema
 export const registry = new OpenAPIRegistry();
 
 const bearerAuthName = 'bearerAuth';
@@ -124,6 +124,198 @@ registry.registerPath({
     }
 });
 
+registry.registerPath({
+    method: "post",
+    path: "/api/jobs",
+    description: "This endpoint creates a new job offer.",
+    summary: "Create a new job offer",
+    tags: ["Job Offers"],
+    request: {
+        body: {
+            description: "Job offer data to create.",
+            content: {
+                "application/json": {
+                    schema: jobOfferFullSchema.omit({ PK_id: true }),
+                },
+            },
+        },
+    },
+    responses: {
+        201: {
+            description: "Job offer created successfully.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Offre d'emploi ajoutée avec succès." }),
+                        id: z.number().int(),
+                    }),
+                },
+            },
+        },
+        400: {
+            description: "Bad request, e.g., validation error.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Erreur de validation des données." }),
+                        errors: z.record(z.string(), z.array(z.string())).optional(),
+                    }),
+                },
+            },
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        },
+    },
+});
+
+registry.registerPath({
+    method: "put",
+    path: "/api/jobs/{id}",
+    description: "This endpoint updates an existing job offer.",
+    summary: "Update a job offer",
+    tags: ["Job Offers"],
+    parameters: [{
+        in: 'path',
+        name: 'id',
+        schema: { type: 'string' },
+        required: true,
+        description: 'Unique identifier of the job offer to update.',
+    }],
+    request: {
+        body: {
+            description: "Job offer data to update.",
+            content: {
+                "application/json": {
+                    schema: jobOfferFullSchema.omit({ PK_id: true }),
+                },
+            },
+        },
+    },
+    responses: {
+        200: {
+            description: "Job offer updated successfully.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Offre d'emploi mise à jour avec succès." }),
+                    }),
+                },
+            },
+        },
+        400: {
+            description: "Bad request, e.g., invalid ID or validation error.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Identifiant d'offre invalide." }),
+                        errors: z.record(z.string(), z.array(z.string())).optional(),
+                    }),
+                },
+            },
+        },
+        404: {
+            description: "Not Found, e.g., job offer with the specified ID does not exist.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "L'offre d'emploi à mettre à jour n'existe pas." }) })
+                }
+            }
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        },
+    },
+});
+
+registry.registerPath({
+    method: "delete",
+    path: "/api/jobs/{id}",
+    description: "This endpoint deletes a job offer by its unique identifier.",
+    summary: "Delete a job offer by ID",
+    tags: ["Job Offers"],
+    parameters: [{
+        in: 'path',
+        name: 'id',
+        schema: { type: 'string' },
+        required: true,
+        description: 'Unique identifier of the job offer to delete.',
+    }],
+    responses: {
+        200: {
+            description: "Job offer deleted successfully.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Offre d'emploi supprimée avec succès." }),
+                    }),
+                },
+            },
+        },
+        400: {
+            description: "Bad request, e.g., missing or invalid job offer ID.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Identifiant d'offre manquant." }) })
+                }
+            }
+        },
+        404: {
+            description: "Not Found, e.g., job offer with the specified ID does not exist.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "L'offre d'emploi à supprimer n'existe pas." }) })
+                }
+            }
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        }
+    }
+});
+
+registry.registerPath({
+    method: "get",
+    path: "/api/jobs/count",
+    description: "This endpoint retrieves the total number of active job offers.",
+    summary: "Get total number of active job offers",
+    tags: ["Job Offers"],
+    responses: {
+        200: {
+            description: "Total number of active job offers.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        total: z.number().int(),
+                    }),
+                }
+            }
+        },
+        500: {
+            description: "Internal server error.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error" }) })
+                }
+            }
+        }
+    }
+});
 
 registry.registerPath({
     method: "post",
@@ -1238,6 +1430,101 @@ registry.registerPath({
                     schema: z.object({
                         success: z.boolean().openapi({ example: false }),
                         message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+registry.registerPath({
+    method: "post",
+    path: "/api/security-demo/demo-register-vulnerable",
+    description: "Route de démonstration pour l'enregistrement d'un utilisateur (vulnérable aux attaques XSS car non nettoyé)",
+    summary: "Enregistrement d'un utilisateur (démonstration XSS)",
+    tags: ["Démonstration de sécurité"],
+    request: {
+        body: {
+            description: "Les informations de l'utilisateur à enregistrer",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        username: z.string().openapi({ example: "newuser" }),
+                        email: z.string().email().openapi({ example: "newuser@example.com" }),
+                        password: z.string().openapi({ example: "password123" }),
+                        firstname: z.string().openapi({ example: "<img src=x onerror=alert(1)>" }),
+                        lastname: z.string().openapi({ example: "Dupont" })
+                    })
+                }
+            }
+        }
+    },
+    responses: {
+        201: {
+            description: "Utilisateur créé avec succès (avec données non filtrées).",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "⚠️ Utilisateur créé avec des données non nettoyées dans le prénom/nom !" }),
+                        savedFirstname: z.string().openapi({ example: "<img src=x onerror=alert(1)>" }),
+                        savedLastname: z.string().openapi({ example: "Dupont" })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur ou syntaxe SQL.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        error: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+
+registry.registerPath({
+    method: "post",
+    path: "/api/security-demo/demo-sql-injection",
+    description: "Route de démonstration pour l'attaque par injection SQL (utilisation de concaténation vulnérable)",
+    summary: "Attaque par injection SQL sur le login (démonstration)",
+    tags: ["Démonstration de sécurité"],
+    request: {
+        body: {
+            description: "Les informations d'identification de l'utilisateur",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        username: z.string().openapi({ example: "' OR '1'='1' #" }),
+                        password: z.string().openapi({ example: "password123" })
+                    })
+                }
+            }
+        }
+    },
+    responses: {
+        200: {
+            description: "Succès de l'attaque par injection SQL.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "⚠️ Succès de l'attaque ! L'injection SQL a fonctionné." }),
+                        userFound: z.object({
+                            PK_id: z.number().int().openapi({ example: 1 }),
+                            username: z.string().openapi({ example: "admin" }),
+                            hashed_password: z.string().openapi({ example: "$2b$10$..." })
+                        })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur de syntaxe SQL ou erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        error: z.string().openapi({ example: "You have an error in your SQL syntax..." })
                     })
                 }
             }
