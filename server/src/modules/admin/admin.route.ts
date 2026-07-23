@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { middlewareAuthAdmin } from '../../core/middlewares/adminMiddleware';
-import { getMembers, banMember, unbanMember, updateMembers, getStats } from './admin.controller';
+import { getMembers, banMember, unbanMember, updateMembers, getStats, getBannedMembers } from './admin.controller';
 import { middlewareAuth } from '../../core/middlewares/authMiddleware';
 const router = Router();
 
@@ -13,4 +13,6 @@ router.put('/members/:id', middlewareAuthAdmin, updateMembers);
 
 // route pour les stats user
 router.get('/stats/users', middlewareAuth, middlewareAuthAdmin, getStats);
+// route pour les users banned
+router.get('/banned', middlewareAuthAdmin, getBannedMembers);
 export default router;

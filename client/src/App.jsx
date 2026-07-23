@@ -22,18 +22,26 @@ import AdminJobs from "./pages/admin/AdminJobs";
 import AdminDuplicates from "./pages/admin/AdminDuplicates";
 import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProfile from "./pages/admin/AdminProfile";
+import AdminCompanies from "./pages/admin/AdminCompanies"
 // pages Entreprise/Recruteur
 import CompanyRegister from "./pages/company/CompanyRegister";
 import CompanyForm from "./pages/CompanyForm";
 import CompanyDashboard from "./pages/CompanyDashboard";
 // permet de communiquer le token a linterface
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext"; 
+// pour gérer la préférence d'affichage de l'utilisateur en mobile
+import { HandednessProvider } from "./context/HandednessContext";
+// pour gérer le thème choisi
+import { ThemeProvider } from "./context/ThemeContext";
+
 // sécurité des routes
 import RequireAuth from "./guards/RequireAuth";
 
 export default function App() {
   return (
     <AuthProvider>
+      <ThemeProvider>
+      <HandednessProvider>
       <BrowserRouter>
         <Routes>
 
@@ -100,12 +108,22 @@ export default function App() {
             }
           />
 
-          {/* Pages Admin Users */}
+          {/* Pages Admin Candidat */}
           <Route
-            path="/admin/users"
+            path="/admin/candidat"
             element={
               <RequireAuth allowedRoles={["admin"]}>
                 <AdminUsers />
+              </RequireAuth>
+            }
+          />
+
+          {/* Pages Admin Entreprise */}
+          <Route
+            path="/admin/entreprise"
+            element={
+              <RequireAuth allowedRoles={["admin"]}>
+                <AdminCompanies />
               </RequireAuth>
             }
           />
@@ -173,12 +191,14 @@ export default function App() {
           />
 
           {/*inscription entreprise*/}
-          <Route 
-            path="/register-company" 
+          <Route
+            path="/register-company"
             element={<CompanyRegister />} />
 
         </Routes>
       </BrowserRouter>
+      </HandednessProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

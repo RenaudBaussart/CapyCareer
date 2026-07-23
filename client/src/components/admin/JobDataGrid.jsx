@@ -9,7 +9,7 @@ export default function JobDataGrid({ jobs, handleEditJob, handleDeleteJob }) {
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
                 <thead>
-                    <tr className="border-b border-white/40 text-primary-dark/70 text-sm">
+                    <tr className="border-b border-white/40 text-font-primary-dark/70 text-sm">
                         <th className="py-4 px-4 font-semibold">Poste</th>
                         <th className="py-4 px-4 font-semibold">Entreprise</th>
                         <th className="py-4 px-4 font-semibold">Source</th>
@@ -22,14 +22,14 @@ export default function JobDataGrid({ jobs, handleEditJob, handleDeleteJob }) {
                         jobs.map((job) => (
                             <tr 
                                 key={job.id} 
-                                className="border-b border-white/20 hover:bg-white/30 transition-colors"
+                                className="border-b border-white/20 hover:bg-bone-light/30 transition-colors"
                             >
-                                <td className="py-4 px-4 font-medium text-primary-dark">
+                                <td className="py-4 px-4 font-medium text-font-primary-dark">
                                     <div className="flex items-center gap-2">
                                         {job.title}
                                     </div>
                                 </td>
-                                <td className="py-4 px-4 text-primary-dark/80 flex items-center gap-2">
+                                <td className="py-4 px-4 text-font-primary-dark/80 flex items-center gap-2">
                                     {job.company}
                                 </td>
                                 <td className="py-4 px-4">
@@ -77,7 +77,7 @@ export default function JobDataGrid({ jobs, handleEditJob, handleDeleteJob }) {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5" className="py-8 text-center text-primary-dark/60">
+                            <td colSpan="5" className="py-8 text-center text-font-primary-dark/60">
                                 Aucune offre trouvée avec cette recherche.
                             </td>
                         </tr>

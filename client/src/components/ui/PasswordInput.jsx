@@ -10,12 +10,12 @@ export default function PasswordInput({ register, name, label, error, ...props }
 
   return (
     <div>
-      <label className="block text-lg font-bold text-primary-dark mb-1" htmlFor={name}>
+      <label className="block text-lg font-bold text-font-primary-dark mb-1" htmlFor={name}>
         {label}
       </label>
       <div className="relative">
         <input
-          className={`w-full px-4 py-2 pr-12 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${error
+          className={`w-full px-4 py-2 pr-12 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${error
               ? "border-2 border-red-600 focus:ring-red-500"
               : "border-primary-light focus:ring-primary"
             }`}

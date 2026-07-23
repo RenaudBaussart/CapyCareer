@@ -1,12 +1,14 @@
 // fichier gerant le component navbar admin
 
 // import
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { NavLink, Link } from "react-router-dom";
 // component
 import ProfileMenu from "../../layout/ProfileMenu";
 // icone
-import { LayoutDashboard, Users, Briefcase, Copy, Terminal, Menu, X, LogOut, User } from "lucide-react";
+import { LayoutDashboard, Users, Building, Briefcase, Copy, Terminal, Menu, X, LogOut, User, Sun, Moon } from "lucide-react";
+// theme
+import { useTheme } from "../../../hook/useTheme";
 
 export default function AdminNavbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,6 +26,9 @@ export default function AdminNavbar() {
             : "text-white hover:text-white hover:bg-primary-light/10"
         }`;
 
+      // récupère le thème
+      const { theme, toggleTheme } = useTheme();
+
     return (
         <nav className="bg-primary-dark shadow-sm sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-6">
@@ -35,9 +40,13 @@ export default function AdminNavbar() {
                             <LayoutDashboard className="w-4 h-4 text-white" />
                             Dashboard
                         </NavLink>
-                        <NavLink to="/admin/users" className={navLinkClass}>
+                        <NavLink to="/admin/candidat" className={navLinkClass}>
                             <Users className="w-4 h-4 text-white" />
-                            Utilisateurs
+                            Candidats
+                        </NavLink>
+                        <NavLink to="/admin/entreprise" className={navLinkClass}>
+                            <Building className="w-4 h-4 text-white" />
+                            Entreprises
                         </NavLink>
                         <NavLink to="/admin/jobs" className={navLinkClass}>
                             <Briefcase className="w-4 h-4 text-white" />
@@ -56,11 +65,20 @@ export default function AdminNavbar() {
                     {/* menu burger (mobile) */}
                     <button
                         onClick={() => setIsOpen(!isOpen)}
-                        className="md:hidden p-2 text-bone"
+                        className="md:hidden p-2 text-light"
                         aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
                         aria-expanded={isOpen}
                     >
                         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    </button>
+
+                    {/* bouton thème */}
+                    <button
+                        onClick={toggleTheme}
+                        aria-label={theme === "dark" ? "Activer le mode clair" : "Activer le mode sombre"}
+                        className="p-2 rounded-full text-light hover:bg-primary-light/10 transition-colors"
+                    >
+                        {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                     </button>
 
                     {/* partie droite menu profil */}
@@ -81,9 +99,13 @@ export default function AdminNavbar() {
                             <LayoutDashboard className="w-4 h-4 text-white" />
                             Dashboard
                         </NavLink>
-                        <NavLink to="/admin/users" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
+                        <NavLink to="/admin/candidat" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
                             <Users className="w-4 h-4 text-white" />
-                            Utilisateurs
+                            Candidats
+                        </NavLink>
+                        <NavLink to="/admin/entreprise" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
+                            <Building className="w-4 h-4 text-white" />
+                            Entreprises
                         </NavLink>
                         <NavLink to="/admin/jobs" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
                             <Briefcase className="w-4 h-4 text-white" />

@@ -39,21 +39,21 @@ export default function PostJobForm({ onSubmitJob }) {
     return (
         <div className="w-full ">
             <div className="flex items-center gap-2 mb-5">
-                <Briefcase size={20} className="text-primary" aria-hidden="true" />
-                <h2 className="text-xl font-bold text-primary-dark">Publier une offre</h2>
+                <Briefcase size={20} className="text-font-primary-dark" aria-hidden="true" />
+                <h2 className="text-xl font-bold text-font-primary-dark">Publier une offre</h2>
             </div>
 
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
                 {/* titre du poste */}
                 <div>
                     <label
-                        className="block text-sm font-bold text-primary-dark mb-1"
+                        className="block text-sm font-bold text-font-primary-dark mb-1"
                         htmlFor="title"
                     >
                         Intitulé du poste *
                     </label>
                     <input
-                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.title
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.title
                                 ? "border-accent-dark focus:ring-accent-dark"
                                 : "border-primary-light focus:ring-primary"
                             }`}
@@ -74,13 +74,13 @@ export default function PostJobForm({ onSubmitJob }) {
                 {/* type de contrat */}
                 <div>
                     <label
-                        className="block text-sm font-bold text-primary-dark mb-1"
+                        className="block text-sm font-bold text-font-primary-dark mb-1"
                         htmlFor="contractType"
                     >
                         Type de contrat *
                     </label>
                     <select
-                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.contractType
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.contractType
                                 ? "border-accent-dark focus:ring-accent-dark"
                                 : "border-primary-light focus:ring-primary"
                             }`}
@@ -106,13 +106,13 @@ export default function PostJobForm({ onSubmitJob }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label
-                            className="block text-sm font-bold text-primary-dark mb-1"
+                            className="block text-sm font-bold text-font-primary-dark mb-1"
                             htmlFor="city"
                         >
                             Ville *
                         </label>
                         <input
-                            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.city
+                            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.city
                                     ? "border-accent-dark focus:ring-accent-dark"
                                     : "border-primary-light focus:ring-primary"
                                 }`}
@@ -132,13 +132,13 @@ export default function PostJobForm({ onSubmitJob }) {
 
                     <div>
                         <label
-                            className="block text-sm font-bold text-primary-dark mb-1"
+                            className="block text-sm font-bold text-font-primary-dark mb-1"
                             htmlFor="country"
                         >
                             Pays *
                         </label>
                         <input
-                            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.country
+                            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.country
                                     ? "border-accent-dark focus:ring-accent-dark"
                                     : "border-primary-light focus:ring-primary"
                                 }`}
@@ -159,7 +159,7 @@ export default function PostJobForm({ onSubmitJob }) {
 
                 {/* mode de travail */}
                 <div className="flex gap-6">
-                    <label className="flex items-center gap-2 text-sm font-medium text-primary-dark cursor-pointer">
+                    <label className="flex items-center gap-2 text-sm font-medium text-font-primary-dark cursor-pointer">
                         <input
                             type="checkbox"
                             className="w-4 h-4 rounded border-primary-light text-primary focus:ring-primary"
@@ -167,7 +167,7 @@ export default function PostJobForm({ onSubmitJob }) {
                         />
                         Télétravail possible
                     </label>
-                    <label className="flex items-center gap-2 text-sm font-medium text-primary-dark cursor-pointer">
+                    <label className="flex items-center gap-2 text-sm font-medium text-font-primary-dark cursor-pointer">
                         <input
                             type="checkbox"
                             className="w-4 h-4 rounded border-primary-light text-primary focus:ring-primary"
@@ -181,13 +181,13 @@ export default function PostJobForm({ onSubmitJob }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label
-                            className="block text-sm font-bold text-primary-dark mb-1"
+                            className="block text-sm font-bold text-font-primary-dark mb-1"
                             htmlFor="startDate"
                         >
                             Date de début *
                         </label>
                         <input
-                            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.startDate
+                            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.startDate
                                     ? "border-accent-dark focus:ring-accent-dark"
                                     : "border-primary-light focus:ring-primary"
                                 }`}
@@ -207,13 +207,13 @@ export default function PostJobForm({ onSubmitJob }) {
                     {showDuration && (
                         <div>
                             <label
-                                className="block text-sm font-bold text-primary-dark mb-1"
+                                className="block text-sm font-bold text-font-primary-dark mb-1"
                                 htmlFor="duration"
                             >
                                 Durée *
                             </label>
                             <input
-                                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.duration
+                                className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.duration
                                         ? "border-accent-dark focus:ring-accent-dark"
                                         : "border-primary-light focus:ring-primary"
                                     }`}
@@ -237,13 +237,13 @@ export default function PostJobForm({ onSubmitJob }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label
-                            className="block text-sm font-bold text-primary-dark mb-1"
+                            className="block text-sm font-bold text-font-primary-dark mb-1"
                             htmlFor="salaryMin"
                         >
                             Salaire min. (€/an)
                         </label>
                         <input
-                            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.salaryMin
+                            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.salaryMin
                                     ? "border-accent-dark focus:ring-accent-dark"
                                     : "border-primary-light focus:ring-primary"
                                 }`}
@@ -264,13 +264,13 @@ export default function PostJobForm({ onSubmitJob }) {
 
                     <div>
                         <label
-                            className="block text-sm font-bold text-primary-dark mb-1"
+                            className="block text-sm font-bold text-font-primary-dark mb-1"
                             htmlFor="salaryMax"
                         >
                             Salaire max. (€/an)
                         </label>
                         <input
-                            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.salaryMax
+                            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.salaryMax
                                     ? "border-accent-dark focus:ring-accent-dark"
                                     : "border-primary-light focus:ring-primary"
                                 }`}
@@ -293,13 +293,13 @@ export default function PostJobForm({ onSubmitJob }) {
                 {/* description */}
                 <div>
                     <label
-                        className="block text-sm font-bold text-primary-dark mb-1"
+                        className="block text-sm font-bold text-font-primary-dark mb-1"
                         htmlFor="description"
                     >
                         Description du poste *
                     </label>
                     <textarea
-                        className={`w-full px-4 py-2 bg-white border rounded-2xl focus:ring-2 focus:outline-none transition-colors resize-none ${errors.description
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-2xl focus:ring-2 focus:outline-none transition-colors resize-none ${errors.description
                                 ? "border-accent-dark focus:ring-accent-dark"
                                 : "border-primary-light focus:ring-primary"
                             }`}

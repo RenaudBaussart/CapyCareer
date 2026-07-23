@@ -20,7 +20,7 @@ export default function Footer() {
 
                     {/* colonne 1/4 (marque, intro) */}
                     <div className="space-y-4">
-                        <h2 className="text-2xl font-bold text-bone flex items-center gap-2">
+                        <h2 className="text-2xl font-bold text-light flex items-center gap-2">
                             <img src={logo} alt="Logo CapyCareer" className="h-10 w-auto" />
                             CapyCareer
                         </h2>

@@ -28,13 +28,13 @@ export default function CompanyRegisterForm() {
                 {/* raison sociale */}
                 <div>
                     <label
-                        className="block text-lg font-bold text-primary-dark mb-1"
+                        className="block text-lg font-bold text-font-primary-dark mb-1"
                         htmlFor="companyName"
                     >
                         Entreprise *
                     </label>
                     <input
-                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.companyName ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.companyName ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
                         id="companyName"
                         type="text"
                         autoComplete="organization"
@@ -49,7 +49,7 @@ export default function CompanyRegisterForm() {
                 {/* siret */}
                 <div>
                     <input
-                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.siret ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.siret ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
                         id="siret"
                         type="text"
                         placeholder="Numéro de SIRET (facultatif)"
@@ -63,13 +63,13 @@ export default function CompanyRegisterForm() {
                 {/* personne de contact */}
                 <div>
                     <label
-                        className="block text-lg font-bold text-primary-dark mb-1"
+                        className="block text-lg font-bold text-font-primary-dark mb-1"
                         htmlFor="contactInfos"
                     >
                         Personne de contact *
                     </label>
                     <input
-                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors mb-3 ${errors.contactFirstName ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors mb-3 ${errors.contactFirstName ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
                         id="contactFirstName"
                         type="text"
                         autoComplete="given-name"
@@ -81,7 +81,7 @@ export default function CompanyRegisterForm() {
                     {errors.contactFirstName && <p id="contactFirstName-error" className="text-accent-dark font-medium text-xs mt-1">{errors.contactFirstName.message}</p>}
 
                     <input
-                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.contactLastName ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.contactLastName ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
                         id="contactLastName"
                         type="text"
                         autoComplete="family-name"
@@ -96,7 +96,7 @@ export default function CompanyRegisterForm() {
                 {/* email pro */}
                 <div>
                     <input
-                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.email ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.email ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
                         id="email"
                         type="email"
                         placeholder="Adresse email professionnelle"
@@ -111,13 +111,13 @@ export default function CompanyRegisterForm() {
                 {/* mdp */}
                 <div>
                     <label
-                        className="block text-lg font-bold text-primary-dark mb-1"
+                        className="block text-lg font-bold text-font-primary-dark mb-1"
                         htmlFor="password"
                     >
                         Mot de passe *
                     </label>
                     <input
-                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.password ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.password ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
                         id="password"
                         type="password"
                         autoComplete="new-password"
@@ -132,7 +132,7 @@ export default function CompanyRegisterForm() {
                 {/* confirmation mdp */}
                 <div>
                     <input
-                        className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.confirmPassword ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
+                        className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.confirmPassword ? "border-accent-dark focus:ring-accent-dark" : "border-primary-light focus:ring-primary"}`}
                         id="confirmPassword"
                         type="password"
                         autoComplete="new-password"
@@ -147,7 +147,7 @@ export default function CompanyRegisterForm() {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-deep-primary text-white font-bold py-3 px-4 rounded-3xl mt-6 hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none disabled:opacity-50"
+                    className="w-full bg-deep-primary text-light font-bold py-3 px-4 rounded-3xl mt-6 hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none disabled:opacity-50"
                 >
                     {isSubmitting ? "Inscription..." : "Créer mon espace recruteur"}
                 </button>

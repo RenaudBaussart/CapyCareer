@@ -2,7 +2,7 @@ import RegisterForm from "../components/auth/RegisterForm";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
 import { Link } from "react-router-dom";
-import CapyWrite from "../assets/images/CapyWriteSmoother.gif"
+import CapyWriteVideo from "../assets/images/CapyWrite.mp4"
 import Leaves from "../assets/images/Leaves.png"
 import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
@@ -22,17 +22,17 @@ export default function Register() {
           </section>
 
           {/* colonne droite (dessin capybara) */}
-          <div className="order-1 lg:order-2 flex flex-col items-center text-center backdrop-blur-2xl rounded-3xl overflow-hidden bg-white shadow-[0_0_15px_rgba(0,0,0,0.15)]">
-            <img src={CapyWrite} alt="Capybara qui prend des notes" className="w-full" />
+          <div className="order-1 lg:order-2 flex flex-col items-center text-center backdrop-blur-2xl rounded-3xl overflow-hidden bg-bone-light dark:bg-bone-light shadow-[0_0_15px_rgba(0,0,0,0.15)]">
+          <video src={CapyWriteVideo} autoPlay loop muted alt="Capybara qui prend des notes" className="w-full"></video>
             <div className="  py-10 lg:py-16 px-6" >
               <div className="max-w-2xl mx-auto text-center ">
-                <h1 className="text-4xl font-bold text-primary-dark ">Bienvenue !</h1>
-                <p className="text-primary-dark">
+                <h1 className="text-4xl font-bold text-font-primary-dark ">Bienvenue !</h1>
+                <p className="text-font-primary-dark">
                   Pour commencer votre inscription, veuillez renseigner vos informations ou vous inscrire via votre compte Google.
                 </p>
 
 
-                <p className="text-sm text-primary-dark">
+                <p className="text-sm text-font-primary-dark">
                   En cliquant sur l'une des options "S'inscrire" ci-dessous, vous comprenez et acceptez les <Link to="#" className="text-accent-deep font-medium hover:underline">Conditions d'utilisation</Link> de CapyCareer. Vous confirmez également avoir pris connaissance de la <Link to="#" className="text-accent-deep font-medium hover:underline">Politique de confidentialité</Link>.
                 </p>
 
