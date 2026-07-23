@@ -1244,6 +1244,101 @@ registry.registerPath({
         }
     }
 });
+registry.registerPath({
+    method: "post",
+    path: "/api/security-demo/demo-register-vulnerable",
+    description: "Route de démonstration pour l'enregistrement d'un utilisateur (vulnérable aux attaques XSS car non nettoyé)",
+    summary: "Enregistrement d'un utilisateur (démonstration XSS)",
+    tags: ["Démonstration de sécurité"],
+    request: {
+        body: {
+            description: "Les informations de l'utilisateur à enregistrer",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        username: z.string().openapi({ example: "newuser" }),
+                        email: z.string().email().openapi({ example: "newuser@example.com" }),
+                        password: z.string().openapi({ example: "password123" }),
+                        firstname: z.string().openapi({ example: "<img src=x onerror=alert(1)>" }),
+                        lastname: z.string().openapi({ example: "Dupont" })
+                    })
+                }
+            }
+        }
+    },
+    responses: {
+        201: {
+            description: "Utilisateur créé avec succès (avec données non filtrées).",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "⚠️ Utilisateur créé avec des données non nettoyées dans le prénom/nom !" }),
+                        savedFirstname: z.string().openapi({ example: "<img src=x onerror=alert(1)>" }),
+                        savedLastname: z.string().openapi({ example: "Dupont" })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur ou syntaxe SQL.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        error: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+
+registry.registerPath({
+    method: "post",
+    path: "/api/security-demo/demo-sql-injection",
+    description: "Route de démonstration pour l'attaque par injection SQL (utilisation de concaténation vulnérable)",
+    summary: "Attaque par injection SQL sur le login (démonstration)",
+    tags: ["Démonstration de sécurité"],
+    request: {
+        body: {
+            description: "Les informations d'identification de l'utilisateur",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        username: z.string().openapi({ example: "' OR '1'='1' #" }),
+                        password: z.string().openapi({ example: "password123" })
+                    })
+                }
+            }
+        }
+    },
+    responses: {
+        200: {
+            description: "Succès de l'attaque par injection SQL.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "⚠️ Succès de l'attaque ! L'injection SQL a fonctionné." }),
+                        userFound: z.object({
+                            PK_id: z.number().int().openapi({ example: 1 }),
+                            username: z.string().openapi({ example: "admin" }),
+                            hashed_password: z.string().openapi({ example: "$2b$10$..." })
+                        })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur de syntaxe SQL ou erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        error: z.string().openapi({ example: "You have an error in your SQL syntax..." })
+                    })
+                }
+            }
+        }
+    }
+});
 
 export function generateOpenAPI() {
     const generator = new OpenApiGeneratorV3(registry.definitions);
