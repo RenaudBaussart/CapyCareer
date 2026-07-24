@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+
+extendZodWithOpenApi(z);
 
 export const jobOfferSchema = z.object({
     PK_id: z.number().int().openapi({ description: "Primary key of the job offer." }),

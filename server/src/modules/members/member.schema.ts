@@ -118,7 +118,13 @@ export const updateMemberSchema = baseUpdateSchema.extend({
         .optional(),
         
     password: z.string().optional() 
-}).openapi("AdminUpdateMember");
+});
+
+export const updateProfileOnlySchema = updateMemberSchema.omit({
+    role: true,
+    password: true,
+    newPassword: true,
+}).openapi("updateAdminForProfile");
 
 export const updateProfileSchema = createMemberSchema.pick({
     firstname: true,

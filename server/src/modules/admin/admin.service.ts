@@ -1,6 +1,6 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import bcrypt from "bcrypt";
-import { ConflictError, UnauthorizedError, NotFoundError, InternalServerError, BadRequestError } from '../../core/errors/HttpError';
+import { ConflictError, NotFoundError, BadRequestError } from '../../core/errors/HttpError';
 
 export class AdminService {
     private pool: Pool;
@@ -266,35 +266,6 @@ export class AdminService {
         }
     }
 
-    private async changeMemberRole(connection: any, memberId: number, newRole: string) {
-        await this.checkMemberExistsAndIsNotAdmin(connection, memberId);
-
-        if (!this.ROLE_MAP[newRole.toLowerCase()]) {
-            throw new BadRequestError("Rôle invalide.");
-        }
-
-        await connection.execute(
-            "UPDATE User_ SET FK_role_id = ? WHERE PK_id = ?",
-            [newRole, memberId]
-        );
-    }
-
-    private async changePassword(connection: any, memberId: number, newPassword: string) {
-        await this.checkMemberExistsAndIsNotAdmin(connection, memberId);
-
-
-
-
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-
-
-        const [result] = await connection.execute(
-            "UPDATE User_ SET hashed_password = ? WHERE PK_id = ?",
-            [hashedPassword, memberId]
-        );
-
-    }
 
     private async checkMemberExistsAndIsNotAdmin(connection: any, memberId: number) {
         const [rows] = await connection.execute(
@@ -312,22 +283,46 @@ export class AdminService {
             await connection.beginTransaction();
 
             await this.checkMemberExistsAndIsNotAdmin(connection, memberId);
-            const passwordToUpdate = data.newPassword || data.password;
 
-            if (passwordToUpdate) {
-                await this.changePassword(connection, memberId, passwordToUpdate);
-            }
-
-            if (data.email || data.firstname || data.lastname || data.biography || data.profil_pic_link) {
-                await this.updateMemberProfile(connection, memberId, data);
+            if (data.newPassword || data.password) {
+                const passwordToUpdate = data.newPassword || data.password;
+                const hashedPassword = await bcrypt.hash(passwordToUpdate, 10);
+                await connection.execute(
+                    "UPDATE User_ SET hashed_password = ? WHERE PK_id = ?",
+                    [hashedPassword, memberId]
+                );
             }
 
             if (data.role) {
-                await this.changeMemberRole(connection, memberId, data.role);
+                const normalizedRole = this.ROLE_MAP[data.role.toLowerCase()];
+                if (!normalizedRole) {
+                    throw new BadRequestError("Rôle invalide.");
+                }
+                await connection.execute(
+                    "UPDATE User_ SET FK_role_id = ? WHERE PK_id = ?",
+                    [normalizedRole, memberId]
+                );
             }
 
+            const profileFields = ['email', 'firstname', 'lastname', 'username', 'biography', 'profil_pic_link'];
+            const updateFields = profileFields.filter(field => data[field] !== undefined);
+
+            if (updateFields.length > 0) {
+                if (data.email) {
+                    await this.validateAndCheckEmailConflict(connection, memberId, data.email);
+                }
+
+                const setClause = updateFields.map(field => `${field} = ?`).join(", ");
+                const values = updateFields.map(field => data[field]);
+
+                await connection.execute(
+                    `UPDATE User_ SET ${setClause} WHERE PK_id = ?`,
+                    [...values, memberId]
+                );
+            }
 
             await connection.commit();
+            return { message: "Mise à jour effectuée avec succès." };
         } catch (error) {
             await connection.rollback();
             throw error;

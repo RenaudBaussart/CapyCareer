@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AdminService } from "./admin.service";
 import { pool } from "../../config/database";
-import { updateMemberSchema } from "../members/member.schema";
+import { updateMemberSchema, updateProfileOnlySchema } from "../members/member.schema";
 import { ZodError } from "zod";
 
 
@@ -102,27 +102,28 @@ const getBannedMembers = async (req: Request, res: Response, next: NextFunction)
  */
 const updateMembers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const memberId = parseInt((req.params.id || req.query.id) as string, 10);
+        const memberId = parseInt(req.params.id as string, 10);
         const adminService = new AdminService(pool);
 
         let rawData: any = {};
         let successMessage = "Profil mis à jour avec succès.";
+        let validatedData: any;
 
-        if (req.originalUrl.endsWith('/role')) {
+        if (req.originalUrl.includes('/role')) {
             rawData = { role: req.body.role };
             successMessage = "Rôle du membre mis à jour avec succès.";
+            validatedData = updateMemberSchema.pick({ role: true }).parse(rawData);
         }
-        if (req.originalUrl.endsWith('/password') || req.body.password) {
+        else if (req.originalUrl.includes('/password')) {
             rawData = { newPassword: req.body.password || req.body.newPassword };
             successMessage = "Mot de passe du membre mis à jour avec succès.";
+            validatedData = updateMemberSchema.pick({ newPassword: true }).parse(rawData);
         }
         else {
             rawData = req.body;
+            successMessage = "Informations du profil mises à jour avec succès.";
+            validatedData = updateProfileOnlySchema.parse(rawData);
         }
-
-
-        const validatedData = updateMemberSchema.parse(rawData);
-
 
         await adminService.performAdminUpdate(memberId, validatedData);
 
@@ -138,7 +139,6 @@ const updateMembers = async (req: Request, res: Response, next: NextFunction) =>
         next(error);
     }
 };
-
 
 // pour gerer la requete HTTP des stats des users
 const getStats = async (req: Request, res: Response, next: NextFunction) => {

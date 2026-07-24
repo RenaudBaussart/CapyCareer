@@ -1,6 +1,6 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
-import { member, updateMemberSchema, updateProfileSchema, updatePasswordSchema, updateAccountSchema } from "./modules/members/member.schema";
+import { member, updateProfileOnlySchema, updateProfileSchema, updatePasswordSchema, updateAccountSchema } from "./modules/members/member.schema";
 import { loginSchema } from "./modules/auth/auth.schema";
 import { jobOfferSchema, jobOfferDetailSchema, jobOfferFullSchema } from "./modules/job_offers/job.offers.schema"; // Import the new schema
 export const registry = new OpenAPIRegistry();
@@ -816,23 +816,23 @@ registry.registerPath({
 });
 registry.registerPath({
     method: "put",
-    path: "/api/admin/members/:id",
+    path: "/api/admin/members/{id}",
     description: "Mettre à jour le profil d'un membre (accessible uniquement aux administrateurs)",
     summary: "Mettre à jour le profil d'un membre",
     tags: ["Administration"],
     security: [{ [bearerAuthName]: [] }],
     request: {
+        params: z.object({
+            id: z.string().transform(Number).openapi({ description: "ID du membre", example: 1 })
+        }),
         body: {
             description: "Les données du profil à mettre à jour",
             content: {
                 "application/json": {
-                    schema: updateMemberSchema,
+                    schema: updateProfileOnlySchema,
                 },
             },
-        },
-        query: z.object({
-            id: z.number().int().positive().openapi({ example: 1 })
-        })
+        }
     },
     responses: {
         200: {
@@ -916,12 +916,15 @@ registry.registerPath({
 });
 registry.registerPath({
     method: "patch",
-    path: "/api/admin/members/:id/role",
+    path: "/api/admin/members/{id}/role",
     description: "Mettre à jour le rôle d'un membre (accessible uniquement aux administrateurs)",
     summary: "Mettre à jour le rôle d'un membre",
     tags: ["Administration"],
     security: [{ [bearerAuthName]: [] }],
     request: {
+        params: z.object({
+            id: z.string().transform(Number).openapi({ description: "ID du membre", example: 1 })
+        }),
         body: {
             description: "Le nouveau rôle du membre",
             content: {
@@ -931,10 +934,7 @@ registry.registerPath({
                     })
                 }
             }
-        },
-        query: z.object({
-            id: z.number().int().positive().openapi({ example: 1 })
-        })
+        }
     },
     responses: {
         200: {
@@ -1007,12 +1007,15 @@ registry.registerPath({
 });
 registry.registerPath({
     method: "patch",
-    path: "/api/admin/members/:id/password",
+    path: "/api/admin/members/{id}/password",
     description: "Mettre à jour le mot de passe d'un membre (accessible uniquement aux administrateurs)",
     summary: "Mettre à jour le mot de passe d'un membre",
     tags: ["Administration"],
     security: [{ [bearerAuthName]: [] }],
     request: {
+        params: z.object({
+            id: z.string().transform(Number).openapi({ description: "ID du membre", example: 1 })
+        }),
         body: {
             description: "Le nouveau mot de passe du membre",
             content: {
@@ -1022,10 +1025,7 @@ registry.registerPath({
                     })
                 }
             }
-        },
-        query: z.object({
-            id: z.number().int().positive().openapi({ example: 1 })
-        })
+        }
     },
     responses: {
         200: {
