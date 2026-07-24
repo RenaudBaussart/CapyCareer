@@ -122,9 +122,15 @@ export function useUserProfile() {
 
             if (response.ok) {
                 alert("Votre compte a bien été supprimé.");
+
+                // clean tken & ses datas user
                 localStorage.removeItem("capy_token");
+                localStorage.removeItem("capy_user");
                 sessionStorage.removeItem("capy_token");
-                window.location.href = "/";
+                sessionStorage.removeItem("capy_user");
+
+                // redirection vers accueil
+                window.location.replace("/");
             } else {
                 const data = await response.json();
                 alert(`Erreur lors de la suppression : ${data.message || "Action refusée"}`);
