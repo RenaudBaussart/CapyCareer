@@ -1,9 +1,9 @@
-// fichier gerant le tableau/grille des users
+// fichier gérant le tableau/grille des users
 
 // import
 import { Ban, ShieldCheck, Mail } from "lucide-react";
 
-export default function UserDataGrid({ users, activeTab, handleBanUser, handleUnbanUser }) {
+export default function UserDataGrid({ users, activeTab, handleBanUser, handleUnbanUser, searchQuery }) {
     return (
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse" aria-label="Liste des utilisateurs">
@@ -43,7 +43,7 @@ export default function UserDataGrid({ users, activeTab, handleBanUser, handleUn
                                 </td>
                                 <td className="py-4 px-4 flex justify-end gap-2">
 
-                                    {/* btn ban ou unban selon l'onglet (on passe tout le user) */}
+                                    {/* btn ban ou unban selon longlet */}
                                     {activeTab === 'actifs' ? (
                                         <button
                                             onClick={() => handleBanUser(user)}
@@ -68,11 +68,21 @@ export default function UserDataGrid({ users, activeTab, handleBanUser, handleUn
                         ))
                     ) : (
                         <tr>
-                            {/* colSpan passe de 4 à 5 à cause de la nouvelle colonne Rôle */}
+
                             <td colSpan="5" className="py-8 text-center text-font-primary-dark/60">
-                                {activeTab === 'actifs' 
-                                    ? "Aucun utilisateur trouvé avec cette adresse email." 
-                                    : "Aucun utilisateur banni."}
+                                {activeTab === 'actifs' ? (
+                                    searchQuery ? (
+                                        "Aucun utilisateur trouvé avec cette adresse email."
+                                    ) : (
+                                        "Aucun utilisateur actif enregistré pour le moment."
+                                    )
+                                ) : (
+                                    searchQuery ? (
+                                        "Aucun utilisateur banni trouvé avec cette recherche."
+                                    ) : (
+                                        "Aucun utilisateur banni."
+                                    )
+                                )}
                             </td>
                         </tr>
                     )}

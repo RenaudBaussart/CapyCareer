@@ -75,6 +75,7 @@ export default function AdminCompanies() {
                             activeTab={activeTab}
                             handleBanUser={requestBanUser}
                             handleUnbanUser={requestUnbanUser}
+                            searchQuery={searchQuery}
                         />
                     </div>
                 </div>

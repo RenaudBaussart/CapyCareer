@@ -78,6 +78,7 @@ export default function AdminUsers({ roleToManage = "candidat" }) {
                             activeTab={activeTab}
                             handleBanUser={requestBanUser}
                             handleUnbanUser={requestUnbanUser}
+                            searchQuery={searchQuery}
                         />
                     </div>
                 </div>
