@@ -1,14 +1,13 @@
-// Fichier du dashboard de l'entreprise
+// fichier du dashboard de l'entreprise
 
 // import
 // components
 import Footer from "../components/layout/Footer";
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import { Link } from "react-router-dom";
 // icone
 import { PlusCircle, LayoutList, Briefcase, Users, Sparkles, XCircle } from "lucide-react";
 // img
-import Leaves from "../assets/images/Leaves.png";
 import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 // data
 import { COMPANY_JOBS_MOCK } from "../data/companyJobsMock";
@@ -83,7 +82,7 @@ export default function CompanyDashboard() {
 
     return (
         <main className="flex flex-col min-h-screen bg-bone text-font-primary-dark font-sans">
-            <Navbar />
+            <MainNavbar />
 
             <section className="bg-main-layout">
                 <div className="w-full p-10">

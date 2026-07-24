@@ -3,16 +3,15 @@
 // import
 import { Link } from "react-router-dom";
 // components
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import Footer from "../components/layout/Footer";
 // img
-import Leaves from "../assets/images/Leaves.png";
 import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function AccessibilityPage() {
   return (
     <main className="bg-main-layout">
-      <Navbar />
+      <MainNavbar />
 
       <div className="grow flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-4xl backdrop-blur-2xl bg-bone-light/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">

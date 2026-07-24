@@ -1,25 +1,19 @@
 // fichier gerant la page de profil admin
 
 // import
-import { useState } from "react";
+import { useAdminProfile } from "../../hook/useAdminProfile";
 // component
-import AdminNavbar from "../../components/admin/layout/AdminNavbar";
-// img
-import Leaves from "../../assets/images/Leaves.png";
+import MainNavbar from "../../components/layout/MainNavbar";
+import PasswordInput from "../../components/ui/PasswordInput";
 // icone
-import { User, Mail, Lock, Save, ShieldCheck } from "lucide-react";
+import { User, Mail, Save, ShieldCheck } from "lucide-react";
 
 export default function AdminProfile() {
-    const [profileData, setProfileData] = useState({
-        firstName: "Capy", lastName: "Admin", email: "admin@capycareer.fr", currentPassword: "", newPassword: ""
-    });
-
-    const handleChange = (e) => setProfileData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-    const handleSubmit = (e) => { e.preventDefault(); console.log("Maj:", profileData); };
+    const { profileData, handleChange, handleSubmit } = useAdminProfile();
 
     return (
         <div className="bg-main-layout">
-            <AdminNavbar />
+            <MainNavbar />
             <main className="flex-1 max-w-3xl w-full mx-auto px-6 py-12 flex flex-col">
                 <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full">
 
@@ -33,14 +27,37 @@ export default function AdminProfile() {
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
                         <div className="space-y-4">
                             <h2 className="text-lg font-semibold text-font-primary-dark mb-4">Informations</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="relative"><input type="text" name="firstName" value={profileData.firstName} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 bg-bone-light/50 border border-white/60 rounded-xl" /><User className="w-5 h-5 text-font-primary-dark/40 absolute left-3 top-1/2 -translate-y-1/2" /></div>
-                                <div className="relative"><input type="text" name="lastName" value={profileData.lastName} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 bg-bone-light/50 border border-white/60 rounded-xl" /><User className="w-5 h-5 text-font-primary-dark/40 absolute left-3 top-1/2 -translate-y-1/2" /></div>
+                                <div className="relative">
+                                    <input type="text" name="firstName" value={profileData.firstName} onChange={handleChange} placeholder="Prénom" autoComplete="off" className="w-full pl-10 pr-4 py-2.5 bg-bone-light/50 border border-white/60 rounded-xl text-font-primary-dark" />
+                                    <User className="w-5 h-5 text-font-primary-dark/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                                </div>
+                                <div className="relative">
+                                    <input type="text" name="lastName" value={profileData.lastName} onChange={handleChange} placeholder="Nom" autoComplete="off" className="w-full pl-10 pr-4 py-2.5 bg-bone-light/50 border border-white/60 rounded-xl text-font-primary-dark" />
+                                    <User className="w-5 h-5 text-font-primary-dark/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                                </div>
+                                <div className="relative">
+                                    <input type="text" name="username" value={profileData.username} onChange={handleChange} placeholder="Pseudo" autoComplete="off" className="w-full pl-10 pr-4 py-2.5 bg-bone-light/50 border border-white/60 rounded-xl text-font-primary-dark" />
+                                    <User className="w-5 h-5 text-font-primary-dark/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                                </div>
+                                <div className="relative">
+                                    <input type="email" name="email" value={profileData.email} onChange={handleChange} autoComplete="off" className="w-full pl-10 pr-4 py-2.5 bg-bone-light/50 border border-white/60 rounded-xl text-font-primary-dark" />
+                                    <Mail className="w-5 h-5 text-font-primary-dark/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                                </div>
+
+                                <div className="md:col-span-2">
+                                    <PasswordInput
+                                        name="newPassword"
+                                        value={profileData.newPassword}
+                                        onChange={handleChange}
+                                        placeholder="Nouveau mot de passe (laisser vide si inchangé)"
+                                        autoComplete="new-password"
+                                    />
+                                </div>
                             </div>
-                            <div className="relative"><input type="email" name="email" value={profileData.email} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 bg-bone-light/50 border border-white/60 rounded-xl" /><Mail className="w-5 h-5 text-font-primary-dark/40 absolute left-3 top-1/2 -translate-y-1/2" /></div>
                         </div>
 
                         <div className="pt-6 flex justify-end">

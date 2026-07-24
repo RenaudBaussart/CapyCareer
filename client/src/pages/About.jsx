@@ -3,7 +3,7 @@
 // import
 import { Link } from "react-router-dom";
 // component
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import Footer from "../components/layout/Footer";
 // icones
 import { Users, Code } from "lucide-react";
@@ -48,7 +48,7 @@ const teamMembers = [
 export default function About() {
     return (
        <main className="bg-main-layout">
-            <Navbar />
+            <MainNavbar />
 
             <div className="grow flex items-center justify-center p-6 lg:p-12">
                 {/* grande card */}

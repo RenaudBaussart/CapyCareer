@@ -1,12 +1,14 @@
+// fichier gerant la page de connexion pour espace entreprise
+
 import CompanyRegisterForm from "../../components/auth/CompanyRegisterForm";
 import Footer from "../../components/layout/Footer";
-import Navbar from "../../components/layout/Navbar";
+import MainNavbar from "../../components/layout/MainNavbar";
 import { Link } from "react-router-dom";
 
 export default function CompanyRegister() {
     return (
         <main className="bg-main-layout">
-            <Navbar />
+            <MainNavbar />
 
             <div className="grow flex items-center justify-center p-6 lg:p-12">
                 <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
