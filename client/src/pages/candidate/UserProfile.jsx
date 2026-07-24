@@ -1,19 +1,22 @@
 // fichier gerant la page de profil candidat
 
-// import
 import { useContext } from "react";
-// hooks
 import { HandednessContext } from "../../context/HandednessContext";
 import { useUserProfile } from "../../hook/useUserProfile";
-// component
 import MainNavbar from "../../components/layout/MainNavbar";
-// icone
+import ConfirmModal from "../../components/modals/ConfirmModal";
+import GdprDataModal from "../../components/ui/GdprDataModal";
 import { User, Mail, Save, GraduationCap, Upload, Shield, BellOff, Trash2, FileText } from "lucide-react";
 
 export default function UserProfile() {
     const {
-        profileData, handleChange, handleSubmit,
-        handleCVUpload, disableNotifications, requestAccountDeletion
+        profileData, handleChange, handleCVUpload, disableNotifications,
+        // var delete
+        requestAccountDeletion, isDeleteModalOpen, setIsDeleteModalOpen, executeAccountDeletion, isDeleting,
+        // var save
+        requestSaveProfile, isSaveModalOpen, setIsSaveModalOpen, executeSaveProfile, isSaving,
+        // var rgpd
+        isGdprModalOpen, setIsGdprModalOpen, requestGdprData, downloadGdprData, gdprData, isLoadingGdpr
     } = useUserProfile();
 
     const { handedness, setHandedness } = useContext(HandednessContext);
@@ -36,13 +39,12 @@ export default function UserProfile() {
                             </div>
                         </div>
 
-                        {/* initiales user */}
                         <div className="hidden sm:flex items-center justify-center w-16 h-16 rounded-full border-2 border-primary-dark/20 text-xl font-bold text-font-primary-dark bg-bone-light/50 dark:bg-bone-light/50">
                             {profileData.firstName ? profileData.firstName.charAt(0) : "C"}{profileData.lastName ? profileData.lastName.charAt(0) : ""}
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-8">
+                    <form onSubmit={requestSaveProfile} className="space-y-8">
 
                         {/* informations */}
                         <div className="space-y-4">
@@ -75,19 +77,11 @@ export default function UserProfile() {
                             </div>
                         </div>
 
-                        {/* CV & RGPD */}
+                        {/* cv & RGPD */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-6 border-t border-primary-dark/10">
-                            {/* <div className="space-y-3">
-                                <h3 className="text-lg font-bold text-font-primary-dark">CV</h3>
-                                <label className="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 bg-bone-light/60 border border-primary/20 text-primary font-medium rounded-xl hover:bg-primary/10 transition-colors">
-                                    <Upload className="w-5 h-5" />
-                                    Importer un CV
-                                    <input type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={handleCVUpload} />
-                                </label>
-                            </div> */}
                             <div className="space-y-3">
                                 <h3 className="text-lg font-bold text-font-primary-dark">RGPD</h3>
-                                <button type="button" className="inline-flex items-center gap-2 px-5 py-2.5 bg-bone-light/60 border border-blue-200 text-blue-600 font-medium rounded-xl hover:bg-blue-50 transition-colors">
+                                <button type="button" onClick={requestGdprData} className="inline-flex items-center gap-2 px-5 py-2.5 bg-bone-light/60 border border-blue-200 text-blue-600 font-medium rounded-xl hover:bg-blue-50 transition-colors">
                                     <Shield className="w-5 h-5" />
                                     Consulter mes données
                                 </button>
@@ -108,7 +102,6 @@ export default function UserProfile() {
                         <div className="space-y-4 pt-6 border-t border-primary-dark/10">
                             <h3 className="text-xl font-bold text-red-600">Zone dangereuse</h3>
                             <div className="flex flex-col sm:flex-row gap-4">
-                                {/* <button type="button" onClick={disableNotifications} className="flex-1 flex justify-center items-center gap-2 px-4 py-3 bg-bone-light/60 border border-red-200 text-red-500 font-medium rounded-xl hover:bg-red-50 transition-colors"><BellOff className="w-5 h-5" /> Désactiver notifications</button> */}
                                 <button type="button" onClick={requestAccountDeletion} className="flex-1 flex justify-center items-center gap-2 px-4 py-3 bg-bone-100/80 border border-red-200 text-red-600 font-medium rounded-xl hover:bg-red-200 transition-colors"><Trash2 className="w-5 h-5" /> Suppression définitive</button>
                             </div>
                         </div>
@@ -122,6 +115,41 @@ export default function UserProfile() {
                     </form>
                 </div>
             </main>
+
+            {/* modale delete */}
+            <ConfirmModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={executeAccountDeletion}
+                title="Supprimer définitivement le compte ?"
+                message="Attention : Toutes vos données, candidatures et informations seront effacées de nos serveurs. Cette action est totalement irréversible."
+                confirmText="Oui, supprimer mon compte"
+                cancelText="Annuler"
+                isDestructive={true}
+                isLoading={isDeleting}
+            />
+
+            {/* modale save */}
+            <ConfirmModal
+                isOpen={isSaveModalOpen}
+                onClose={() => setIsSaveModalOpen(false)}
+                onConfirm={executeSaveProfile}
+                title="Enregistrer les modifications ?"
+                message="Voulez-vous valider et mettre à jour les informations de votre profil public ?"
+                confirmText="Oui, enregistrer"
+                cancelText="Annuler"
+                isDestructive={false}
+                isLoading={isSaving}
+            />
+
+            {/* modale RGPD */}
+            <GdprDataModal
+                isOpen={isGdprModalOpen}
+                onClose={() => setIsGdprModalOpen(false)}
+                onDownload={downloadGdprData}
+                data={gdprData}
+                isLoading={isLoadingGdpr}
+            />
         </div>
     );
 }
