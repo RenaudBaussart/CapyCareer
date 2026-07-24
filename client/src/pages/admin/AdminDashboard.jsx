@@ -71,8 +71,8 @@ export default function AdminDashboard() {
 
                     {/* haut de page */}
                     <div className="mb-10">
-                        <h1 className="text-3xl font-bold text-font-primary-dark">vue d ensemble</h1>
-                        <p className="text-deep-primary mt-1">gerez la collecte de donnees et surveillez l activite de capycareer.</p>
+                        <h1 className="text-3xl font-bold text-font-primary-dark">Vue d'ensemble</h1>
+                        <p className="text-deep-primary mt-1">Gérez la collecte de données et surveillez l'activité de Capycareer.</p>
                     </div>
 
                     {/* controle n8n */}

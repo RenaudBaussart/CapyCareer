@@ -1,4 +1,4 @@
-// fichier gérant la page de modération des entreprises (recruteurs)
+// fichier gerant page de moderation entreprises
 
 // import
 import { useAdminUsers } from "../../hook/useAdminUsers";
