@@ -17,7 +17,7 @@ export function useN8nSync() {
 
         try {
             // WARNING: call api à mettre
-            // const response = await fetch('/api/n8n/sync', { method: 'POST' });
+            // const response = await fetch('/n8n/sync', { method: 'POST' });
 
             // fake api
             await new Promise(resolve => setTimeout(resolve, 2500));

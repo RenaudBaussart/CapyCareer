@@ -29,7 +29,7 @@ export function useCompanyProfile() {
                     return;
                 }
 
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/members/me`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/members/me`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -58,14 +58,14 @@ export function useCompanyProfile() {
 
         try {
             // update profil
-            await fetch(`${import.meta.env.VITE_API_URL}/api/members/me`, {
+            await fetch(`${import.meta.env.VITE_API_URL}/members/me`, {
                 method: 'PUT',
                 headers,
                 body: JSON.stringify({ biography: profileData.description })
             });
 
             // update info
-            await fetch(`${import.meta.env.VITE_API_URL}/api/members/me/account`, {
+            await fetch(`${import.meta.env.VITE_API_URL}/members/me/account`, {
                 method: 'PATCH',
                 headers,
                 body: JSON.stringify({ email: profileData.email, username: profileData.companyName })

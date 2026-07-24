@@ -31,7 +31,7 @@ export function useUserProfile() {
                     return;
                 }
 
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/members/me`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/members/me`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -64,7 +64,7 @@ export function useUserProfile() {
 
         try {
             // update profile
-            await fetch(`${import.meta.env.VITE_API_URL}/api/members/me`, {
+            await fetch(`${import.meta.env.VITE_API_URL}/members/me`, {
                 method: 'PUT',
                 headers,
                 body: JSON.stringify({
@@ -75,7 +75,7 @@ export function useUserProfile() {
             });
 
             // update info compte
-            await fetch(`${import.meta.env.VITE_API_URL}/api/members/me/account`, {
+            await fetch(`${import.meta.env.VITE_API_URL}/members/me/account`, {
                 method: 'PATCH',
                 headers,
                 body: JSON.stringify({
@@ -115,7 +115,7 @@ export function useUserProfile() {
                 return;
             }
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/members/me`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/members/me`, {
                 method: 'DELETE',
                 headers: { "Authorization": `Bearer ${token}` }
             });

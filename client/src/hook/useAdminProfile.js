@@ -28,7 +28,7 @@ export function useAdminProfile() {
                     return;
                 }
 
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/members/me`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/members/me`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -59,14 +59,14 @@ export function useAdminProfile() {
 
         try {
             // maj profil
-            await fetch(`${import.meta.env.VITE_API_URL}/api/members/me`, {
+            await fetch(`${import.meta.env.VITE_API_URL}/members/me`, {
                 method: 'PUT',
                 headers,
                 body: JSON.stringify({ firstname: profileData.firstName, lastname: profileData.lastName })
             });
 
             // Requête 2: Mise à jour du compte (email, pseudo)
-            await fetch(`${import.meta.env.VITE_API_URL}/api/members/me/account`, {
+            await fetch(`${import.meta.env.VITE_API_URL}/members/me/account`, {
                 method: 'PATCH',
                 headers,
                 body: JSON.stringify({ email: profileData.email, username: profileData.username })
@@ -74,7 +74,7 @@ export function useAdminProfile() {
 
             // mdp
             if (profileData.newPassword) {
-                await fetch(`${import.meta.env.VITE_API_URL}/api/members/me/password`, {
+                await fetch(`${import.meta.env.VITE_API_URL}/members/me/password`, {
                     method: 'PATCH',
                     headers,
                     body: JSON.stringify({ password: profileData.newPassword })

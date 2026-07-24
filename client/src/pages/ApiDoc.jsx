@@ -39,7 +39,7 @@ export default function ApiDoc() {
             </p>
             <div className="bg-bone-light/80 p-4 rounded-xl border border-primary-light/20 space-y-2">
               <p className="text-sm font-medium"><strong>Format d'échange :</strong> JSON uniquement</p>
-              <p className="text-sm font-medium"><strong>URL de base :</strong> <code className="bg-bone-light/80 px-1.5 py-0.5 rounded border text-font-primary-dark font-mono text-xs">https://api.capycareer.com/api/v1</code></p>
+              <p className="text-sm font-medium"><strong>URL de base :</strong> <code className="bg-bone-light/80 px-1.5 py-0.5 rounded border text-font-primary-dark font-mono text-xs">https://api.capycareer.com/v1</code></p>
             </div>
           </section>
 

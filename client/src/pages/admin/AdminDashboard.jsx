@@ -32,7 +32,7 @@ export default function AdminDashboard() {
                 const token = localStorage.getItem("capy_token") || sessionStorage.getItem("capy_token");
 
                 // call route back pour verifier lautorisation
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats/users`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/stats/users`, {
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }
