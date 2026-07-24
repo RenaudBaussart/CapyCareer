@@ -1,6 +1,6 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import bcrypt from "bcrypt";
-import { ConflictError, UnauthorizedError, NotFoundError, InternalServerError, BadRequestError } from '../../core/errors/HttpError';
+import { ConflictError, NotFoundError, BadRequestError } from '../../core/errors/HttpError';
 
 export class AdminService {
     private pool: Pool;
@@ -266,35 +266,6 @@ export class AdminService {
         }
     }
 
-    private async changeMemberRole(connection: any, memberId: number, newRole: string) {
-        await this.checkMemberExistsAndIsNotAdmin(connection, memberId);
-
-        if (!this.ROLE_MAP[newRole.toLowerCase()]) {
-            throw new BadRequestError("Rôle invalide.");
-        }
-
-        await connection.execute(
-            "UPDATE User_ SET FK_role_id = ? WHERE PK_id = ?",
-            [newRole, memberId]
-        );
-    }
-
-    private async changePassword(connection: any, memberId: number, newPassword: string) {
-        await this.checkMemberExistsAndIsNotAdmin(connection, memberId);
-
-
-
-
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-
-
-        const [result] = await connection.execute(
-            "UPDATE User_ SET hashed_password = ? WHERE PK_id = ?",
-            [hashedPassword, memberId]
-        );
-
-    }
 
     private async checkMemberExistsAndIsNotAdmin(connection: any, memberId: number) {
         const [rows] = await connection.execute(
