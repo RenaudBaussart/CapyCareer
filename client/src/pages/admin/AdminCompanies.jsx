@@ -31,7 +31,7 @@ export default function AdminCompanies() {
             <MainNavbar />
 
             <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
-                <div className="bg-white/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1 flex flex-col">
+                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-bone-light/50 p-8 md:p-10 w-full flex-1 flex flex-col">
 
                     <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
@@ -54,7 +54,7 @@ export default function AdminCompanies() {
                     </div>
 
                     {/* gestion des onglets */}
-                    <div className="flex gap-4 mb-4 border-b border-white/40">
+                    <div className="flex gap-4 mb-4 border-b border-bone-light/40">
                         <button
                             onClick={() => setActiveTab("actifs")}
                             className={`pb-2 px-2 font-medium transition-colors ${activeTab === 'actifs' ? 'text-primary border-b-2 border-primary' : 'text-primary-dark/60 hover:text-primary-dark'}`}
@@ -69,7 +69,7 @@ export default function AdminCompanies() {
                         </button>
                     </div>
 
-                    <div className="bg-white/40 rounded-2xl p-2 border border-white/50 flex-1">
+                    <div className="bg-bone-light/40 rounded-2xl p-2 border border-bone-light/50 flex-1">
                         <UserDataGrid
                             users={users}
                             activeTab={activeTab}
