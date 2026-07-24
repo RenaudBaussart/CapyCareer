@@ -197,7 +197,7 @@ describe("AdminController", () => {
                 .send({ firstname: "Jean", lastname: "Dupont" });
 
             expect(res.status).toBe(200);
-            expect(res.body).toEqual({ message: "Profil mis à jour avec succès." });
+            expect(res.body).toEqual({ message: "Informations du profil mises à jour avec succès." });
             expect(AdminService.prototype.performAdminUpdate).toHaveBeenCalledWith(2, expect.objectContaining({ firstname: "Jean", lastname: "Dupont" }));
         });
 
@@ -253,4 +253,4 @@ describe("AdminController", () => {
             });
         });
     });
-})
+});

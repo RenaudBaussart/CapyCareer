@@ -60,7 +60,6 @@ describe("AdminService", () => {
         });
     });
 
-   
     describe("getMemberByRoleName", () => {
         it("devrait lancer BadRequestError si le rôle n'est pas valide", async () => {
             await expect(adminService.getMemberByRoleName("pirate")).rejects.toThrow(BadRequestError);
@@ -73,10 +72,9 @@ describe("AdminService", () => {
         });
     });
 
-   
     describe("banMember", () => {
         it("devrait bannir un membre, le supprimer et faire un commit", async () => {
-            mockConnection.execute.mockResolvedValueOnce([[{ PK_id: 2, username: "baduser", FK_role_id: "candidat" }]]); // SELECT User
+            mockConnection.execute.mockResolvedValueOnce([[{ PK_id: 2, username: "baduser", FK_role_id: "candidat" }]]); 
             mockConnection.execute.mockResolvedValueOnce([[]]); 
             mockConnection.execute.mockResolvedValueOnce([[]]); 
 
@@ -103,7 +101,6 @@ describe("AdminService", () => {
         });
     });
 
-   
     describe("unbanMember", () => {
         it("devrait débannir un membre et faire un commit", async () => {
             mockConnection.execute.mockResolvedValueOnce([[{ PK_banned_id: 1 }]]); 
@@ -123,14 +120,12 @@ describe("AdminService", () => {
         });
     });
 
-  
     describe("performAdminUpdate", () => {
         beforeEach(() => {
             mockConnection.execute.mockImplementation(async (query: string) => {
-                if (query.includes("SELECT FK_role_id")) return [[{ FK_role_id: "candidat" }]];
-                if (query.includes("SELECT PK_id FROM User_ WHERE PK_id = ?")) return [[{ PK_id: 2 }]];
+                if (query.includes("SELECT FK_role_id FROM User_ WHERE PK_id = ?")) return [[{ FK_role_id: "candidat" }]];
                 if (query.includes("SELECT 1 FROM Banned")) return [[ ]]; 
-                if (query.includes("AND PK_id !=")) return [[ ]]; 
+                if (query.includes("SELECT PK_id FROM User_ WHERE email = ? AND PK_id != ?")) return [[ ]]; 
                 return [[]]; 
             });
         });
@@ -154,7 +149,7 @@ describe("AdminService", () => {
 
         it("devrait lancer BadRequestError si on modifie un admin", async () => {
             mockConnection.execute.mockImplementation(async (query: string) => {
-                if (query.includes("SELECT FK_role_id")) return [[{ FK_role_id: "admin" }]];
+                if (query.includes("SELECT FK_role_id FROM User_ WHERE PK_id = ?")) return [[{ FK_role_id: "admin" }]];
                 return [[]];
             });
 
@@ -166,10 +161,9 @@ describe("AdminService", () => {
 
         it("devrait lancer ConflictError si le nouvel email est déjà pris", async () => {
             mockConnection.execute.mockImplementation(async (query: string) => {
-                if (query.includes("SELECT FK_role_id")) return [[{ FK_role_id: "candidat" }]];
-                if (query.includes("SELECT PK_id FROM User_ WHERE PK_id = ?")) return [[{ PK_id: 2 }]];
+                if (query.includes("SELECT FK_role_id FROM User_ WHERE PK_id = ?")) return [[{ FK_role_id: "candidat" }]];
                 if (query.includes("SELECT 1 FROM Banned")) return [[ ]]; 
-                if (query.includes("AND PK_id !=")) return [[{ PK_id: 5 }]]; 
+                if (query.includes("SELECT PK_id FROM User_ WHERE email = ? AND PK_id != ?")) return [[{ PK_id: 5 }]]; 
                 return [[]];
             });
 
