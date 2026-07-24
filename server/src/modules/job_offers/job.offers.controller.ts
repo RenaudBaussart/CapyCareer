@@ -65,6 +65,8 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
     try {
         // récupère l'identifiant dans les paramètres d'url
         const { id } = req.params;
+        const jobId = Number(id);
+
         if (!id) throw new BadRequestError("Identifiant d'offre manquant.");
         if (typeof id !== 'string' || id.trim() === '') {
             //lève une erreur si le paramètre est vide ou invalide
