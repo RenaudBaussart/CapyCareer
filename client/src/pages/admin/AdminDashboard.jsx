@@ -3,7 +3,7 @@
 // import
 import { useState, useEffect } from "react";
 // component
-import AdminNavbar from "../../components/admin/layout/AdminNavbar";
+import MainNavbar from "../../components/layout/MainNavbar";
 import AdminStatCard from "../../components/admin/AdminStatCard";
 import N8nSyncCard from "../../components/admin/N8nSyncCard";
 import SearchBar from "../../components/admin/SearchBar";
@@ -60,7 +60,7 @@ export default function AdminDashboard() {
 
     return (
         <div className="bg-main-layout">
-            <AdminNavbar />
+            <MainNavbar />
             <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
 
                 {/* conteneur principal*/}

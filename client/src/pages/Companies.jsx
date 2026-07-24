@@ -3,8 +3,8 @@
 // import component
 import CompanyCard from "../components/companies/CompanyCard";
 import Footer from "../components/layout/Footer";
-import Navbar from "../components/layout/Navbar";
-import Leaves from "../assets/images/Leaves.png";
+import MainNavbar from "../components/layout/MainNavbar";
+
 import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 // icone
@@ -24,7 +24,7 @@ export default function Companies() {
     return (
         // conteneur principal
         <main className="bg-main-layout">
-            <Navbar />
+            <MainNavbar /> {/* <-- Utilisation de la navbar entreprise */}
 
             {/* conteneur card */}
             <div className="grow flex items-center justify-center p-6 lg:p-12">

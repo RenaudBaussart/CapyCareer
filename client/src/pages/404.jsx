@@ -1,13 +1,13 @@
 // fichier de la page 404
 
 import Footer from "../components/layout/Footer";
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import Capy404 from "../assets/images/CappyNotFound2.png";
 
 export default function Home() {
     return (
         <main>
-            <Navbar />
+            <MainNavbar />
 
             <section className="relative flex justify-center overflow-hidden">
                 <img
