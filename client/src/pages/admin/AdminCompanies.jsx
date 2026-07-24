@@ -1,9 +1,8 @@
-// fichier gérant la page de modération des entreprises (recruteurs)
+// fichier gerant page de moderation entreprises
 
 // import
 import { useAdminUsers } from "../../hook/useAdminUsers";
-// component
-import AdminNavbar from "../../components/admin/layout/AdminNavbar";
+import MainNavbar from "../../components/layout/MainNavbar";
 import UserDataGrid from "../../components/admin/UseDataGrid";
 import AdminActionModal from "../../components/admin/modals/AdminActionModal";
 import SearchBar from "../../components/admin/SearchBar";
@@ -29,7 +28,7 @@ export default function AdminCompanies() {
 
     return (
         <div className="bg-main-layout">
-            <AdminNavbar />
+            <MainNavbar />
 
             <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
                 <div className="bg-white/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1 flex flex-col">
@@ -76,6 +75,7 @@ export default function AdminCompanies() {
                             activeTab={activeTab}
                             handleBanUser={requestBanUser}
                             handleUnbanUser={requestUnbanUser}
+                            searchQuery={searchQuery}
                         />
                     </div>
                 </div>

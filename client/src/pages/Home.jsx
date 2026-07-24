@@ -3,7 +3,7 @@
 // import
 // components
 import Footer from "../components/layout/Footer";
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import JobsSection from "../components/home/JobsSection";
 // icone
 import { Banana, Apple, Citrus } from "lucide-react";
@@ -15,7 +15,7 @@ import { fetchJobOffers, fetchJobOfferDetail } from "../services/jobs.service";
 export default function Home() {
     return (
         <main className="bg-main-layout">
-            <Navbar />
+            <MainNavbar />
 
             <section className="relative px-4 sm:px-6 pt-12 pb-16 lg:pt-16 lg:pb-20">
                 <div className="max-w-7xl mx-auto">

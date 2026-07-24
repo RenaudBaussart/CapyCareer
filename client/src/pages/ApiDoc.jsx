@@ -5,18 +5,17 @@
 // import
 import { Link } from "react-router-dom";
 // component
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import Footer from "../components/layout/Footer";
 // icones
 import { Terminal, Code2, ShieldAlert } from "lucide-react";
 // img
-import Leaves from "../assets/images/Leaves.png";
 import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function ApiDoc() {
   return (
-   <main className="bg-main-layout">
-      <Navbar />
+    <main className="bg-main-layout">
+      <MainNavbar />
 
       <div className="grow flex items-center justify-center p-6 lg:p-12">
         {/* grande card */}
@@ -40,7 +39,7 @@ export default function ApiDoc() {
             </p>
             <div className="bg-bone-light/80 p-4 rounded-xl border border-primary-light/20 space-y-2">
               <p className="text-sm font-medium"><strong>Format d'échange :</strong> JSON uniquement</p>
-              <p className="text-sm font-medium"><strong>URL de base :</strong> <code className="bg-bone-light/80 px-1.5 py-0.5 rounded border text-font-primary-dark font-mono text-xs">https://api.capycareer.com/api/v1</code></p>
+              <p className="text-sm font-medium"><strong>URL de base :</strong> <code className="bg-bone-light/80 px-1.5 py-0.5 rounded border text-font-primary-dark font-mono text-xs">https://api.capycareer.com/v1</code></p>
             </div>
           </section>
 

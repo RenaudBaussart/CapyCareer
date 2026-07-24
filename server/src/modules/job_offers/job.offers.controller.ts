@@ -25,7 +25,7 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
 
         // récupère 51 offres au lieu de 50 pour anticiper la page suivante
         const [rows] = await pool.query(
-            "SELECT PK_id, title, contract_type, city, country, company FROM Job_Offers ORDER BY publish_date DESC LIMIT ? OFFSET ?;",
+            "SELECT PK_id, title, contract_type, city, country, company, url FROM Job_Offers ORDER BY publish_date DESC LIMIT ? OFFSET ?;",
             [limit + 1, offset]
         );
 

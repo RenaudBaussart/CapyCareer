@@ -2,20 +2,18 @@
 
 // imports
 import { Link } from "react-router-dom";
-// component
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import Footer from "../components/layout/Footer";
 // icones
 import { Shield } from "lucide-react";
 // img
-import Leaves from "../assets/images/Leaves.png";
 import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function Legal() {
     return (
         // conteneur principal
         <main className="bg-main-layout">
-            <Navbar />
+                  <MainNavbar />
 
             {/* conteneur pour centrer */}
             <div className="grow flex items-center justify-center p-6 lg:p-12">
