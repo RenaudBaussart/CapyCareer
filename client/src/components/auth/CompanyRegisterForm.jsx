@@ -1,13 +1,26 @@
 // fichier du component qui gere validation, accessibilité champs & erreurs (version entreprise)
 
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerCompanySchema } from "../../schemas/auth.schema";
 
 // navigation
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+// communication API & gestion des erreurs
+import { registerUser } from "../../services/auth.service";
+import { getFriendlyErrorMessage } from "../../utils/errorHandler";
 
 export default function CompanyRegisterForm() {
+    // recupere fonction login du contexte
+    const { login: contextLogin } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    // etat pour gerer les erreurs renvoyees par API
+    const [apiError, setApiError] = useState("");
+
     const {
         register,
         handleSubmit,
@@ -17,12 +30,58 @@ export default function CompanyRegisterForm() {
     });
 
     const onSubmit = async (data) => {
-        // WARNING: connecter a lAPI 
-        console.log("Form data entreprise :", data);
+        // reset des erreurs api avant chaque tentative
+        setApiError("");
+
+        try {
+            // retire confirmation mdp & structure pour le back
+            const { confirmPassword, ...formData } = data;
+
+            const registerData = {
+                username: formData.companyName,
+                email: formData.email,
+                password: formData.password,
+                firstname: formData.contactFirstName,
+                lastname: formData.contactLastName,
+                siret: formData.siret,
+                role: "entreprise"
+            };
+
+            // call service externe inscription
+            const result = await registerUser(registerData);
+
+            // SI le back-end renvoie bien un token
+            if (result && result.token) {
+                // prepare data user avec son role
+                const userInfos = result.user || {
+                    username: formData.companyName,
+                    email: formData.email,
+                    role: "entreprise"
+                };
+
+                contextLogin(result.token, userInfos);
+                navigate("/");
+            } else {
+                // SI pas token alors redirige vers le login
+                navigate("/login");
+            }
+
+        } catch (error) {
+            console.error("Erreur d'inscription entreprise :", error.message);
+            setApiError(getFriendlyErrorMessage(error.message));
+        }
     };
 
     return (
         <div className="w-full max-w-md">
+
+            {/* affichage des erreurs api traduites */}
+            {apiError && (
+                <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl text-sm font-semibold text-center mb-4">
+                    {apiError}
+                </div>
+            )}
+
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
 
                 {/* raison sociale */}
