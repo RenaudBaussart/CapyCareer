@@ -26,8 +26,8 @@ export default function AdminNavbar() {
             : "text-white hover:text-white hover:bg-primary-light/10"
         }`;
 
-      // récupère le thème
-      const { theme, toggleTheme } = useTheme();
+    // recupere le thème
+    const { theme, toggleTheme } = useTheme();
 
     return (
         <nav className="bg-primary-dark shadow-sm sticky top-0 z-50">
@@ -59,6 +59,10 @@ export default function AdminNavbar() {
                         <NavLink to="/admin/logs" className={navLinkClass}>
                             <Terminal className="w-4 h-4 text-white" />
                             Logs
+                        </NavLink>
+                        <NavLink to="/admin/profile" className={navLinkClass}>
+                            <User className="w-4 h-4 text-white" />
+                            Mon Profil
                         </NavLink>
                     </div>
 
@@ -119,18 +123,14 @@ export default function AdminNavbar() {
                             <Terminal className="w-4 h-4 text-white" />
                             Logs
                         </NavLink>
+                        <NavLink to="/admin/profile" className={mobileNavLinkClass} onClick={() => setIsOpen(false)}>
+                            <User className="w-4 h-4 text-white" />
+                            Mon Profil
+                        </NavLink>
 
                         <hr className="border-light-bone/10 my-2" />
 
                         {/* link (profil & deconnexion) */}
-                        <Link
-                            to="/admin/profile"
-                            className="flex items-center gap-2 py-3 px-2 rounded-md font-medium text-white hover:bg-primary-light/10 transition-colors"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <User className="w-4 h-4" />
-                            Mon Profil
-                        </Link>
                         <Link
                             to="/"
                             className="flex items-center gap-2 py-3 px-2 rounded-md font-medium text-red-400 hover:bg-red-500/10 transition-colors"
