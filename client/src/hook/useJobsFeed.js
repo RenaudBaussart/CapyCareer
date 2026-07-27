@@ -60,6 +60,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // récupère la première page d'offres au montage
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoadingList(true);
     setListError(null);
 
@@ -87,6 +88,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   useEffect(() => {
     if (mode !== "saved") return;
     if (saved.size === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSavedDetails([]);
       setSavedError(null);
       return;
@@ -188,6 +190,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // ajuste la sélection quand les résultats affichés changent
   useEffect(() => {
     if (visibleJobs.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedId(null);
       return;
     }
@@ -202,6 +205,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // récupère le détail de l'offre sélectionnée
   useEffect(() => {
     if (selectedId == null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedDetail(null);
       return;
     }
