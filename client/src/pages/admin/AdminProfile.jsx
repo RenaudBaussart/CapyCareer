@@ -12,17 +12,17 @@ export default function AdminProfile() {
     const { profileData, handleChange, handleSubmit } = useAdminProfile();
 
     return (
-        <div className="bg-main-layout">
+        <div className="bg-main-layout flex flex-col min-h-screen">
             <MainNavbar />
-            <main className="flex-1 max-w-3xl w-full mx-auto px-6 py-12 flex flex-col">
-                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full">
+            <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col">
+                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-5 sm:p-8 md:p-10 w-full">
 
                     <div className="mb-8 flex items-center gap-4 border-b border-primary-dark/10 pb-6">
                         <div className="p-4 bg-primary/10 rounded-full text-primary">
                             <ShieldCheck className="w-8 h-8" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-font-primary-dark">Mon Profil Admin</h1>
+                            <h1 className="text-2xl sm:text-3xl font-bold text-font-primary-dark">Mon Profil Admin</h1>
                             <p className="text-deep-primary mt-1">Gérez vos informations personnelles et votre sécurité.</p>
                         </div>
                     </div>
@@ -61,7 +61,7 @@ export default function AdminProfile() {
                         </div>
 
                         <div className="pt-6 flex justify-end">
-                            <button type="submit" className="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-xl font-medium flex items-center gap-2 transition-all">
+                            <button type="submit" className="w-full sm:w-auto justify-center px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-xl font-medium flex items-center gap-2 transition-all">
                                 <Save className="w-5 h-5" /> Enregistrer
                             </button>
                         </div>
