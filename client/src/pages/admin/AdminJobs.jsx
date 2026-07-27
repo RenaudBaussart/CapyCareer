@@ -69,6 +69,7 @@ export default function AdminJobs() {
                             </p>
                         </div>
 
+                         {/* barre de recherche component */}
                         <div className="relative w-full md:w-72 shrink-0">
                             <input
                                 type="text"
@@ -99,6 +100,7 @@ export default function AdminJobs() {
                                     searchQuery={searchQuery}
                                 />
 
+                                {/* pagination component (masqué si recherche active) */}
                                 {(!searchQuery && (jobs.length > 0 || currentPage > 0)) && (
                                     <Pagination
                                         currentPage={currentPage}
