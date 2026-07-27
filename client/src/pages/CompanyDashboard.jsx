@@ -46,7 +46,7 @@ function RecentJobRow({ job }) {
     const pendingCount = job.applicants.filter((a) => a.status === "pending").length;
 
     return (
-        <div className="flex items-center justify-between gap-4 py-3 border-b border-primary-light/20 last:border-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 py-3 border-b border-primary-light/20 last:border-0">
             <div className="min-w-0">
                 <p className="font-semibold text-sm text-font-primary-dark truncate">{job.title}</p>
                 <p className="text-xs text-font-primary-dark/60">
@@ -85,7 +85,7 @@ export default function CompanyDashboard() {
             <MainNavbar />
 
             <section className="bg-main-layout">
-                <div className="w-full p-10">
+                <div className="w-full p-4 sm:p-6 lg:p-10">
                     <div className="max-w-7xl mx-auto">
                         {/* en-tête */}
                         <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)] mb-10">

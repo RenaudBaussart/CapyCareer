@@ -30,13 +30,11 @@ export default function Footer() {
                     </div>
 
                     {/* colonne 2/4 (candidats) */}
-                    {/* WARNING: à linké */}
                     <div>
                         <h3 className="text-light-bone font-semibold mb-4">Candidats</h3>
                         <ul className="space-y-3 text-sm">
-                            <li><Link to="#" className="hover:text-white transition-colors">Parcourir les offres</Link></li>
+                            <li><Link to="/" className="hover:text-white transition-colors">Parcourir les offres</Link></li>
                             <li><Link to="/companies" className="hover:text-white transition-colors">Découvrir les entreprises</Link></li>
-                            <li><Link to="#" className="hover:text-white transition-colors">Mon espace personnel</Link></li>
                         </ul>
                     </div>
 
@@ -55,9 +53,9 @@ export default function Footer() {
                     <div>
                         <h3 className="text-light-bone font-semibold mb-4">Suivez-nous</h3>
                         <div className="flex gap-4 mb-6">
-                            <a href="https://github.com/RenaudBaussart/CapyCareer" 
-                            className="text-sm flex items-center gap-2 hover:text-white transition-colors" aria-label="GitHub">
-                               GitHub
+                            <a href="https://github.com/RenaudBaussart/CapyCareer"
+                                className="text-sm flex items-center gap-2 hover:text-white transition-colors" aria-label="GitHub">
+                                GitHub
                             </a>
 
                         </div>
@@ -76,7 +74,6 @@ export default function Footer() {
                     <p>© {currentYear} CapyCareer. Tous droits réservés.</p>
 
                     {/* liens) */}
-                    {/* WARNING a relier (doc a faire) */}
                     <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-light-bone">
                         <li><Link to="/accessibility" className="hover:text-white transition-colors">Accessibilité : conforme (WCAG 2.1 AA)</Link></li>
 
