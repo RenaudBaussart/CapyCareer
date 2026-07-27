@@ -1,4 +1,4 @@
-// fichier gerant la securité des routes, verifie luser est bien co grace à son token
+// fichier gerant la securité des routes, verifie luser est bien co grace a son token
 
 // import
 import { useContext } from "react";
@@ -20,10 +20,13 @@ export default function RequireAuth({ children, allowedRoles }) {
         return <Navigate to="/login" replace />;
     }
 
+    // verif le role
+    const currentRole = user?.roleId || user?.role;
+
     // SI des roles sont exigés pour la route & que luser na pas le bon role
-    if (allowedRoles && !allowedRoles.includes(user?.roleId)) {
+    if (allowedRoles && !allowedRoles.includes(currentRole)) {
         // alors redirige luser selon son espace
-        switch (user?.roleId) {
+        switch (currentRole) {
             case "admin":
                 return <Navigate to="/admin/dashboard" replace />;
             case "entreprise":
@@ -32,7 +35,7 @@ export default function RequireAuth({ children, allowedRoles }) {
             case "user":
                 return <Navigate to="/" replace />;
             default:
-                // pour les autres cas de non role par défaut sur laccueil du site
+                // user sans compte
                 return <Navigate to="/" replace />;
         }
     }
