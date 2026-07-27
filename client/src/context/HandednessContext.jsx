@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 // contexte gérant la préférence de main (gaucher/droitier) pour l'affichage mobile
 
 import { createContext, useState } from "react";

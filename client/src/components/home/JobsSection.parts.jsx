@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 // composants d'affichage réutilisés par JobsSection.jsx, regroupés ici pour ne pas multiplier les fichiers
 
 import { useState } from "react";

@@ -5,13 +5,15 @@ import {
     createJobOffer, 
     updateJobOffer, 
     deleteJobOffer, 
-    totalJobOffersCount 
+    totalJobOffersCount,
+    refreshJobOffers
 } from './job.offers.controller';
 
 const router = Router();
 
 router.get('/', getJobOffers);
 router.get('/count', totalJobOffersCount);
+router.get('/refresh', refreshJobOffers);
 router.get('/:id', getJobOfferById);
 router.post('/', createJobOffer);
 router.put('/:id', updateJobOffer);

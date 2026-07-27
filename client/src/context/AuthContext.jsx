@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 // import
 import { createContext, useState, useEffect } from "react";
 // fonction blacklist
@@ -41,6 +43,7 @@ export function AuthProvider({ children }) {
                     // SINON SI token encore valide
                 } else {
                     // alors connecte luser
+                    // eslint-disable-next-line react-hooks/set-state-in-effect
                     setToken(storedToken);
                     setUser(JSON.parse(storedUser));
                 }
