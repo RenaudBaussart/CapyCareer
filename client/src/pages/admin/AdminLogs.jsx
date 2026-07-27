@@ -49,37 +49,35 @@ export default function AdminLogs() {
 
     return (
         <div
-            className="bg-main-layout">
+            className="bg-main-layout flex flex-col min-h-screen">
             <MainNavbar />
 
-            <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
-                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1 flex flex-col">
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col">
+                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-5 sm:p-8 md:p-10 w-full flex-1 flex flex-col">
 
                     {/* haut de page (recherche) */}
-                    <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                        <div>
-                            <h1 className="text-3xl font-bold text-font-primary-dark flex items-center gap-3">
-                                <Terminal className="w-8 h-8 text-primary" />
-                                Journaux Système (Logs)
+                    <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div className="min-w-0">
+                            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-font-primary-dark flex items-center gap-2 sm:gap-3">
+                                <Terminal className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
+                                <span className="truncate">Journaux Système (Logs)</span>
                             </h1>
-                            <p className="text-deep-primary mt-1 max-w-xl">
+                            <p className="text-deep-primary mt-1 max-w-xl text-sm sm:text-base">
                                 Surveillez l'activité de la plateforme, les erreurs d'API N8N et les événements critiques de sécurité.
                             </p>
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                            {/* btn purger SIL y a des logs */}
                             {logs.length > 0 && (
                                 <button
                                     onClick={requestPurge}
-                                    className="px-4 py-2 bg-red-100/80 text-red-600 hover:bg-red-200 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors border border-red-200/50"
+                                    className="px-4 py-2 bg-red-100/80 text-red-600 hover:bg-red-200 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors border border-red-200/50 whitespace-nowrap"
                                 >
-                                    <Trash2 className="w-4 h-4" />
+                                    <Trash2 className="w-4 h-4 shrink-0" />
                                     Tout purger
                                 </button>
                             )}
 
-                            {/* recherche */}
                             <div className="relative w-full sm:w-64 md:w-72">
                                 <input
                                     type="text"

@@ -30,49 +30,49 @@ export default function AdminUsers({ roleToManage = "candidat" }) {
     const isCandidate = roleToManage === "candidat";
 
     return (
-        <div className="bg-main-layout">
+        <div className="bg-main-layout flex flex-col min-h-screen">
             <MainNavbar />
 
-            <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
-                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1 flex flex-col">
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col">
+                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-4 sm:p-8 md:p-10 w-full flex-1 flex flex-col">
 
-                    <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            {/* titre selon role */}
-                            <h1 className="text-3xl font-bold text-font-primary-dark flex items-center gap-3">
-                                {isCandidate ? <Users className="w-8 h-8 text-primary" aria-hidden="true" /> : <Building className="w-8 h-8 text-primary" aria-hidden="true" />}
-                                Modération {isCandidate ? "Candidats" : "Entreprises"}
+                    <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="min-w-0">
+                            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-font-primary-dark flex items-center gap-2 sm:gap-3">
+                                {isCandidate ? <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" aria-hidden="true" /> : <Building className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" aria-hidden="true" />}
+                                <span className="truncate">Modération {isCandidate ? "Candidats" : "Entreprises"}</span>
                             </h1>
-                            <p className="text-deep-primary mt-1">
+                            <p className="text-deep-primary mt-1 text-sm sm:text-base">
                                 Recherchez, bloquez ou débloquez des comptes {isCandidate ? "candidats" : "recruteurs"} pour maintenir la sécurité.
                             </p>
                         </div>
 
-                        {/* recherche component */}
-                        <SearchBar
-                            searchQuery={searchQuery}
-                            setSearchQuery={setSearchQuery}
-                            placeholder="Rechercher par email..."
-                        />
+                        <div className="w-full md:w-auto">
+                            <SearchBar
+                                searchQuery={searchQuery}
+                                setSearchQuery={setSearchQuery}
+                                placeholder="Rechercher par email..."
+                            />
+                        </div>
                     </div>
 
                     {/* gestion des onglets */}
-                    <div className="flex gap-4 mb-4 border-b border-white/40">
+                    <div className="flex gap-3 sm:gap-4 mb-4 border-b border-white/40 overflow-x-auto">
                         <button
                             onClick={() => setActiveTab("actifs")}
-                            className={`pb-2 px-2 font-medium transition-colors ${activeTab === 'actifs' ? 'text-primary border-b-2 border-primary' : 'text-font-primary-dark/60 hover:text-font-primary-dark'}`}
+                            className={`pb-2 px-2 font-medium whitespace-nowrap transition-colors ${activeTab === 'actifs' ? 'text-primary border-b-2 border-primary' : 'text-font-primary-dark/60 hover:text-font-primary-dark'}`}
                         >
                             Comptes Actifs
                         </button>
                         <button
                             onClick={() => setActiveTab("bannis")}
-                            className={`pb-2 px-2 font-medium transition-colors ${activeTab === 'bannis' ? 'text-red-500 border-b-2 border-red-500' : 'text-font-primary-dark/60 hover:text-font-primary-dark'}`}
+                            className={`pb-2 px-2 font-medium whitespace-nowrap transition-colors ${activeTab === 'bannis' ? 'text-red-500 border-b-2 border-red-500' : 'text-font-primary-dark/60 hover:text-font-primary-dark'}`}
                         >
                             Comptes Bannis
                         </button>
                     </div>
 
-                    <div className="bg-bone-light/40 rounded-2xl p-2 border border-white/50 flex-1">
+                    <div className="bg-bone-light/40 rounded-2xl p-2 border border-white/50 flex-1 overflow-x-auto">
                         <UserDataGrid
                             users={users}
                             activeTab={activeTab}
