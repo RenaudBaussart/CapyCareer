@@ -13,10 +13,10 @@ const router = Router();
 
 router.get('/', getJobOffers);
 router.get('/count', totalJobOffersCount);
+router.get('/refresh', refreshJobOffers);
 router.get('/:id', getJobOfferById);
 router.post('/', createJobOffer);
 router.put('/:id', updateJobOffer);
 router.delete('/:id', deleteJobOffer);
-router.get('/refresh', refreshJobOffers);
 
 export default router;

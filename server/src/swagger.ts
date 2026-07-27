@@ -1532,6 +1532,34 @@ registry.registerPath({
     }
 });
 
+registry.registerPath({
+    method: "get",
+    path: "/api/jobs/refresh",
+    description: "This endpoint triggers a refresh of job offers from external sources.",
+    summary: "Refresh job offers",
+    tags: ["Job Offers"],
+    responses: {
+        200: {
+            description: "Job offers refreshed successfully.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "Job offers refreshed successfully." }),
+                    }),
+                },
+            },
+        },
+        500: {
+            description: "Internal server error during job offer refresh.",
+            content: {
+                "application/json": {
+                    schema: errorSchema.extend({ error: z.string().openapi({ example: "Internal Server Error during refresh." }) })
+                }
+            }
+        },
+    },
+});
+
 export function generateOpenAPI() {
     const generator = new OpenApiGeneratorV3(registry.definitions);
     return generator.generateDocument({

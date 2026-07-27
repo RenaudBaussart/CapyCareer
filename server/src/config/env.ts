@@ -1,6 +1,21 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: '../../../.env' }); 
+import fs from 'fs';
+import path from 'path';
 import { z } from 'zod';
+
+const envPath = path.resolve(__dirname, '../../../.env');
+let envConfig = {};
+try {
+  const envFile = fs.readFileSync(envPath, 'utf-8');
+  envConfig = envFile.split('\n').reduce((acc: { [key: string]: string }, line) => {
+    const [key, value] = line.split('=');
+    if (key && value) {
+      acc[key.trim()] = value.trim();
+    }
+    return acc;
+  }, {});
+} catch (error) {
+  console.error("Could not read .env file:", error);
+}
 
 // zod schema pour valider les variables d'environnement
 const envSchema = z.object({
@@ -24,4 +39,4 @@ const envSchema = z.object({
 });
 
 // Parse et valider les variables d'environnement
-export const env = envSchema.parse(process.env);
+export const env = envSchema.parse(envConfig);
