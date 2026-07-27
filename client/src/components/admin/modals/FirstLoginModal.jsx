@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Banana, X } from "lucide-react";
 
 const STORAGE_KEY = "capycareer_first_login_seen";
-const ANIMATION_DURATION = 250; // ms, doit matcher la durée CSS ci-dessous
+const ANIMATION_DURATION = 250; // ms, doit matcher la durée du CSS (index.css)
 
 export default function FirstLoginModal() {
     const [isVisible, setIsVisible] = useState(false);
