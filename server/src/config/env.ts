@@ -1,4 +1,5 @@
-import 'dotenv/config'; 
+import dotenv from 'dotenv';
+dotenv.config({ path: '../../../.env' }); 
 import { z } from 'zod';
 
 // zod schema pour valider les variables d'environnement
