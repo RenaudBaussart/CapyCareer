@@ -5,7 +5,8 @@ import {
     createJobOffer, 
     updateJobOffer, 
     deleteJobOffer, 
-    totalJobOffersCount 
+    totalJobOffersCount,
+    refreshJobOffers
 } from './job.offers.controller';
 
 const router = Router();
@@ -16,5 +17,6 @@ router.get('/:id', getJobOfferById);
 router.post('/', createJobOffer);
 router.put('/:id', updateJobOffer);
 router.delete('/:id', deleteJobOffer);
+router.get('/refresh', refreshJobOffers);
 
 export default router;
