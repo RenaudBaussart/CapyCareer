@@ -1,24 +1,21 @@
-// fichier gerant la déclaration d'accessibilité
+// fichier gerant la page documentation sur l accessibilité
 
 // import
 import { Link } from "react-router-dom";
 // components
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import Footer from "../components/layout/Footer";
-// img
-import Leaves from "../assets/images/Leaves.png";
-import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function AccessibilityPage() {
   return (
-    <main className="bg-main-layout">
-      <Navbar />
+    <main className="bg-main-layout flex flex-col min-h-screen">
+      <MainNavbar />
 
       <div className="grow flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-4xl backdrop-blur-2xl bg-white/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
+        <div className="w-full max-w-4xl backdrop-blur-2xl bg-bone-light/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
 
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl md:text-4xl font-bold text-primary-dark">
+            <h1 className="text-3xl md:text-4xl font-bold text-font-primary-dark">
               Déclaration d'accessibilité
             </h1>
           </div>
@@ -42,12 +39,24 @@ export default function AccessibilityPage() {
             <h2 className="text-2xl font-bold text-deep-primary border-b-2 border-primary-light/30 pb-2">
               Technologies utilisées
             </h2>
-            {/* WARNING a mettre à jour */}
             <p className="leading-relaxed">L'accessibilité de CapyCareer s'appuie sur les technologies suivantes :</p>
             <ul className="list-disc list-inside space-y-2 ml-2 font-medium">
               <li>HTML5</li>
               <li>CSS (framework Tailwind CSS)</li>
               <li>JavaScript (bibliothèque ReactJS)</li>
+            </ul>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-deep-primary border-b-2 border-primary-light/30 pb-2">
+              Évaluation et outils de vérification
+            </h2>
+            <p className="leading-relaxed">
+              La vérification de l'accessibilité est réalisée au cours du développement via des auto-évaluations combinant des tests manuels (navigation au clavier, vérification des règles ARIA) et des outils d'analyse automatique :
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-2 font-medium">
+              <li>Lighthouse (Google Chrome DevTools)</li>
+              <li>axe DevTools (Deque Systems)</li>
             </ul>
           </section>
 

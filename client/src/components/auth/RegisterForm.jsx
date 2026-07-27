@@ -59,18 +59,26 @@ export default function RegisterForm() {
       // call service externe inscription
       const result = await registerUser(registerData);
 
-      // SI un token est renvoyé 
-      if (result.token) {
-        // alors il est stocké & luser est co
-        contextLogin(result.token, { username: data.username });
-      }
+      // SI back renvoie bien token à l'inscription
+      if (result && result.token) {
 
-      console.log("Inscription réussie !", result);
-      navigate("/");
+        // co luser avec ses datas
+        const userInfos = result.user || {
+          username: registerData.username,
+          email: registerData.email,
+          role: "candidat"
+        };
+
+        contextLogin(result.token, userInfos);
+        navigate("/");
+
+      } else {
+        // SI back ne renvoie pas de token alors redirection login
+        navigate("/login");
+      }
 
     } catch (error) {
       console.error("Erreur d'inscription :", error.message);
-
       setApiError(getFriendlyErrorMessage(error.message));
     }
   };
@@ -85,7 +93,7 @@ export default function RegisterForm() {
         noValidate>
 
         {/* titre */}
-        <h1 className="text-3xl font-bold text-white text-center mb-6 tracking-normal">
+        <h1 className="text-3xl font-bold text-white bg-bone/20 p-5 rounded-2xl text-center mb-6 tracking-normal shadow-[0_0_15px_rgba(0,0,0,0.05)]">
           Inscription
         </h1>
 
@@ -99,7 +107,7 @@ export default function RegisterForm() {
         {/* informations */}
         <div>
 
-          <span className="block text-lg font-bold text-primary-dark mb-1" id="Userinfos">
+          <span className="block text-lg font-bold text-font-primary-dark mb-1" id="Userinfos">
             Informations *
           </span>
 
@@ -109,9 +117,9 @@ export default function RegisterForm() {
 
               <label htmlFor="lastName" className="sr-only">Nom</label>
               <input
-                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.lastName
-                    ? "border-2 border-red-600 focus:ring-red-500"
-                    : "border-primary-light focus:ring-primary"
+                className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.lastName
+                  ? "border-2 border-red-600 focus:ring-red-500"
+                  : "border-primary-light focus:ring-primary"
                   }`}
                 id="lastName"
                 type="text"
@@ -129,9 +137,9 @@ export default function RegisterForm() {
 
               <label htmlFor="firstName" className="sr-only">Prénom</label>
               <input
-                className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.firstName
-                    ? "border-2 border-red-600 focus:ring-red-500"
-                    : "border-primary-light focus:ring-primary"
+                className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.firstName
+                  ? "border-2 border-red-600 focus:ring-red-500"
+                  : "border-primary-light focus:ring-primary"
                   }`}
                 id="firstName"
                 type="text"
@@ -151,9 +159,9 @@ export default function RegisterForm() {
 
           <label htmlFor="username" className="sr-only">Identifiant de connexion</label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
-                ? "border-2 border-red-600 focus:ring-red-500"
-                : "border-primary-light focus:ring-primary"
+            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
+              ? "border-2 border-red-600 focus:ring-red-500"
+              : "border-primary-light focus:ring-primary"
               }`}
             id="username"
             type="text"
@@ -170,9 +178,9 @@ export default function RegisterForm() {
 
           <label htmlFor="email" className="sr-only">Adresse email</label>
           <input
-            className={`w-full px-4 py-2 bg-white border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.email
-                ? "border-2 border-red-600 focus:ring-red-500"
-                : "border-primary-light focus:ring-primary"
+            className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.email
+              ? "border-2 border-red-600 focus:ring-red-500"
+              : "border-primary-light focus:ring-primary"
               }`}
             id="email"
             type="email"
@@ -210,7 +218,7 @@ export default function RegisterForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-deep-primary text-white font-bold py-3 px-4 rounded-3xl mt-6 hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none disabled:opacity-50"
+          className="w-full bg-deep-primary text-light-bone font-bold py-3 px-4 rounded-3xl mt-6 hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none disabled:opacity-50"
         >
           {isSubmitting ? "Inscription..." : "S'inscrire"}
         </button>
@@ -225,7 +233,7 @@ export default function RegisterForm() {
         {/* btn co google */}
         <button
           type="button"
-          className="w-full mb-6 flex items-center justify-center gap-2 bg-white text-primary-dark border border-primary-light font-semibold py-3 px-4 rounded-3xl transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
+          className="w-full mb-6 flex items-center justify-center gap-2 bg-bone-light text-font-primary-dark border border-primary-light font-semibold py-3 px-4 rounded-3xl transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
           aria-label="S'inscrire avec Google"
         >
           <UserPlus className="w-5 h-5" />

@@ -3,7 +3,7 @@
 // import
 import { Link } from "react-router-dom";
 // component
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import Footer from "../components/layout/Footer";
 // icones
 import { Users, Code } from "lucide-react";
@@ -48,16 +48,16 @@ const teamMembers = [
 export default function About() {
     return (
        <main className="bg-main-layout">
-            <Navbar />
+            <MainNavbar />
 
             <div className="grow flex items-center justify-center p-6 lg:p-12">
                 {/* grande card */}
-                <div className="w-full max-w-4xl backdrop-blur-2xl bg-white/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
+                <div className="w-full max-w-4xl backdrop-blur-2xl bg-bone-light/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl space-y-10">
 
                     {/* haut de page */}
                     <div className="flex items-center gap-3 mb-2">
                         <Users className="w-8 h-8 text-primary" aria-hidden="true" />
-                        <h1 className="text-3xl md:text-4xl font-bold text-primary-dark">
+                        <h1 className="text-3xl md:text-4xl font-bold text-font-primary-dark">
                             À propos de nous
                         </h1>
                     </div>
@@ -73,7 +73,7 @@ export default function About() {
                         <p className="leading-relaxed">
                             Conçu comme une véritable application, <strong>CapyCareer</strong> offre une recherche d'emploi fluide et intègre des fonctionnalités de traitement de données et d'intelligence artificielle pour aider les candidats dans leur recherche.
                         </p>
-                        <p className="leading-relaxed text-sm italic text-primary-dark/80">
+                        <p className="leading-relaxed text-sm italic text-font-primary-dark/80">
                             Projet académique réalisé en équipe dans le cadre de la formation Web@cadémie d'Epitech Lille.
                         </p>
                     </section>
@@ -87,7 +87,7 @@ export default function About() {
                             {teamMembers.map((member, index) => (
                                 <div key={index} className="bg-bone-light/80 p-5 rounded-2xl border border-primary-light/20 flex flex-col justify-between">
                                     <div>
-                                        <h3 className="text-lg font-bold text-primary-dark">{member.name}</h3>
+                                        <h3 className="text-lg font-bold text-font-primary-dark">{member.name}</h3>
                                         <p className="text-sm text-primary font-medium mt-1">{member.role}</p>
                                     </div>
 

@@ -3,19 +3,19 @@
 // import
 // components
 import Footer from "../components/layout/Footer";
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import JobsSection from "../components/home/JobsSection";
 // icone
 import { Banana, Apple, Citrus } from "lucide-react";
 // img
 import CapyGlasses from "../assets/images/CapyGlasses.png";
 // data
-import { fetchJobOffersMock, fetchJobOfferDetailMock } from "../data/jobsMock";
+import { fetchJobOffers, fetchJobOfferDetail } from "../services/jobs.service";
 
 export default function Home() {
     return (
         <main className="bg-main-layout">
-            <Navbar />
+            <MainNavbar />
 
             <section className="relative px-4 sm:px-6 pt-12 pb-16 lg:pt-16 lg:pb-20">
                 <div className="max-w-7xl mx-auto">
@@ -25,13 +25,13 @@ export default function Home() {
 
                         <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)] flex flex-col">
                             <div className="w-full h-auto p-5 relative bg-primary">
-                                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-bone mb-4">
+                                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-light mb-4">
                                     Bienvenue sur CapyCareer !
                                 </h1>
                             </div>
 
                             <div className="bg-bone-light p-6 sm:p-8 grow flex flex-col justify-center">
-                                <p className="text-primary-dark/70 mb-6 text-start">
+                                <p className="text-font-primary/70 mb-6 text-start">
                                     Explorez des offres adaptées à votre profil, développez votre réseau professionnel
                                     et avancez dans votre carrière à votre rythme. Que vous soyez étudiant,
                                     jeune diplômé ou professionnel confirmé, CapyCareer vous accompagne à
@@ -56,9 +56,9 @@ export default function Home() {
                         </div>
 
                     </div>
-
-                    {/* WARNING: JOBS_MOCK à remplacer par les offres récupérées via N8N */}
-                    <JobsSection fetchJobOffers={fetchJobOffersMock} fetchJobOfferDetail={fetchJobOfferDetailMock} />
+                    
+                    {/* offres récupérées via l'API */}
+                    <JobsSection fetchJobOffers={fetchJobOffers} fetchJobOfferDetail={fetchJobOfferDetail} />
 
                 </div>
             </section>

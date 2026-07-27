@@ -3,8 +3,8 @@
 // import component
 import CompanyCard from "../components/companies/CompanyCard";
 import Footer from "../components/layout/Footer";
-import Navbar from "../components/layout/Navbar";
-import Leaves from "../assets/images/Leaves.png";
+import MainNavbar from "../components/layout/MainNavbar";
+
 import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 // icone
@@ -24,17 +24,17 @@ export default function Companies() {
     return (
         // conteneur principal
         <main className="bg-main-layout">
-            <Navbar />
+            <MainNavbar /> {/* <-- Utilisation de la navbar entreprise */}
 
             {/* conteneur card */}
             <div className="grow flex items-center justify-center p-6 lg:p-12">
 
                 {/* grande card */}
-                <div className="w-full max-w-5xl backdrop-blur-2xl bg-white/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl">
+                <div className="w-full max-w-5xl backdrop-blur-2xl bg-bone-light/70 p-8 lg:p-12 shadow-[0_0_15px_rgba(0,0,0,0.15)] rounded-3xl">
 
                     {/* section recherche */}
                     <section className="mb-16">
-                        <h1 className="text-3xl md:text-4xl font-bold text-primary-dark mb-8">
+                        <h1 className="text-3xl md:text-4xl font-bold text-font-primary-dark mb-8">
                             Trouvez les entreprises qui vous ressemblent
                         </h1>
 
@@ -45,18 +45,18 @@ export default function Companies() {
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <div className="relative grow">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Search className="h-5 w-5 text-primary-dark/50" aria-hidden="true" />
+                                        <Search className="h-5 w-5 text-font-primary-dark/50" aria-hidden="true" />
                                     </div>
                                     <input
                                         type="text"
                                         id="company-search"
-                                        className="block w-full pl-12 pr-4 py-4 border-2 border-primary-light/30 rounded-xl bg-light-bone text-primary-dark focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors"
+                                        className="block w-full pl-12 pr-4 py-4 border-2 border-primary-light/30 rounded-xl bg-bone-light text-font-primary-dark focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none transition-colors"
                                         placeholder="Ex: Développeur Web, Castorama..."
                                     />
                                 </div>
                                 <button
                                     type="button"
-                                    className="bg-deep-primary text-bone font-bold py-4 px-8 rounded-xl hover:bg-deep-primary transition-colors focus:ring-2 focus:ring-primary focus:outline-none whitespace-nowrap"
+                                    className="bg-deep-primary text-light font-bold py-4 px-8 rounded-xl hover:bg-deep-primary transition-colors focus:ring-2 focus:ring-primary focus:outline-none whitespace-nowrap"
                                 >
                                     Rechercher
                                 </button>
@@ -66,7 +66,7 @@ export default function Companies() {
 
                     {/* section avec liste entreprises */}
                     <section>
-                        <h2 className="text-2xl font-bold text-primary-dark mb-8">
+                        <h2 className="text-2xl font-bold text-font-primary-dark mb-8">
                             Entreprises les plus recherchées
                         </h2>
 

@@ -6,7 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 // LOGIN
 export const login = async (credentials) => {
     // envoie requete back
-    const response = await fetch(`${API_URL}/api/auth/login`, {
+    const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -32,7 +32,7 @@ export const login = async (credentials) => {
 // REGISTER CANDIDAT
 export const registerUser = async (userData) => {
     // envoie requete back pour new compte
-    const response = await fetch(`${API_URL}/api/auth/register`, {
+    const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export const logoutApi = async (token) => {
     // clean le token sil commence par bearer pr cibler uniquement JWT
     const cleanToken = token.replace("Bearer ", "");
 
-    const response = await fetch(`${API_URL}/api/auth/logout`, {
+    const response = await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

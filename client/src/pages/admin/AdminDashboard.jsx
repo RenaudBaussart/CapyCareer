@@ -1,117 +1,121 @@
-// fichier gerant la page du dashboard de ladmin (outils de controle, syncronisation datas n8n)
+// fichier gerant la page du dashboard de l admin (outils de controle, synchronisation datas n8n)
 
 // import
 import { useState, useEffect } from "react";
 // component
-import AdminNavbar from "../../components/admin/layout/AdminNavbar";
+import MainNavbar from "../../components/layout/MainNavbar";
 import AdminStatCard from "../../components/admin/AdminStatCard";
 import N8nSyncCard from "../../components/admin/N8nSyncCard";
-import Leaves from "../../assets/images/Leaves.png"
+import SearchBar from "../../components/admin/SearchBar";
+
 // icone
 import { Users, Briefcase, Copy, Terminal, Building } from "lucide-react";
 // navigation
 import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
-    // etat pour stocker data
+    // etat pour stocker les donnees des statistiques
     const [stats, setStats] = useState({
         candidats: "...",
         entreprises: "...",
-        // WARNING: fictive pour le moment
-        offresActives: 342,
+        offresActives: "...",
+        // warning : fictif pour le moment
         doublons: 8,
         erreursApi: 3
     });
 
-    // call API lors du chargement component
+    // call api lors du chargement du component pour recuperer les stats reelles
     useEffect(() => {
-        const fetchUserStats = async () => {
+        const fetchDashboardStats = async () => {
             try {
-                // recupere token (localStorage ou sessionStorage)
+                // recupere le token d authentification
                 const token = localStorage.getItem("capy_token") || sessionStorage.getItem("capy_token");
 
-                // call route back pour verifier lautorisation
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats/users`, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
+                // lancement des requetes pour user & nbr offre
+                const [usersResponse, jobsResponse] = await Promise.all([
+                    fetch(`${import.meta.env.VITE_API_URL}/admin/stats/users`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }),
+                    fetch(`${import.meta.env.VITE_API_URL}/jobs/count`)
+                ]);
 
-                if (!response.ok) {
-                    throw new Error("Erreur lors de la récupération des statistiques");
+                if (!usersResponse.ok || !jobsResponse.ok) {
+                    throw new Error("erreur lors de la recuperation des statistiques");
                 }
 
-                const data = await response.json();
+                const usersData = await usersResponse.json();
+                const jobsData = await jobsResponse.json();
 
-                // maj letat selon les datas renvoyées par le back
+                // maj de l etat selon les datas renvoyees par le back
                 setStats(prevStats => ({
                     ...prevStats,
-                    candidats: data.candidats,
-                    entreprises: data.entreprises
+                    candidats: usersData.candidats,
+                    entreprises: usersData.entreprises,
+                    offresActives: jobsData.total
                 }));
             } catch (error) {
-                console.error("Erreur lors de la récupération des stats utilisateurs :", error);
+                console.error("erreur lors de la recuperation des stats :", error);
             }
         };
 
-        fetchUserStats();
+        fetchDashboardStats();
     }, []);
 
     return (
         <div className="bg-main-layout">
-            <AdminNavbar />
+            <MainNavbar />
             <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
 
-                {/* conteneur principal*/}
-                <div className="bg-white/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1">
+                {/* conteneur principal */}
+                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1">
 
                     {/* haut de page */}
                     <div className="mb-10">
-                        <h1 className="text-3xl font-bold text-primary-dark">Vue d'ensemble</h1>
-                        <p className="text-deep-primary mt-1">Gérez la collecte de données et surveillez l'activité de CapyCareer.</p>
+                        <h1 className="text-3xl font-bold text-font-primary-dark">Vue d'ensemble</h1>
+                        <p className="text-deep-primary mt-1">Gérez la collecte de données et surveillez l'activité de Capycareer.</p>
                     </div>
 
-                    {/* controle N8N */}
+                    {/* controle n8n */}
                     <N8nSyncCard />
 
-                    {/* statistiques */}
+                    {/* statistiques rapides */}
                     <section className="mt-10" aria-live="polite">
-                        <h2 className="text-xl font-semibold text-deep-primary mb-6">Statistiques Rapides</h2>
+                        <h2 className="text-xl font-semibold text-deep-primary mb-6">statistiques rapides</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
 
                             {/* nbr de candidats */}
-                            <Link to="/admin/users" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
+                            <Link to="/admin/candidat" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
                                 <AdminStatCard
                                     title="Candidats"
                                     value={stats.candidats}
                                     icon={Users}
                                     trendText="Inscrits sur la plateforme"
-                                    trendColor="text-primary-dark"
+                                    trendColor="text-font-primary-dark"
                                     colorClass="bg-primary/10 text-primary-deep"
                                 />
                             </Link>
 
-                            {/* nbr d'entreprises */}
-                            <Link to="/admin/users" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
+                            {/* nbr d entreprises */}
+                            <Link to="/admin/entreprise" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
                                 <AdminStatCard
                                     title="Entreprises"
                                     value={stats.entreprises}
                                     icon={Building}
                                     trendText="Recruteurs actifs"
-                                    trendColor="text-primary-dark"
+                                    trendColor="text-font-primary-dark"
                                     colorClass="bg-primary/10 text-primary-deep"
                                 />
                             </Link>
 
-                            {/* nbr d'offres online */}
+                            {/* nbr d offres actives */}
                             <Link to="/admin/jobs" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
                                 <AdminStatCard
                                     title="Offres Actives"
                                     value={stats.offresActives}
                                     icon={Briefcase}
-                                    trendText="Synchronisées ajd"
-                                    trendColor="text-primary-dark"
+                                    trendText="Synchronisees ajd"
+                                    trendColor="text-font-primary-dark"
                                     colorClass="bg-accent-deep/10 text-accent-dark"
                                 />
                             </Link>
@@ -123,12 +127,12 @@ export default function AdminDashboard() {
                                     value={stats.doublons}
                                     icon={Copy}
                                     trendText="En attente de validation"
-                                    trendColor="text-accent-deep"
+                                    trendColor="text-font-accent-deep"
                                     colorClass="bg-accent-deep/10 text-accent-deep"
                                 />
                             </Link>
 
-                            {/* nbr derreur API */}
+                            {/* nbr d erreurs api */}
                             <Link to="/admin/logs" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
                                 <AdminStatCard
                                     title="Erreurs API (48h)"

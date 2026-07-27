@@ -1,343 +1,118 @@
 // fichier du component fil d'offres (recherche + liste + detail)
 
-// import
-import { useEffect, useMemo, useRef, useState } from "react";
-// icone
-import { Search, MapPin, Bookmark, Share2, Briefcase, Sparkles } from "lucide-react";
+import { useJobsFeed } from "../../hook/useJobsFeed";
+import { Search, MapPin, Bookmark, Sparkles, Apple, Banana, Citrus } from "lucide-react";
+import { JobCard, JobDetail, KeywordTagInput } from "./JobsSection.parts";
 
-/* affichage */
-
-function formatLocation(job) {
-    if (job.city && job.country) return `${job.city}, ${job.country}`;
-    return job.city || job.country || "Localisation non précisée";
-}
-
-function getWorkMode(job) {
-    if (job.is_remote_job) return "Télétravail";
-    if (job.is_hybride_job) return "Hybride";
-    return "Sur site";
-}
-
-function truncate(text, maxLength) {
-    if (!text || text.length <= maxLength) return text;
-    return `${text.slice(0, maxLength).trim()}…`;
-}
-
-
-/* badge type de contrat */
-
-const BADGE_STYLES = {
-    CDI: "bg-accent/15 text-accent-dark",
-    CDD: "bg-orange-100 text-orange-700",
-    Stage: "bg-primary-light/20 text-primary-dark",
-    Alternance: "bg-primary/15 text-primary-dark",
-};
-
-function Badge({ label }) {
-    if (!label) return null;
-    const style = BADGE_STYLES[label] || "bg-primary-light/10 text-primary-dark";
-    return (
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${style}`}>
-            {label}
-        </span>
-    );
-}
-
-/* carte liste offres */
-
-function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
-    return (
-        <div
-            onClick={onSelect}
-            onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onSelect();
-                }
-            }}
-            role="button"
-            tabIndex={0}
-            aria-pressed={isSelected}
-            className={`bg-bone-light rounded-2xl p-4 border cursor-pointer transition-all hover:shadow-[0_0_15px_rgba(0,0,0,0.15)] focus:outline-none focus:ring-2 focus:ring-primary ${isSelected
-                ? "border-primary shadow-[0_0_15px_rgba(0,0,0,0.15)]"
-                : "border-primary-light/40 shadow-[0_0_15px_rgba(0,0,0,0.06)]"
-                }`}
-        >
-            <div className="flex items-start justify-between gap-2">
-                <div>
-                    <p className="font-semibold text-sm leading-snug text-primary-dark">{job.name}</p>
-                    <p className="text-xs mt-0.5 text-primary-dark/60">{job.company}</p>
-                    <p className="text-xs flex items-center gap-1 mt-0.5 text-primary-dark/60">
-                        <MapPin size={11} aria-hidden="true" /> {formatLocation(job)}
-                    </p>
-                </div>
-
-                <button
-                    type="button"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleSave();
-                    }}
-                    className="p-1.5 shrink-0 rounded-full hover:bg-primary-light/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                    aria-label={isSaved ? "Retirer des offres sauvegardées" : "Sauvegarder l'offre"}
-                    aria-pressed={isSaved}
-                >
-                    <Bookmark
-                        size={14}
-                        fill={isSaved ? "currentColor" : "none"}
-                        className={isSaved ? "text-accent-dark" : "text-primary-dark"}
-                        aria-hidden="true"
-                    />
-                </button>
-            </div>
-
-            <div className="mt-3">
-                <Badge label={job.contract_type} />
-            </div>
-        </div>
-    );
-}
-
-/*detail offre selectionnée */
-
-function JobDetail({ job, isSaved, onToggleSave }) {
-    return (
-        <article className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-5 sm:p-7">
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <h2 className="text-lg sm:text-xl font-bold text-primary-dark">{job.name}</h2>
-                    <p className="mt-1 font-medium text-primary-dark/70">{job.company}</p>
-                    <p className="text-sm mt-0.5 flex items-center gap-1 text-primary-dark/70">
-                        <MapPin size={14} aria-hidden="true" /> {formatLocation(job)}
-                    </p>
-                </div>
-
-                <div className="flex gap-2 shrink-0">
-                    <button
-                        type="button"
-                        onClick={onToggleSave}
-                        className="p-2 rounded-full hover:bg-primary-light/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                        aria-label={isSaved ? "Retirer des offres sauvegardées" : "Sauvegarder l'offre"}
-                        aria-pressed={isSaved}
-                    >
-                        <Bookmark
-                            size={17}
-                            fill={isSaved ? "currentColor" : "none"}
-                            className={isSaved ? "text-accent-dark" : "text-primary-dark"}
-                            aria-hidden="true"
-                        />
-                    </button>
-                    <button
-                        type="button"
-                        className="p-2 rounded-full hover:bg-primary-light/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                        aria-label="Partager l'offre"
-                    >
-                        <Share2 size={17} className="text-primary-dark" aria-hidden="true" />
-                    </button>
-                </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2 mt-4">
-                <Badge label={job.contract_type} />
-                <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-bone text-primary-dark/70">
-                    {getWorkMode(job)}
-                </span>
-            </div>
-
-            <a
-                href={job.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-primary text-bone text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark"
-            >
-                Postuler — Voir l'offre
-            </a>
-
-            <div className="mt-7 pt-6 border-t border-primary-light/30">
-                <h3 className="flex items-center gap-2 font-semibold text-primary-dark mb-2">
-                    <Briefcase size={16} aria-hidden="true" /> Détails de l'emploi
-                </h3>
-                <dl className="grid grid-cols-2 gap-y-2 text-sm mb-5">
-                    <dt className="text-primary-dark/60">Entreprise</dt>
-                    <dd className="font-medium text-primary-dark">{job.company}</dd>
-                    <dt className="text-primary-dark/60">Lieu</dt>
-                    <dd className="font-medium text-primary-dark">{formatLocation(job)}</dd>
-                </dl>
-                <h3 className="font-semibold text-primary-dark mb-2">Description du poste</h3>
-                <p className="text-sm leading-relaxed text-primary-dark/70 whitespace-pre-line">
-                    {truncate(job.description, 500)}
-                </p>
-            </div>
-        </article >
-    );
-}
-
-/* section principale */
+// section principale
 
 export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
-    const [query, setQuery] = useState("");
-    const [lieu, setLieu] = useState("");
-
-    // liste légère issue de la route listing
-    const [jobs, setJobs] = useState([]);
-    const [page, setPage] = useState(0);
-    const [isEnd, setIsEnd] = useState(true);
-    const [isLoadingList, setIsLoadingList] = useState(true);
-    const [listError, setListError] = useState(null);
-
-    const [selectedId, setSelectedId] = useState(null);
-    const [selectedDetail, setSelectedDetail] = useState(null);
-    const [isLoadingDetail, setIsLoadingDetail] = useState(false);
-    const [detailError, setDetailError] = useState(null);
-    // évite de refetch si loffre a déjà été consultée
-    const detailsCache = useRef(new Map());
-
-    const [saved, setSaved] = useState(() => new Set());
-
-    // récupère la première page d'offres au montage
-    useEffect(() => {
-        let cancelled = false;
-        setIsLoadingList(true);
-        setListError(null);
-
-        fetchJobOffers({ page: 0 })
-            .then((data) => {
-                if (cancelled) return;
-                setJobs(data.job_offers);
-                setIsEnd(data.is_the_end);
-                setPage(0);
-            })
-            .catch((err) => {
-                if (cancelled) return;
-                setListError(err.message);
-            })
-            .finally(() => {
-                if (!cancelled) setIsLoadingList(false);
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, [fetchJobOffers]);
-
-    // charge la page suivante d'offres
-    function loadMore() {
-        const nextPage = page + 1;
-        setIsLoadingList(true);
-        fetchJobOffers({ page: nextPage })
-            .then((data) => {
-                setJobs((prev) => [...prev, ...data.job_offers]);
-                setIsEnd(data.is_the_end);
-                setPage(nextPage);
-            })
-            .catch((err) => setListError(err.message))
-            .finally(() => setIsLoadingList(false));
-    }
-
-    const filtered = useMemo(() => {
-        const q = query.trim().toLowerCase();
-        const l = lieu.trim().toLowerCase();
-        return jobs.filter((job) => {
-            const matchQ = !q || job.name.toLowerCase().includes(q) || job.company.toLowerCase().includes(q);
-            const matchL = !l || formatLocation(job).toLowerCase().includes(l);
-            return matchQ && matchL;
-        });
-    }, [jobs, query, lieu]);
-
-    // sélectionne automatiquement la première offre de la liste filtrée
-    useEffect(() => {
-        if (!selectedId && filtered.length > 0) {
-            setSelectedId(filtered[0].PK_id);
-        }
-    }, [filtered, selectedId]);
-
-    // récupère le détail de l'offre sélectionnée (avec cache)
-    useEffect(() => {
-        if (selectedId == null) return;
-
-        const cached = detailsCache.current.get(selectedId);
-        if (cached) {
-            setSelectedDetail(cached);
-            return;
-        }
-
-        let cancelled = false;
-        setIsLoadingDetail(true);
-        setDetailError(null);
-
-        fetchJobOfferDetail(selectedId)
-            .then((data) => {
-                if (cancelled) return;
-                detailsCache.current.set(selectedId, data);
-                setSelectedDetail(data);
-            })
-            .catch((err) => {
-                if (cancelled) return;
-                setDetailError(err.message);
-            })
-            .finally(() => {
-                if (!cancelled) setIsLoadingDetail(false);
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, [selectedId, fetchJobOfferDetail]);
-
-    function toggleSave(id) {
-        setSaved((prev) => {
-            const next = new Set(prev);
-            next.has(id) ? next.delete(id) : next.add(id);
-            return next;
-        });
-    }
+    const {
+        query, setQuery,
+        lieu, setLieu,
+        keywords, addKeyword, removeKeyword,
+        isLoadingList, listError, isEnd, loadMore,
+        visibleJobs,
+        selectedId, selectedDetail, isLoadingDetail, detailError,
+        handleSelectJob,
+        mode, setMode,
+        isLoadingSaved, savedError,
+        saved, toggleSave,
+        isMobileDetailOpen, setIsMobileDetailOpen,
+    } = useJobsFeed({ fetchJobOffers, fetchJobOfferDetail });
 
     return (
         <div className="mt-10">
 
             <div className="flex items-start gap-3 mb-3">
-                <h2 className="text-2xl font-bold text-primary-dark pt-1">Fil d'offres</h2>
+                <h2 className="text-2xl font-bold text-font-primary-dark pt-1">Fil d'offres</h2>
             </div>
 
-            {/* barre de recherche */}
-            <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light flex flex-col sm:flex-row sm:items-center px-4 py-3 gap-3 mb-10 transition-colors focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
-
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <Search size={18} className="text-primary-dark/50 shrink-0" aria-hidden="true" />
-                    <label htmlFor="job-query" className="sr-only">Intitulé de poste, mots clés</label>
-                    <input
-                        id="job-query"
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Intitulé de poste, mots clés..."
-                        className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-primary-dark/40"
-                    />
-                </div>
-
-                <div className="hidden sm:block w-px h-6 bg-primary-light/50 shrink-0" aria-hidden="true" />
-                <div className="sm:hidden border-t border-primary-light/30" aria-hidden="true" />
-
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <MapPin size={18} className="text-primary-dark/50 shrink-0" aria-hidden="true" />
-                    <label htmlFor="job-location" className="sr-only">Localisation</label>
-                    <input
-                        id="job-location"
-                        type="text"
-                        value={lieu}
-                        onChange={(e) => setLieu(e.target.value)}
-                        placeholder="Localisation"
-                        className="flex-1 min-w-0 sm:w-40 bg-transparent outline-none text-sm placeholder:text-primary-dark/40"
-                    />
-                </div>
-
+            {/* onglets */}
+            <div className="flex items-center gap-2 mb-4">
                 <button
                     type="button"
-                    className="w-full sm:w-auto bg-primary text-bone font-bold text-sm px-5 py-2 rounded-xl hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none shrink-0"
+                    onClick={() => setMode("feed")}
+                    aria-pressed={mode === "feed"}
+                    className={`text-sm font-semibold px-4 py-2 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${mode === "feed"
+                        ? "bg-primary text-light"
+                        : "bg-bone-light text-font-primary-dark hover:bg-primary-light/10"
+                        }`}
                 >
-                    Rechercher
+                    Fil d'offres
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setMode("saved")}
+                    aria-pressed={mode === "saved"}
+                    className={`flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${mode === "saved"
+                        ? "bg-primary text-light"
+                        : "bg-bone-light text-font-primary-dark hover:bg-primary-light/10"
+                        }`}
+                >
+                    <Bookmark size={14} fill={mode === "saved" ? "currentColor" : "none"} aria-hidden="true" />
+                    Offres sauvegardées
+                    {saved.size > 0 && (
+                        <span className={`text-xs rounded-full px-1.5 ${mode === "saved" ? "bg-light/20" : "bg-primary/15 text-primary"}`}>
+                            {saved.size}
+                        </span>
+                    )}
                 </button>
             </div>
+
+            {mode === "feed" && (
+                <>
+                    {/* barre de recherche */}
+                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light flex flex-col sm:flex-row sm:items-center px-4 py-3 gap-3 mb-4 transition-colors focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <Search size={18} className="text-font-primary-dark/50 shrink-0" aria-hidden="true" />
+
+                            <label htmlFor="job-query" className="sr-only">Intitulé de poste, mots clés</label>
+                            <input
+                                id="job-query"
+                                type="text"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Intitulé de poste, mots clés..."
+                                className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
+                            />
+                        </div>
+
+                        <div className="hidden sm:block w-px h-6 bg-primary-light/50 shrink-0" aria-hidden="true" />
+                        <div className="sm:hidden border-t border-primary-light/30" aria-hidden="true" />
+
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <MapPin size={18} className="text-font-primary-dark/50 shrink-0" aria-hidden="true" />
+                            <label htmlFor="job-location" className="sr-only">Localisation</label>
+                            <input
+                                id="job-location"
+                                type="text"
+                                value={lieu}
+                                onChange={(e) => setLieu(e.target.value)}
+                                placeholder="Localisation"
+                                className="flex-1 min-w-0 sm:w-40 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
+                            />
+                        </div>
+
+                        <button
+                            type="button"
+                            className="w-full sm:w-auto bg-primary text-light font-bold text-sm px-5 py-2 rounded-xl hover:bg-primary-dark transition-colors focus:ring-2 focus:ring-primary-dark focus:outline-none shrink-0"
+                        >
+                            Rechercher
+                        </button>
+                    </div>
+
+                    {/* mots-clés libres (front-end, back-end...) */}
+                    <div className="mb-4">
+                        <KeywordTagInput
+                            keywords={keywords}
+                            onAddKeyword={addKeyword}
+                            onRemoveKeyword={removeKeyword}
+                        />
+                    </div>
+                </>
+            )}
 
             {listError && (
                 <p className="text-sm text-accent-dark mb-4">Impossible de charger les offres : {listError}</p>
@@ -346,27 +121,51 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
             {/* liste des offres & détails */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-6">
                 <aside aria-label="Liste des offres">
-                    <h3 className="flex items-center gap-2 font-bold text-primary-dark mb-3">
+                    <h3 className="flex items-center gap-2 font-bold text-font-primary-dark mb-3">
                         <Sparkles size={16} className="text-primary" aria-hidden="true" /> Emplois recommandés
                     </h3>
-                    <div className="flex flex-col gap-3 overflow-auto max-h-150 scrollbar-thumb-primary-dark rounded-2xl">
-                        {filtered.map((job) => (
+                    <div className="flex flex-col gap-3 overflow-auto max-h-150 scrollbar-auto md:scrollbar-thumb-primary-dark lg:scrollbar-thumb-primary-dark rounded-2xl box-border">
+                        {visibleJobs.map((job) => (
                             <JobCard
                                 key={job.PK_id}
                                 job={job}
                                 isSelected={selectedId === job.PK_id}
                                 isSaved={saved.has(job.PK_id)}
-                                onSelect={() => setSelectedId(job.PK_id)}
+                                onSelect={() => handleSelectJob(job.PK_id)}
                                 onToggleSave={() => toggleSave(job.PK_id)}
                             />
                         ))}
-                        {!isLoadingList && filtered.length === 0 && (
-                            <p className="text-sm text-center py-6 text-primary-dark/60">Aucun résultat.</p>
+
+                        {mode === "feed" && !isLoadingList && visibleJobs.length === 0 && (
+                            <p className="text-sm text-center py-6 text-font-primary-dark/60">Aucun résultat.</p>
                         )}
-                        {isLoadingList && (
-                            <p className="text-sm text-center py-6 text-primary-dark/60">Chargement des offres...</p>
+
+                        {mode === "saved" && !isLoadingSaved && visibleJobs.length === 0 && (
+                            <p className="text-sm text-center py-6 text-font-primary-dark/60">
+                                Tu n'as pas encore sauvegardé d'offre. Clique sur l'icône 🔖 sur une offre pour la retrouver ici.
+                            </p>
                         )}
-                        {!isEnd && !isLoadingList && (
+
+                        {mode === "feed" && isLoadingList && (
+                            <>
+                                <p className="text-sm text-center py-6 text-font-primary-dark">Chargement des offres...</p>
+                                <div className="flex items-center gap-4 justify-center text-3xl">
+                                    <Apple className="animate-bounce" aria-hidden="true" />
+                                    <Citrus className="animate-bounce [animation-delay:100ms]" aria-hidden="true" />
+                                    <Banana className="animate-bounce [animation-delay:200ms]" aria-hidden="true" />
+                                </div>
+                            </>
+                        )}
+
+                        {mode === "saved" && isLoadingSaved && (
+                            <p className="text-sm text-center py-6 text-font-primary-dark">Chargement des offres sauvegardées...</p>
+                        )}
+
+                        {mode === "saved" && savedError && (
+                            <p className="text-xs text-center text-accent-dark">{savedError}</p>
+                        )}
+
+                        {mode === "feed" && !isEnd && !isLoadingList && (
                             <button
                                 type="button"
                                 onClick={loadMore}
@@ -378,33 +177,53 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                     </div>
                 </aside>
 
-                {isLoadingDetail && (
-                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
-                        <p className="text-sm text-primary-dark/60">Chargement de l'offre...</p>
-                    </div>
-                )}
+                {/*
+                  colonne détail : toujours visible en desktop.
+                  En mobile : elle est masquée par défaut et devient une modal plein écran
+                */}
+                <div
+                    className={`${isMobileDetailOpen ? "fixed inset-0 z-50 bg-bone overflow-y-auto p-4" : "hidden"} lg:static lg:z-auto lg:bg-transparent lg:p-0 lg:block lg:overflow-visible`}
+                >
+                    {isLoadingDetail && (
+                        <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
+                            <p className="text-sm text-font-primary-dark">Chargement de l'offre...</p>
+                            <>
+                                <div className="flex items-center gap-4 justify-center text-3xl">
+                                    <Apple className="animate-bounce" aria-hidden="true" />
+                                    <Citrus className="animate-bounce [animation-delay:100ms]" aria-hidden="true" />
+                                    <Banana className="animate-bounce [animation-delay:200ms]" aria-hidden="true" />
+                                </div>
+                            </>
+                        </div>
+                    )}
 
-                {!isLoadingDetail && detailError && (
-                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
-                        <p className="font-semibold text-primary-dark">Impossible de charger cette offre</p>
-                        <p className="text-sm text-primary-dark/60">{detailError}</p>
-                    </div>
-                )}
+                    {!isLoadingDetail && detailError && (
+                        <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
+                            <p className="font-semibold text-font-primary-dark">Impossible de charger cette offre</p>
+                            <p className="text-sm text-font-primary-dark/60">{detailError}</p>
+                        </div>
+                    )}
 
-                {!isLoadingDetail && !detailError && selectedDetail && (
-                    <JobDetail
-                        job={selectedDetail}
-                        isSaved={saved.has(selectedDetail.PK_id)}
-                        onToggleSave={() => toggleSave(selectedDetail.PK_id)}
-                    />
-                )}
+                    {!isLoadingDetail && !detailError && selectedDetail && (
+                        <JobDetail
+                            job={selectedDetail}
+                            isSaved={saved.has(selectedDetail.PK_id)}
+                            onToggleSave={() => toggleSave(selectedDetail.PK_id)}
+                            onClose={() => setIsMobileDetailOpen(false)}
+                        />
+                    )}
 
-                {!isLoadingDetail && !detailError && !selectedDetail && !isLoadingList && filtered.length === 0 && (
-                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
-                        <p className="font-semibold text-primary-dark">Aucune offre ne correspond</p>
-                        <p className="text-sm text-primary-dark/60">Essaie d'élargir ta recherche.</p>
-                    </div>
-                )}
+                    {!isLoadingDetail && !detailError && !selectedDetail && visibleJobs.length === 0 && (
+                        <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light/40 p-10 flex flex-col items-center text-center gap-3">
+                            <p className="font-semibold text-font-primary-dark">
+                                {mode === "feed" ? "Aucune offre ne correspond" : "Aucune offre sauvegardée"}
+                            </p>
+                            <p className="text-sm text-font-primary-dark/60">
+                                {mode === "feed" ? "Essaie d'élargir ta recherche." : "Sauvegarde une offre pour la retrouver ici."}
+                            </p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

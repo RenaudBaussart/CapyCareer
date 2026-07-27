@@ -1,6 +1,6 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
-import { member, updateMemberSchema, updateProfileSchema, updatePasswordSchema, updateAccountSchema } from "./modules/members/member.schema";
+import { member, updateProfileOnlySchema, updateProfileSchema, updatePasswordSchema, updateAccountSchema } from "./modules/members/member.schema";
 import { loginSchema } from "./modules/auth/auth.schema";
 import { jobOfferSchema, jobOfferDetailSchema, jobOfferFullSchema } from "./modules/job_offers/job.offers.schema"; // Import the new schema
 export const registry = new OpenAPIRegistry();
@@ -816,23 +816,23 @@ registry.registerPath({
 });
 registry.registerPath({
     method: "put",
-    path: "/api/admin/members/:id",
+    path: "/api/admin/members/{id}",
     description: "Mettre à jour le profil d'un membre (accessible uniquement aux administrateurs)",
     summary: "Mettre à jour le profil d'un membre",
     tags: ["Administration"],
     security: [{ [bearerAuthName]: [] }],
     request: {
+        params: z.object({
+            id: z.string().transform(Number).openapi({ description: "ID du membre", example: 1 })
+        }),
         body: {
             description: "Les données du profil à mettre à jour",
             content: {
                 "application/json": {
-                    schema: updateMemberSchema,
+                    schema: updateProfileOnlySchema,
                 },
             },
-        },
-        query: z.object({
-            id: z.number().int().positive().openapi({ example: 1 })
-        })
+        }
     },
     responses: {
         200: {
@@ -916,12 +916,15 @@ registry.registerPath({
 });
 registry.registerPath({
     method: "patch",
-    path: "/api/admin/members/:id/role",
+    path: "/api/admin/members/{id}/role",
     description: "Mettre à jour le rôle d'un membre (accessible uniquement aux administrateurs)",
     summary: "Mettre à jour le rôle d'un membre",
     tags: ["Administration"],
     security: [{ [bearerAuthName]: [] }],
     request: {
+        params: z.object({
+            id: z.string().transform(Number).openapi({ description: "ID du membre", example: 1 })
+        }),
         body: {
             description: "Le nouveau rôle du membre",
             content: {
@@ -931,10 +934,7 @@ registry.registerPath({
                     })
                 }
             }
-        },
-        query: z.object({
-            id: z.number().int().positive().openapi({ example: 1 })
-        })
+        }
     },
     responses: {
         200: {
@@ -1007,12 +1007,15 @@ registry.registerPath({
 });
 registry.registerPath({
     method: "patch",
-    path: "/api/admin/members/:id/password",
+    path: "/api/admin/members/{id}/password",
     description: "Mettre à jour le mot de passe d'un membre (accessible uniquement aux administrateurs)",
     summary: "Mettre à jour le mot de passe d'un membre",
     tags: ["Administration"],
     security: [{ [bearerAuthName]: [] }],
     request: {
+        params: z.object({
+            id: z.string().transform(Number).openapi({ description: "ID du membre", example: 1 })
+        }),
         body: {
             description: "Le nouveau mot de passe du membre",
             content: {
@@ -1022,10 +1025,7 @@ registry.registerPath({
                     })
                 }
             }
-        },
-        query: z.object({
-            id: z.number().int().positive().openapi({ example: 1 })
-        })
+        }
     },
     responses: {
         200: {
@@ -1430,6 +1430,101 @@ registry.registerPath({
                     schema: z.object({
                         success: z.boolean().openapi({ example: false }),
                         message: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+registry.registerPath({
+    method: "post",
+    path: "/api/security-demo/demo-register-vulnerable",
+    description: "Route de démonstration pour l'enregistrement d'un utilisateur (vulnérable aux attaques XSS car non nettoyé)",
+    summary: "Enregistrement d'un utilisateur (démonstration XSS)",
+    tags: ["Démonstration de sécurité"],
+    request: {
+        body: {
+            description: "Les informations de l'utilisateur à enregistrer",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        username: z.string().openapi({ example: "newuser" }),
+                        email: z.string().email().openapi({ example: "newuser@example.com" }),
+                        password: z.string().openapi({ example: "password123" }),
+                        firstname: z.string().openapi({ example: "<img src=x onerror=alert(1)>" }),
+                        lastname: z.string().openapi({ example: "Dupont" })
+                    })
+                }
+            }
+        }
+    },
+    responses: {
+        201: {
+            description: "Utilisateur créé avec succès (avec données non filtrées).",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "⚠️ Utilisateur créé avec des données non nettoyées dans le prénom/nom !" }),
+                        savedFirstname: z.string().openapi({ example: "<img src=x onerror=alert(1)>" }),
+                        savedLastname: z.string().openapi({ example: "Dupont" })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur interne du serveur ou syntaxe SQL.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        error: z.string().openapi({ example: "Erreur interne du serveur." })
+                    })
+                }
+            }
+        }
+    }
+});
+
+registry.registerPath({
+    method: "post",
+    path: "/api/security-demo/demo-sql-injection",
+    description: "Route de démonstration pour l'attaque par injection SQL (utilisation de concaténation vulnérable)",
+    summary: "Attaque par injection SQL sur le login (démonstration)",
+    tags: ["Démonstration de sécurité"],
+    request: {
+        body: {
+            description: "Les informations d'identification de l'utilisateur",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        username: z.string().openapi({ example: "' OR '1'='1' #" }),
+                        password: z.string().openapi({ example: "password123" })
+                    })
+                }
+            }
+        }
+    },
+    responses: {
+        200: {
+            description: "Succès de l'attaque par injection SQL.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string().openapi({ example: "⚠️ Succès de l'attaque ! L'injection SQL a fonctionné." }),
+                        userFound: z.object({
+                            PK_id: z.number().int().openapi({ example: 1 }),
+                            username: z.string().openapi({ example: "admin" }),
+                            hashed_password: z.string().openapi({ example: "$2b$10$..." })
+                        })
+                    })
+                }
+            }
+        },
+        500: {
+            description: "Erreur de syntaxe SQL ou erreur interne du serveur.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        error: z.string().openapi({ example: "You have an error in your SQL syntax..." })
                     })
                 }
             }

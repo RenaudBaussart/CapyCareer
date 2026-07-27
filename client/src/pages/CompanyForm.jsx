@@ -6,13 +6,12 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Footer from "../components/layout/Footer";
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import PostJobForm from "../components/dashboard/PostJobForm";
 import CompanyJobsList from "../components/dashboard/CompanyJobsList";
 // icone
 import { PlusCircle, LayoutList, ArrowLeft } from "lucide-react";
 // img
-import Leaves from "../assets/images/Leaves.png";
 import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 // data
 import { COMPANY_JOBS_MOCK } from "../data/companyJobsMock";
@@ -93,8 +92,8 @@ export default function CompanyForm() {
     }
 
     return (
-        <main className="flex flex-col min-h-screen bg-bone text-primary-dark font-sans">
-            <Navbar />
+        <main className="flex flex-col min-h-screen bg-bone text-font-primary-dark font-sans">
+            <MainNavbar />
 
             <section className="bg-main-layout">
                 <div className="w-full p-10">
@@ -102,10 +101,10 @@ export default function CompanyForm() {
                         {/* en-tête */}
                         <div className="text-center backdrop-blur-3xl overflow-hidden rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.15)] mb-10">
                             <div className="w-full h-auto p-6 sm:p-8 bg-primary">
-                                <h1 className="text-3xl sm:text-4xl font-bold text-bone">
+                                <h1 className="text-3xl sm:text-4xl font-bold text-light">
                                     Espace recruteur
                                 </h1>
-                                <p className="text-bone/80 mt-2 max-w-2xl mx-auto">
+                                <p className="text-light/80 mt-2 max-w-2xl mx-auto">
                                     Publiez vos offres et suivez les candidatures reçues, le tout au
                                     même endroit.
                                 </p>
@@ -113,12 +112,12 @@ export default function CompanyForm() {
 
                         </div>
 
-                            <Link
-                                to="/company/dashboard/"
-                                className=" mb-5 flex items-center justify-center gap-2 flex-1 font-bold text-sm text-primary-dark hover:text-primary"
-                            >
-                            <ArrowLeft/>    Retour
-                            </Link>
+                        <Link
+                            to="/company/dashboard/"
+                            className=" mb-5 flex items-center justify-center gap-2 flex-1 font-bold text-sm text-font-primary-dark hover:text-primary"
+                        >
+                            <ArrowLeft />    Retour
+                        </Link>
 
                         {/* onglets */}
                         <div
@@ -135,7 +134,7 @@ export default function CompanyForm() {
                                     onClick={() => handleTabChange(id)}
                                     className={`flex items-center justify-center gap-2 flex-1 font-bold text-sm py-3 px-5 rounded-3xl border transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${activeTab === id
                                         ? "bg-deep-primary text-white border-deep-primary"
-                                        : "bg-bone-light text-primary-dark border-primary-light/40 hover:bg-primary-light/10"
+                                        : "bg-bone-light text-font-primary-dark border-primary-light/40 hover:bg-primary-light/10"
                                         }`}
                                 >
                                     <Icon size={16} aria-hidden="true" />

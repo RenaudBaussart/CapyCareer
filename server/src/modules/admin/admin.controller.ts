@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AdminService } from "./admin.service";
 import { pool } from "../../config/database";
-import { updateMemberSchema } from "../members/member.schema";
+import { updateMemberSchema, updateProfileOnlySchema } from "../members/member.schema";
 import { ZodError } from "zod";
 
 
@@ -14,19 +14,19 @@ import { ZodError } from "zod";
 const getMembers = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const adminService = new AdminService(pool);
-        
-        const roleQuery = req.query.role as string; 
+
+        const roleQuery = req.query.role as string;
 
         if (roleQuery) {
-           
-        const members = await adminService.getMemberByRoleName(roleQuery, req.member?.id);
-            return res.status(200).json({ 
-                message: `Liste des ${roleQuery}s récupérée avec succès.`, 
-                members 
+
+            const members = await adminService.getMemberByRoleName(roleQuery, req.member?.id);
+            return res.status(200).json({
+                message: `Liste des ${roleQuery}s récupérée avec succès.`,
+                members
             });
         }
 
- 
+
         const allMembers = await adminService.getAllMembers(req.member?.id);
         res.status(200).json({ message: "Tous les profils récupérés.", members: allMembers });
 
@@ -45,7 +45,7 @@ const banMember = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const email = req.query.email as string;
 
-        
+
         const adminService = new AdminService(pool);
         const result = await adminService.banMember(email);
         res.status(200).json(result);
@@ -62,7 +62,7 @@ const banMember = async (req: Request, res: Response, next: NextFunction) => {
 const unbanMember = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email } = req.query;
-        
+
         const adminService = new AdminService(pool);
         const result = await adminService.unbanMember(email as string);
         res.status(200).json(result);
@@ -70,6 +70,24 @@ const unbanMember = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
+
+/**
+ * Récupère la liste de tous les membres bannis depuis la table Banned
+ * @param req - La requête Express
+ * @param res - La réponse Express pour envoyer la liste des membres bannis
+ * @param next - La fonction next pour passer au middleware suivant en cas d'erreur
+ */
+const getBannedMembers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const adminService = new AdminService(pool);
+        const bannedMembers = await adminService.getBannedMembers();
+
+        res.status(200).json(bannedMembers);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 
 /**
  * Met à jour les informations d'un membre, y compris son rôle et son mot de passe.
@@ -84,55 +102,55 @@ const unbanMember = async (req: Request, res: Response, next: NextFunction) => {
  */
 const updateMembers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const memberId = parseInt((req.params.id || req.query.id) as string, 10);
+        const memberId = parseInt(req.params.id as string, 10);
         const adminService = new AdminService(pool);
-        
+
         let rawData: any = {};
         let successMessage = "Profil mis à jour avec succès.";
+        let validatedData: any;
 
-        if (req.originalUrl.endsWith('/role')) {
+        if (req.originalUrl.includes('/role')) {
             rawData = { role: req.body.role };
             successMessage = "Rôle du membre mis à jour avec succès.";
-        } 
-        if (req.originalUrl.endsWith('/password') || req.body.password) {
+            validatedData = updateMemberSchema.pick({ role: true }).parse(rawData);
+        }
+        else if (req.originalUrl.includes('/password')) {
             rawData = { newPassword: req.body.password || req.body.newPassword };
             successMessage = "Mot de passe du membre mis à jour avec succès.";
+            validatedData = updateMemberSchema.pick({ newPassword: true }).parse(rawData);
         }
         else {
             rawData = req.body;
+            successMessage = "Informations du profil mises à jour avec succès.";
+            validatedData = updateProfileOnlySchema.parse(rawData);
         }
 
-
-        const validatedData = updateMemberSchema.parse(rawData);
-
-
         await adminService.performAdminUpdate(memberId, validatedData);
-        
+
         res.status(200).json({ message: successMessage });
 
     } catch (error) {
         if (error instanceof ZodError) {
-            return res.status(400).json({ 
-                message: "Erreur de validation des données.", 
-                errors: error.flatten().fieldErrors 
+            return res.status(400).json({
+                message: "Erreur de validation des données.",
+                errors: error.flatten().fieldErrors
             });
         }
         next(error);
     }
 };
 
-
 // pour gerer la requete HTTP des stats des users
 const getStats = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const adminService = new AdminService(pool);
         const stats = await adminService.getUserStats();
-        
+
         res.status(200).json(stats);
     } catch (error: any) {
         next(error);
     }
 };
 
-export { getMembers, banMember, unbanMember, updateMembers, getStats };
+export { getMembers, banMember, unbanMember, updateMembers, getStats, getBannedMembers };
 
