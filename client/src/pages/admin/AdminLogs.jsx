@@ -68,6 +68,7 @@ export default function AdminLogs() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                              {/* btn purger SIL y a des logs */}
                             {logs.length > 0 && (
                                 <button
                                     onClick={requestPurge}
@@ -78,6 +79,8 @@ export default function AdminLogs() {
                                 </button>
                             )}
 
+                            
+                            {/* recherche */}
                             <div className="relative w-full sm:w-64 md:w-72">
                                 <input
                                     type="text"

@@ -2,7 +2,7 @@
 
 import { useContext, useEffect } from "react";
 import { useJobsFeed } from "../../hook/useJobsFeed";
-import { AuthContext } from "../../context/AuthContext"; // adapter le chemin si besoin
+import { AuthContext } from "../../context/AuthContext";
 import { Search, MapPin, Bookmark, Sparkles, Apple, Banana, Citrus } from "lucide-react";
 import { JobCard, JobDetail, KeywordTagInput } from "./JobsSection.parts";
 
@@ -27,7 +27,7 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
     const { token } = useContext(AuthContext);
     const isAuthenticated = !!token;
 
-    // si deconnexion pendant que l'onglet "saved" est actif, on revient au fil
+    // si deconnexion pendant que l'onglet "saved" est actif, revient au fil
     useEffect(() => {
         if (!isAuthenticated && mode === "saved") {
             setMode("feed");
@@ -208,7 +208,7 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
 
                 {/*
                   colonne détail : toujours visible en desktop.
-                  En mobile : elle est masquée par défaut et devient une modal plein écran
+                  mobile :  masquée par défaut et devient une modal plein écran
                 */}
                 <div
                     className={`${isMobileDetailOpen ? "fixed inset-0 z-50 bg-bone overflow-y-auto p-4" : "hidden"} lg:static lg:z-auto lg:bg-transparent lg:p-0 lg:block lg:overflow-visible`}

@@ -39,6 +39,7 @@ export default function AdminUsers({ roleToManage = "candidat" }) {
                     <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="min-w-0">
                             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-font-primary-dark flex items-center gap-2 sm:gap-3">
+                                  {/* titre selon role */}
                                 {isCandidate ? <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" aria-hidden="true" /> : <Building className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" aria-hidden="true" />}
                                 <span className="truncate">Modération {isCandidate ? "Candidats" : "Entreprises"}</span>
                             </h1>
@@ -47,6 +48,7 @@ export default function AdminUsers({ roleToManage = "candidat" }) {
                             </p>
                         </div>
 
+                           {/* recherche component */}
                         <div className="w-full md:w-auto">
                             <SearchBar
                                 searchQuery={searchQuery}
