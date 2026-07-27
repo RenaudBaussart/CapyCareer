@@ -97,12 +97,25 @@ services:
       - n8n
     networks:
       - app-network
+  
+  # ollama (IA en local)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: always
+    networks:
+      - app-network
 
 # Déclaration des volumes
 volumes: 
   n8n_data: 
   # Crée un volume nommé "n8n_data" pour stocker les données persistantes de n8n, garantissant que les workflows et configurations ne sont pas perdus lors des redémarrages ou mises à jour du conteneur.
-
+  ollama_data:
+  # Crée un volume nommé "ollama_data" pour stocker les données persistantes de l'IA Ollama, assurant que les modèles et configurations restent intacts même après le redémarrage ou la mise à jour du conteneur.
 networks: 
 # Déclaration des réseaux
   app-network: 
