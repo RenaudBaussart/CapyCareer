@@ -6,14 +6,12 @@ import MainNavbar from "../components/layout/MainNavbar";
 import Footer from "../components/layout/Footer";
 // icones
 import { Shield } from "lucide-react";
-// img
-import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function Legal() {
     return (
         // conteneur principal
-        <main className="bg-main-layout">
-                  <MainNavbar />
+        <main className="bg-main-layout flex flex-col min-h-screen">
+            <MainNavbar />
 
             {/* conteneur pour centrer */}
             <div className="grow flex items-center justify-center p-6 lg:p-12">
@@ -56,6 +54,7 @@ export default function Legal() {
                         </p>
                     </section>
 
+
                     {/* section 3 */}
                     <section className="space-y-4">
                         <h2 className="text-2xl font-bold text-deep-primary border-b-2 border-primary-light/30 pb-2">
@@ -77,7 +76,6 @@ export default function Legal() {
                               </p> */}
                         </div>
                     </section>
-
                     {/* section 4 */}
                     <section className="space-y-4">
                         <h2 className="text-2xl font-bold text-deep-primary border-b-2 border-primary-light/30 pb-2">
@@ -90,40 +88,6 @@ export default function Legal() {
                             Toute reproduction, représentation ou diffusion, en tout ou partie, du contenu de ce site sur quelque support ou par quelque procédé que ce soit, est interdite sans l'autorisation expresse de l'équipe projet.
                         </p>
                     </section>
-
-                    {/* WARNING a remplir */}
-                    {/* section 5 */}
-                    {/* <section className="space-y-4">
-                        <h2 className="text-2xl font-bold text-deep-primary border-b-2 border-primary-light/30 pb-2">
-                            5. Protection des données personnelles (RGPD)
-                        </h2>
-                        <p className="leading-relaxed">
-                            Dans le cadre de l'utilisation de nos services, nous sommes amenés à collecter et traiter certaines de vos données personnelles.
-                        </p>
-                        <ul className="list-disc list-inside space-y-2 ml-2">
-                            <li><strong>Responsable du traitement :</strong> L'équipe projet CapyCareer.</li>
-                            <li><strong>Finalité :</strong> La collecte des données a pour but la création de votre compte, la gestion des candidatures et la mise en relation avec les recruteurs.</li>
-                            <li><strong>Durée de conservation :</strong> Vos données sont conservées pendant toute la durée de votre inscription, puis supprimées après une période d'inactivité de 2 ans.</li>
-                            <li><strong>Vos droits :</strong> Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de portabilité et de suppression de vos données.</li>
-                        </ul>
-                        <p className="leading-relaxed">
-                            Pour exercer ces droits, vous pouvez nous contacter à l'adresse suivante :
-                            <a href="mailto:contact@capycareer.com" className="text-primary font-bold hover:text-deep-primary hover:underline transition-colors px-1">contact@capycareer.com</a>.
-                        </p>
-                    </section> */}
-
-                    {/* section 6 */}
-                    {/* <section className="space-y-4">
-                        <h2 className="text-2xl font-bold text-deep-primary border-b-2 border-primary-light/30 pb-2">
-                            6. Gestion des cookies
-                        </h2>
-                        <p className="leading-relaxed">
-                            Le site CapyCareer utilise des cookies techniques nécessaires au bon fonctionnement du service, notamment pour maintenir votre session de connexion sécurisée.
-                        </p>
-                        <p className="leading-relaxed">
-                            Ces cookies ne sont pas utilisés à des fins publicitaires. Vous pouvez configurer votre navigateur pour refuser les cookies, mais cela pourrait altérer votre expérience utilisateur (par exemple, vous devrez vous reconnecter à chaque visite).
-                        </p>
-                    </section> */}
 
                     {/* btn retour */}
                     <div className="pt-6 border-t border-primary-light/30">
