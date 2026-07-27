@@ -1,4 +1,3 @@
-
 # CapyCareer - Job Aggregator
 
 ## Contexte du projet
