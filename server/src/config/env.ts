@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { z } from 'zod';
 
+
 let envPath = path.resolve(process.cwd(), '.env');
 if (!fs.existsSync(envPath)) {
   envPath = path.resolve(process.cwd(), '../.env'); 
@@ -44,6 +45,8 @@ const envSchema = z.object({
   
   SERVER_PORT: z.string().transform(Number).optional().default(5000),
 
+  // pour que zod accepte les url n8n
+  N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL: z.string().url(),
 
 });
 

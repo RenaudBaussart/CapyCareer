@@ -19,20 +19,62 @@ export default function LogDataGrid({ logs, handleDelete }) {
         }
     };
 
+    if (logs.length === 0) {
+        return (
+            <div className="py-8 text-center text-font-primary-dark/60">
+                Aucun log trouvé. Le système est propre !
+            </div>
+        );
+    }
+
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-                <thead>
-                    <tr className="border-b border-white/40 text-font-primary-dark/70 text-sm">
-                        <th className="py-4 px-4 font-semibold">Date</th>
-                        <th className="py-4 px-4 font-semibold">Type</th>
-                        <th className="py-4 px-4 font-semibold">Message</th>
-                        <th className="py-4 px-4 font-semibold text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {logs.length > 0 ? (
-                        logs.map((log) => {
+        <>
+            {/* ---- vue mobile : cartes (< sm) ---- */}
+            <div className="sm:hidden flex flex-col gap-3">
+                {logs.map((log) => {
+                    const Style = getLogStyle(log.type);
+                    const Icon = Style.icon;
+
+                    return (
+                        <div
+                            key={log.id}
+                            className="bg-bone-light/60 border border-white/50 rounded-xl p-4 flex flex-col gap-2"
+                        >
+                            <div className="flex items-start justify-between gap-2">
+                                <span className={`px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1 w-fit capitalize shrink-0 ${Style.color}`}>
+                                    <Icon className="w-3 h-3" />
+                                    {log.type}
+                                </span>
+                                <button
+                                    onClick={() => handleDelete(log.id)}
+                                    title="Supprimer ce log"
+                                    className="p-2 shrink-0 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <p className="text-font-primary-dark font-medium text-sm break-words">
+                                {log.message}
+                            </p>
+                            <p className="text-xs text-font-primary-dark/60">{log.date}</p>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* ---- vue tableau (sm et plus) ---- */}
+            <div className="hidden sm:block overflow-x-auto">
+                <table className="w-full min-w-[560px] text-left border-collapse">
+                    <thead>
+                        <tr className="border-b border-white/40 text-font-primary-dark/70 text-sm">
+                            <th className="py-4 px-4 font-semibold">Date</th>
+                            <th className="py-4 px-4 font-semibold">Type</th>
+                            <th className="py-4 px-4 font-semibold">Message</th>
+                            <th className="py-4 px-4 font-semibold text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {logs.map((log) => {
                             const Style = getLogStyle(log.type);
                             const Icon = Style.icon;
 
@@ -50,7 +92,7 @@ export default function LogDataGrid({ logs, handleDelete }) {
                                             {log.type}
                                         </span>
                                     </td>
-                                    <td className="py-4 px-4 text-font-primary-dark font-medium flex items-center gap-2">
+                                    <td className="py-4 px-4 text-font-primary-dark font-medium">
                                         {log.message}
                                     </td>
                                     <td className="py-4 px-4 text-right">
@@ -63,17 +105,11 @@ export default function LogDataGrid({ logs, handleDelete }) {
                                         </button>
                                     </td>
                                 </tr>
-                            )
-                        })
-                    ) : (
-                        <tr>
-                            <td colSpan="4" className="py-8 text-center text-font-primary-dark/60">
-                                Aucun log trouvé. Le système est propre !
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        </>
     );
 }

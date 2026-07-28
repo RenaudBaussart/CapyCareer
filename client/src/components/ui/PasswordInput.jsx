@@ -20,10 +20,10 @@ export default function PasswordInput({ register, name, label, error, value, onC
       )}
       <div className="relative">
         <input
-          className={`w-full px-4 py-2.5 pr-12 bg-bone-light/50 border rounded-xl focus:ring-2 focus:outline-none transition-colors ${error
-            ? "border-2 border-red-600 focus:ring-red-500"
-            : "border-white/60 focus:ring-primary text-font-primary-dark"
-            }`}
+          className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${error
+                  ? "border-2 border-red-600 focus:ring-red-500"
+                  : "border-primary-light focus:ring-primary"
+                  }`}
           id={name}
           name={name}
           type={showPassword ? "text" : "password"}

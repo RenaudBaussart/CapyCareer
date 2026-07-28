@@ -139,7 +139,7 @@ export default function App() {
                 }
               />
 
-              {/* Pages Admin Duplicates */}
+              {/* Pages Admin Duplicates
               <Route
                 path="/admin/duplicates"
                 element={
@@ -147,7 +147,7 @@ export default function App() {
                     <AdminDuplicates />
                   </RequireAuth>
                 }
-              />
+              /> */}
 
               {/* Pages Admin Logs */}
               <Route
