@@ -80,7 +80,7 @@ export default function AdminDashboard() {
 
                     {/* statistiques rapides */}
                     <section className="mt-10" aria-live="polite">
-                        <h2 className="text-xl font-semibold text-deep-primary mb-6">statistiques rapides</h2>
+                        <h2 className="text-xl font-semibold text-deep-primary mb-6">Statistiques rapides</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
 
@@ -120,7 +120,7 @@ export default function AdminDashboard() {
                                 />
                             </Link>
 
-                            {/* offres en doublons */}
+                            {/* offres en doublons
                             <Link to="/admin/duplicates" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
                                 <AdminStatCard
                                     title="Doublons (IA)"
@@ -130,10 +130,10 @@ export default function AdminDashboard() {
                                     trendColor="text-font-accent-deep"
                                     colorClass="bg-accent-deep/10 text-accent-deep"
                                 />
-                            </Link>
+                            </Link> */}
 
                             {/* nbr d erreurs api */}
-                            <Link to="/admin/logs" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
+                            {/* <Link to="/admin/logs" className="block transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary rounded-2xl">
                                 <AdminStatCard
                                     title="Erreurs API (48h)"
                                     value={stats.erreursApi}
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
                                     trendColor="text-red-800"
                                     colorClass="bg-red-100 text-red-600"
                                 />
-                            </Link>
+                            </Link> */}
 
                         </div>
                     </section>
