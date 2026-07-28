@@ -52,10 +52,10 @@ export default function AdminNavbar() {
                             <Briefcase className="w-4 h-4 text-white" />
                             Offres
                         </NavLink>
-                        <NavLink to="/admin/duplicates" className={navLinkClass}>
+                        {/* <NavLink to="/admin/duplicates" className={navLinkClass}>
                             <Copy className="w-4 h-4 text-white" />
                             Doublons
-                        </NavLink>
+                        </NavLink> */}
                         <NavLink to="/admin/logs" className={navLinkClass}>
                             <Terminal className="w-4 h-4 text-white" />
                             Logs

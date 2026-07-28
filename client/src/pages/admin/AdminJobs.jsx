@@ -45,33 +45,32 @@ export default function AdminJobs() {
     const currentModal = modalConfig.actionType ? modalContentMap[modalConfig.actionType] : {};
 
     return (
-        <div className="bg-main-layout flex flex-col min-h-screen">
+        <div className="bg-main-layout">
             {/* navbar globale */}
             <MainNavbar />
 
-            <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
-                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1 flex flex-col">
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col min-w-0">
+                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-5 sm:p-8 md:p-10 w-full flex-1 flex flex-col min-w-0">
 
                     {/* haut de page (titre + compteur + recherche) */}
-                    <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            {/* titre avec badge du nombre total d'offres */}
-                            <h1 className="text-3xl font-bold text-font-primary-dark flex items-center gap-3">
-                                <Briefcase className="w-8 h-8 text-primary" />
-                                Modération des Offres
+                    <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="min-w-0">
+                            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-font-primary-dark flex flex-wrap items-center gap-2 sm:gap-3">
+                                <Briefcase className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
+                                <span>Modération des Offres</span>
                                 {totalJobsCount > 0 && (
-                                    <span className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20">
+                                    <span className="text-xs sm:text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20 whitespace-nowrap">
                                         {totalJobsCount} actives
                                     </span>
                                 )}
                             </h1>
-                            <p className="text-deep-primary mt-1">
+                            <p className="text-deep-primary mt-1 text-sm sm:text-base">
                                 Gérez les annonces, corrigez les erreurs ou supprimez les offres obsolètes.
                             </p>
                         </div>
 
-                        {/* barre de recherche component */}
-                        <div className="relative w-full md:w-72">
+                         {/* barre de recherche component */}
+                        <div className="relative w-full md:w-72 shrink-0">
                             <input
                                 type="text"
                                 placeholder="Rechercher une offre..."
@@ -87,7 +86,7 @@ export default function AdminJobs() {
                     </div>
 
                     {/* tableau des offres et pagination */}
-                    <div className="bg-bone-light/40 rounded-2xl p-2 border border-white/50 flex-1 flex flex-col">
+                    <div className="bg-bone-light/40 rounded-2xl p-2 border border-white/50 flex-1 flex flex-col min-w-0">
                         {isLoading ? (
                             <div className="p-8 text-center text-font-primary-dark/60 flex-1 flex items-center justify-center">
                                 Chargement des offres...

@@ -3,7 +3,7 @@
 // composants d'affichage réutilisés par JobsSection.jsx, regroupés ici pour ne pas multiplier les fichiers
 
 import { useState } from "react";
-import { MapPin, Bookmark, Share2, Briefcase, X, Tag } from "lucide-react";
+import { MapPin, Bookmark, Share2, Briefcase, X, Tag, Check } from "lucide-react";
 
 
 // affichage
@@ -128,7 +128,7 @@ export function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
 
 // carte liste offres
 
-export function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
+export function JobCard({ job, isSelected, isSaved, isAuthenticated, onSelect, onToggleSave }) {
 
     return (
         <div
@@ -160,10 +160,13 @@ export function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
                     type="button"
                     onClick={(e) => {
                         e.stopPropagation();
+                        // bloque l'enregistrement si non connecté
+                        if (!isAuthenticated) return;
                         onToggleSave();
                     }}
-                    className="p-1.5 shrink-0 rounded-full hover:bg-primary-light/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                    aria-label={isSaved ? "Retirer des offres sauvegardées" : "Sauvegarder l'offre"}
+                    disabled={!isAuthenticated}
+                    className={`p-1.5 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${isAuthenticated ? "hover:bg-primary-light/10" : "opacity-40 cursor-not-allowed"}`}
+                    aria-label={isAuthenticated ? (isSaved ? "Retirer des offres sauvegardées" : "Sauvegarder l'offre") : "Connectez-vous pour enregistrer une offre"}
                     aria-pressed={isSaved}
                 >
                     <Bookmark
@@ -185,7 +188,21 @@ export function JobCard({ job, isSelected, isSaved, onSelect, onToggleSave }) {
 // detail offre selectionnée
 
 // onClose n'est utilisé que sur mobile 
-export function JobDetail({ job, isSaved, onToggleSave, onClose }) {
+export function JobDetail({ job, isSaved, isAuthenticated, onToggleSave, onClose }) {
+    // etat pour afficher un feedback juste après la copie du lien
+    const [isCopied, setIsCopied] = useState(false);
+
+    // copie le lien de l'offre dans le presse-papier
+    const handleShare = async () => {
+        try {
+            await navigator.clipboard.writeText(job.url);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+        } catch (error) {
+            console.error("Impossible de copier le lien", error);
+        }
+    };
+
     return (
         <article className="bg-bone-light rounded-2xl lg:shadow-[0_0_15px_rgba(0,0,0,0.08)] lg:border border-primary-light/40 p-5 sm:p-7">
             <div className="flex items-start justify-between gap-4">
@@ -200,9 +217,14 @@ export function JobDetail({ job, isSaved, onToggleSave, onClose }) {
                 <div className="flex gap-2 shrink-0">
                     <button
                         type="button"
-                        onClick={onToggleSave}
-                        className="p-2 rounded-full hover:bg-primary-light/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                        aria-label={isSaved ? "Retirer des offres sauvegardées" : "Sauvegarder l'offre"}
+                        onClick={() => {
+                            // bloque l'enregistrement si non connecté
+                            if (!isAuthenticated) return;
+                            onToggleSave();
+                        }}
+                        disabled={!isAuthenticated}
+                        className={`p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${isAuthenticated ? "hover:bg-primary-light/10" : "opacity-40 cursor-not-allowed"}`}
+                        aria-label={isAuthenticated ? (isSaved ? "Retirer des offres sauvegardées" : "Sauvegarder l'offre") : "Connectez-vous pour enregistrer une offre"}
                         aria-pressed={isSaved}
                     >
                         <Bookmark
@@ -214,10 +236,16 @@ export function JobDetail({ job, isSaved, onToggleSave, onClose }) {
                     </button>
                     <button
                         type="button"
+                        onClick={handleShare}
                         className="p-2 rounded-full hover:bg-primary-light/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                        aria-label="Partager l'offre"
+                        aria-label={isCopied ? "Lien copié" : "Partager l'offre"}
+                        title={isCopied ? "Lien copié !" : "Copier le lien de l'offre"}
                     >
-                        <Share2 size={17} className="text-font-primary-dark" aria-hidden="true" />
+                        {isCopied ? (
+                            <Check size={17} className="text-green-600" aria-hidden="true" />
+                        ) : (
+                            <Share2 size={17} className="text-font-primary-dark" aria-hidden="true" />
+                        )}
                     </button>
                     {/* bouton fermeture, visible uniquement en modal mobile */}
                     <button
@@ -242,10 +270,18 @@ export function JobDetail({ job, isSaved, onToggleSave, onClose }) {
                 href={job.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block bg-primary text-light text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark"
+                onClick={(e) => {
+                    // empêche l'ouverture de l'offre si non connecté
+                    if (!isAuthenticated) e.preventDefault();
+                }}
+                aria-disabled={!isAuthenticated}
+                className={`inline-block text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark ${isAuthenticated ? "bg-primary text-light hover:bg-primary-dark" : "bg-primary/40 text-light/80 cursor-not-allowed"}`}
             >
                 Postuler — Voir l'offre
             </a>
+            {!isAuthenticated && (
+                <p className="text-xs text-font-primary-dark/50 mt-2">Connectez-vous pour postuler à cette offre.</p>
+            )}
 
             <div className="mt-7 pt-6 border-t border-primary-light/30">
                 <h3 className="flex items-center gap-2 font-semibold text-font-primary-dark mb-2">

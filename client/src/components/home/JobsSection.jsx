@@ -1,6 +1,8 @@
 // fichier du component fil d'offres (recherche + liste + detail)
 
+import { useContext, useEffect } from "react";
 import { useJobsFeed } from "../../hook/useJobsFeed";
+import { AuthContext } from "../../context/AuthContext";
 import { Search, MapPin, Bookmark, Sparkles, Apple, Banana, Citrus } from "lucide-react";
 import { JobCard, JobDetail, KeywordTagInput } from "./JobsSection.parts";
 
@@ -20,6 +22,20 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
         saved, toggleSave,
         isMobileDetailOpen, setIsMobileDetailOpen,
     } = useJobsFeed({ fetchJobOffers, fetchJobOfferDetail });
+
+    // recupere le statut de connexion
+    const { token } = useContext(AuthContext);
+    const isAuthenticated = !!token;
+
+    // si deconnexion pendant que l'onglet "saved" est actif, revient au fil
+    useEffect(() => {
+        if (!isAuthenticated && mode === "saved") {
+            setMode("feed");
+        }
+    }, [isAuthenticated, mode, setMode]);
+
+    // nombre affiché sur l'onglet, fixé à 0 si déconnecté
+    const savedCount = isAuthenticated ? saved.size : 0;
 
     return (
         <div className="mt-10">
@@ -43,18 +59,26 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                 </button>
                 <button
                     type="button"
-                    onClick={() => setMode("saved")}
+                    onClick={() => {
+                        // bloque l'accès à l'onglet si non connecté
+                        if (!isAuthenticated) return;
+                        setMode("saved");
+                    }}
+                    disabled={!isAuthenticated}
                     aria-pressed={mode === "saved"}
-                    className={`flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${mode === "saved"
-                        ? "bg-primary text-light"
-                        : "bg-bone-light text-font-primary-dark hover:bg-primary-light/10"
+                    aria-label={isAuthenticated ? undefined : "Connectez-vous pour voir vos offres sauvegardées"}
+                    className={`flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${!isAuthenticated
+                        ? "bg-bone-light text-font-primary-dark/40 cursor-not-allowed"
+                        : mode === "saved"
+                            ? "bg-primary text-light"
+                            : "bg-bone-light text-font-primary-dark hover:bg-primary-light/10"
                         }`}
                 >
                     <Bookmark size={14} fill={mode === "saved" ? "currentColor" : "none"} aria-hidden="true" />
                     Offres sauvegardées
-                    {saved.size > 0 && (
+                    {savedCount > 0 && (
                         <span className={`text-xs rounded-full px-1.5 ${mode === "saved" ? "bg-light/20" : "bg-primary/15 text-primary"}`}>
-                            {saved.size}
+                            {savedCount}
                         </span>
                     )}
                 </button>
@@ -131,8 +155,13 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                                 job={job}
                                 isSelected={selectedId === job.PK_id}
                                 isSaved={saved.has(job.PK_id)}
+                                isAuthenticated={isAuthenticated}
                                 onSelect={() => handleSelectJob(job.PK_id)}
-                                onToggleSave={() => toggleSave(job.PK_id)}
+                                onToggleSave={() => {
+                                    // bloque l'enregistrement si non connecté
+                                    if (!isAuthenticated) return;
+                                    toggleSave(job.PK_id);
+                                }}
                             />
                         ))}
 
@@ -179,7 +208,7 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
 
                 {/*
                   colonne détail : toujours visible en desktop.
-                  En mobile : elle est masquée par défaut et devient une modal plein écran
+                  mobile :  masquée par défaut et devient une modal plein écran
                 */}
                 <div
                     className={`${isMobileDetailOpen ? "fixed inset-0 z-50 bg-bone overflow-y-auto p-4" : "hidden"} lg:static lg:z-auto lg:bg-transparent lg:p-0 lg:block lg:overflow-visible`}
@@ -208,7 +237,12 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                         <JobDetail
                             job={selectedDetail}
                             isSaved={saved.has(selectedDetail.PK_id)}
-                            onToggleSave={() => toggleSave(selectedDetail.PK_id)}
+                            isAuthenticated={isAuthenticated}
+                            onToggleSave={() => {
+                                // bloque l'enregistrement si non connecté
+                                if (!isAuthenticated) return;
+                                toggleSave(selectedDetail.PK_id);
+                            }}
                             onClose={() => setIsMobileDetailOpen(false)}
                         />
                     )}
