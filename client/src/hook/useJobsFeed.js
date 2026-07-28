@@ -6,10 +6,30 @@ import { formatLocation } from "../components/home/JobsSection.parts";
 export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   const [query, setQuery] = useState("");
   const [lieu, setLieu] = useState("");
+  // filtres de salaire (min/max)
+  const [salaryMin, setSalaryMin] = useState("");
+  const [salaryMax, setSalaryMax] = useState("");
   // tags de type de contrat
   const [selectedTags, setSelectedTags] = useState(() => new Set());
   // mots-cles pour filtrer
   const [keywords, setKeywords] = useState([]);
+
+  // valeurs debouncées de la recherche, pour éviter un appel API à chaque frappe
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [debouncedLieu, setDebouncedLieu] = useState("");
+  const [debouncedSalaryMin, setDebouncedSalaryMin] = useState("");
+  const [debouncedSalaryMax, setDebouncedSalaryMax] = useState("");
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedQuery(query);
+      setDebouncedLieu(lieu);
+      setDebouncedSalaryMin(salaryMin);
+      setDebouncedSalaryMax(salaryMax);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [query, lieu, salaryMin, salaryMax]);
 
   // liste légère des offres
   const [jobs, setJobs] = useState([]);
@@ -35,9 +55,9 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // modal plein écran en mobile
   const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false);
 
-  // empêche le scroll de la page si la modal mobile est ouverte 
+  // empêche le scroll de la page si la modal mobile est ouverte
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 1023px)"); 
+    const mediaQuery = window.matchMedia("(max-width: 1023px)");
 
     // applique ou retire le blocage de scroll selon l'état de la modal
     function updateScrollLock() {
@@ -57,13 +77,19 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     };
   }, [isMobileDetailOpen]);
 
-  // récupère la première page d'offres au montage
+  // récupère la première page d'offres au montage, et à chaque changement de filtre (débouncé)
   useEffect(() => {
     let cancelled = false;
     setIsLoadingList(true);
     setListError(null);
 
-    fetchJobOffers({ page: 0 })
+    fetchJobOffers({
+      page: 0,
+      q: debouncedQuery,
+      lieu: debouncedLieu,
+      salaryMin: debouncedSalaryMin,
+      salaryMax: debouncedSalaryMax,
+    })
       .then((data) => {
         if (cancelled) return;
         setJobs(data.job_offers);
@@ -81,7 +107,13 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     return () => {
       cancelled = true;
     };
-  }, [fetchJobOffers]);
+  }, [
+    fetchJobOffers,
+    debouncedQuery,
+    debouncedLieu,
+    debouncedSalaryMin,
+    debouncedSalaryMax,
+  ]);
 
   // charge le détail de chaque offre sauvegardée si luser ouvre longlet "saved"
   useEffect(() => {
@@ -163,14 +195,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   }
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const l = lieu.trim().toLowerCase();
     return jobs.filter((job) => {
-      const matchQ =
-        !q ||
-        job.title.toLowerCase().includes(q) ||
-        job.company.toLowerCase().includes(q);
-      const matchL = !l || formatLocation(job).toLowerCase().includes(l);
       const matchTags =
         selectedTags.size === 0 || selectedTags.has(job.contract_type);
       const matchKeywords =
@@ -178,9 +203,10 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
         keywords.some((keyword) =>
           job.title.toLowerCase().includes(keyword.toLowerCase()),
         );
-      return matchQ && matchL && matchTags && matchKeywords;
+
+      return matchTags && matchKeywords;
     });
-  }, [jobs, query, lieu, selectedTags, keywords]);
+  }, [jobs, selectedTags, keywords]);
 
   // liste affichée selon l'onglet actif
   const visibleJobs = mode === "feed" ? filtered : savedDetails;
@@ -241,11 +267,17 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     setIsMobileDetailOpen(true);
   }
 
-  // charge la page suivante d'offres
+  // charge la page suivante d'offres, en conservant les mêmes filtres actifs
   function loadMore() {
     const nextPage = page + 1;
     setIsLoadingList(true);
-    fetchJobOffers({ page: nextPage })
+    fetchJobOffers({
+      page: nextPage,
+      q: debouncedQuery,
+      lieu: debouncedLieu,
+      salaryMin: debouncedSalaryMin,
+      salaryMax: debouncedSalaryMax,
+    })
       .then((data) => {
         setJobs((prev) => [...prev, ...data.job_offers]);
         setIsEnd(data.is_the_end);
@@ -261,6 +293,10 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     setQuery,
     lieu,
     setLieu,
+    salaryMin,
+    setSalaryMin,
+    salaryMax,
+    setSalaryMax,
     selectedTags,
     toggleTag,
     keywords,

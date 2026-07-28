@@ -23,11 +23,40 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
         //calcule le décalage pour la pagination
         const offset = (page - 1) * limit;
 
+        // récupère les filtres de recherche envoyés en query params
+        const { q, lieu, salaryMin, salaryMax } = req.query;
+
+        // construit la requête dynamiquement selon les filtres présents
+        let sqlQuery = "SELECT PK_id, title, contract_type, city, country, company, url, salary_max, salary_min, currency FROM Job_Offers WHERE 1=1";
+        const params: any[] = [];
+
+        if (q && typeof q === "string") {
+            sqlQuery += " AND (title LIKE ? OR company LIKE ?)";
+            params.push(`%${q}%`, `%${q}%`);
+        }
+
+        if (lieu && typeof lieu === "string") {
+            sqlQuery += " AND (city LIKE ? OR country LIKE ?)";
+            params.push(`%${lieu}%`, `%${lieu}%`);
+        }
+
+        if (salaryMin && !isNaN(Number(salaryMin))) {
+            // une offre matche si son max (ou son min si pas de max) dépasse le seuil demandé
+            sqlQuery += " AND (salary_max >= ? OR (salary_max IS NULL AND salary_min >= ?))";
+            params.push(Number(salaryMin), Number(salaryMin));
+        }
+
+        if (salaryMax && !isNaN(Number(salaryMax))) {
+            // une offre matche si son min (ou son max si pas de min) reste sous le seuil demandé
+            sqlQuery += " AND (salary_min <= ? OR (salary_min IS NULL AND salary_max <= ?))";
+            params.push(Number(salaryMax), Number(salaryMax));
+        }
+
         // récupère 51 offres au lieu de 50 pour anticiper la page suivante
-        const [rows] = await pool.query(
-            "SELECT PK_id, title, contract_type, city, country, company, url FROM Job_Offers ORDER BY publish_date DESC LIMIT ? OFFSET ?;",
-            [limit + 1, offset]
-        );
+        sqlQuery += " ORDER BY publish_date DESC LIMIT ? OFFSET ?;";
+        params.push(limit + 1, offset);
+
+        const [rows] = await pool.query(sqlQuery, params);
 
         //typage du tableau de résultats
         const offers = rows as any[];
