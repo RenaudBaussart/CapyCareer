@@ -78,7 +78,7 @@ export default function JobDataGrid({ jobs, handleEditJob, handleDeleteJob, sear
                     >
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
-                                <p className="font-medium text-font-primary-dark break-words">{job.title}</p>
+                                <p className="font-medium text-font-primary-dark wrap-break-word">{job.title}</p>
                                 <p className="text-sm text-font-primary-dark/70 truncate">{job.company}</p>
                             </div>
                             <ActionButtons job={job} />
@@ -92,7 +92,7 @@ export default function JobDataGrid({ jobs, handleEditJob, handleDeleteJob, sear
 
             {/* ---- vue tableau (sm et plus) ---- */}
             <div className="hidden sm:block overflow-x-auto">
-                <table className="w-full min-w-[640px] text-left border-collapse table-fixed">
+                <table className="w-full min-w-160 text-left border-collapse table-fixed">
                     <thead>
                         <tr className="border-b border-white/40 text-font-primary-dark/70 text-sm">
                             <th className="py-4 px-4 font-semibold w-[50%]">Poste</th>
