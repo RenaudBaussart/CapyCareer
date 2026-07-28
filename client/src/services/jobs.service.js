@@ -2,15 +2,25 @@
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// recup une page doffre
-export async function fetchJobOffers({ page = 0, search = "" } = {}) {
-  let url = `${API_URL}/jobs?page=${page + 1}`;
+// récupère une page d'offres (le back est en pagination 1-based, le front travaille en 0-based)
+export async function fetchJobOffers({
+  page = 0,
+  search = "",
+  q,
+  lieu,
+  salaryMin,
+  salaryMax,
+} = {}) {
+  const params = new URLSearchParams({ page: page + 1 });
 
-  if (search) {
-    url += `&search=${encodeURIComponent(search)}`;
-  }
+  // recupere le param sil existe dans query
+  if (search) params.set("search", search);
+  if (q) params.set("q", q);
+  if (lieu) params.set("lieu", lieu);
+  if (salaryMin) params.set("salaryMin", salaryMin);
+  if (salaryMax) params.set("salaryMax", salaryMax);
 
-  const response = await fetch(url);
+  const response = await fetch(`${API_URL}/jobs?${params.toString()}`);
 
   if (!response.ok) {
     throw new Error("Impossible de récupérer les offres d'emploi.");

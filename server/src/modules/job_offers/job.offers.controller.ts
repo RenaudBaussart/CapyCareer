@@ -26,25 +26,49 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
         // calcule le decalage pour la pagination
         const offset = (page - 1) * limit;
 
-        let query = "SELECT PK_id, title, description, contract_type, city, country, company, url, remote, hybrid, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE active = 1 ";
+        // recupere filtre de recherche
+        const { q, lieu, salaryMin, salaryMax } = req.query;
+
+        let query = "SELECT PK_id, title, description, contract_type, city, country, company, url, remote, hybrid, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE active = 1";
         const queryParams: any[] = [];
 
-        // SI la recherche est spécifique
-       if (search) {
+        // SI la recherche globale/ID est présente
+        if (search) {
             if (!isNaN(Number(search))) {
-                query += "AND (PK_id = ? OR title LIKE ? OR company LIKE ?) ";
+                query += " AND (PK_id = ? OR title LIKE ? OR company LIKE ?)";
                 queryParams.push(Number(search), `%${search}%`, `%${search}%`);
             } else {
-                query += "AND (title LIKE ? OR company LIKE ?) ";
+                query += " AND (title LIKE ? OR company LIKE ?)";
                 queryParams.push(`%${search}%`, `%${search}%`);
             }
         }
 
+        // filtres spécifiques
+        if (q && typeof q === "string") {
+            query += " AND (title LIKE ? OR company LIKE ?)";
+            queryParams.push(`%${q}%`, `%${q}%`);
+        }
+
+        if (lieu && typeof lieu === "string") {
+            query += " AND (city LIKE ? OR country LIKE ?)";
+            queryParams.push(`%${lieu}%`, `%${lieu}%`);
+        }
+
+        if (salaryMin && !isNaN(Number(salaryMin))) {
+            query += " AND (salary_max >= ? OR (salary_max IS NULL AND salary_min >= ?))";
+            queryParams.push(Number(salaryMin), Number(salaryMin));
+        }
+
+        if (salaryMax && !isNaN(Number(salaryMax))) {
+            query += " AND (salary_min <= ? OR (salary_min IS NULL AND salary_max <= ?))";
+            queryParams.push(Number(salaryMax), Number(salaryMax));
+        }
+
         // ajoute le tri & la limite pour la pagination
-        query += "ORDER BY publish_date DESC LIMIT ? OFFSET ?;";
+        query += " ORDER BY publish_date DESC LIMIT ? OFFSET ?;";
         queryParams.push(limit + 1, offset);
 
-        // recup 51 offres pour anticiper la page suivante (prise en compte des fitlres)
+        // recup 51 offres pour anticiper la page suivante (prise en compte des filtres)
         const [rows] = await pool.query(query, queryParams);
 
         //typage du tableau de result
@@ -269,6 +293,7 @@ const deleteJobOffer = async (req: Request, res: Response, next: NextFunction) =
 const totalJobOffersCount = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const search = req.query.search as string || "";
+        const { q, lieu, salaryMin, salaryMax } = req.query;
 
         let query = "SELECT COUNT(*) as total FROM Job_Offers WHERE active = 1";
         const queryParams: any[] = [];
@@ -282,6 +307,26 @@ const totalJobOffersCount = async (req: Request, res: Response, next: NextFuncti
                 query += " AND (title LIKE ? OR company LIKE ?)";
                 queryParams.push(`%${search}%`, `%${search}%`);
             }
+        }
+
+        if (q && typeof q === "string") {
+            query += " AND (title LIKE ? OR company LIKE ?)";
+            queryParams.push(`%${q}%`, `%${q}%`);
+        }
+
+        if (lieu && typeof lieu === "string") {
+            query += " AND (city LIKE ? OR country LIKE ?)";
+            queryParams.push(`%${lieu}%`, `%${lieu}%`);
+        }
+
+        if (salaryMin && !isNaN(Number(salaryMin))) {
+            query += " AND (salary_max >= ? OR (salary_max IS NULL AND salary_min >= ?))";
+            queryParams.push(Number(salaryMin), Number(salaryMin));
+        }
+
+        if (salaryMax && !isNaN(Number(salaryMax))) {
+            query += " AND (salary_min <= ? OR (salary_min IS NULL AND salary_max <= ?))";
+            queryParams.push(Number(salaryMax), Number(salaryMax));
         }
 
         const [rows] = await pool.execute<any[]>(query, queryParams);
