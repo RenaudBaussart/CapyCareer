@@ -1,19 +1,25 @@
-// fichier gérant les appels API vers le back pour les offres d'emploi
+// fichier gerant appels API vers back pour offres d'emploi
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// récupère une page d'offres (le back est en pagination 1-based, le front travaille en 0-based)
-export async function fetchJobOffers({ page = 0 } = {}) {
-  const response = await fetch(`${API_URL}/jobs?page=${page + 1}`);
+// recup une page doffre
+export async function fetchJobOffers({ page = 0, search = "" } = {}) {
+  let url = `${API_URL}/jobs?page=${page + 1}`;
+
+  if (search) {
+    url += `&search=${encodeURIComponent(search)}`;
+  }
+
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error("Impossible de récupérer les offres d'emploi.");
   }
 
-  return response.json(); // { job_offers: [...], is_the_end: boolean }
+  return response.json();
 }
 
-// récupère le détail d'une offre
+// recup detail offre
 export async function fetchJobOfferDetail(id) {
   const response = await fetch(`${API_URL}/jobs/${id}`);
 
