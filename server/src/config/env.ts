@@ -2,28 +2,30 @@ import fs from 'fs';
 import path from 'path';
 import { z } from 'zod';
 
-// cible le dossier courant
-const localEnvPath = path.resolve(process.cwd(), '.env');
-// cible a la racine
-const projectRootEnvPath = path.resolve(__dirname, '../../../.env');
 
-// cible dynamiquement le path
-// SI fichier dans dossier courant il est ciblé sinon cible a la racine
-const envPath = fs.existsSync(localEnvPath) ? localEnvPath : projectRootEnvPath;
-
-let envConfig = {};
-try {
-  const envFile = fs.readFileSync(envPath, 'utf-8');
-  envConfig = envFile.split('\n').reduce((acc: { [key: string]: string }, line) => {
-    const [key, value] = line.split('=');
-    if (key && value) {
-      acc[key.trim()] = value.trim();
-    }
-    return acc;
-  }, {});
-} catch (error) {
-  console.error("Could not read .env file:", error);
+let envPath = path.resolve(process.cwd(), '.env');
+if (!fs.existsSync(envPath)) {
+  envPath = path.resolve(process.cwd(), '../.env'); 
 }
+let envConfig: Record<string, string | undefined> = { ...process.env };
+
+try {
+  if (fs.existsSync(envPath)) {
+    const envFile = fs.readFileSync(envPath, 'utf-8');
+    const parsedFile = envFile.split('\n').reduce((acc: Record<string, string>, line) => {
+      const [key, value] = line.split('=');
+      if (key && value) {
+        acc[key.trim()] = value.trim().replace(/^["']|["']$/g, ''); 
+      }
+      return acc;
+    }, {});
+    
+    envConfig = { ...parsedFile, ...process.env };
+  }
+} catch (error) {
+  console.warn("Impossible de lire le fichier .env local, utilisation des variables d'environnement du système.");
+}
+
 
 // zod schema pour valider les variables d'environnement
 const envSchema = z.object({
