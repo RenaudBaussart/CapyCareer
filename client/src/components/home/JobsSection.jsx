@@ -3,7 +3,7 @@
 import { useContext, useEffect } from "react";
 import { useJobsFeed } from "../../hook/useJobsFeed";
 import { AuthContext } from "../../context/AuthContext";
-import { Search, MapPin, Bookmark, Sparkles, Apple, Banana, Citrus } from "lucide-react";
+import { Search, MapPin, Bookmark, Sparkles, Apple, Banana, Citrus, Wallet } from "lucide-react";
 import { JobCard, JobDetail, KeywordTagInput } from "./JobsSection.parts";
 
 // section principale
@@ -12,6 +12,8 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
     const {
         query, setQuery,
         lieu, setLieu,
+        salaryMin, setSalaryMin,
+        salaryMax, setSalaryMax,
         keywords, addKeyword, removeKeyword,
         isLoadingList, listError, isEnd, loadMore,
         visibleJobs,
@@ -125,6 +127,62 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                         >
                             Rechercher
                         </button>
+                    </div>
+
+                    {/* filtre salaire */}
+                    <div className="bg-bone-light rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.08)] border border-primary-light flex flex-col sm:flex-row sm:items-center px-4 py-3 gap-3 mb-4 transition-colors focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+                        <div className="flex items-center gap-2 text-font-primary-dark/70 shrink-0">
+                            <Wallet size={18} aria-hidden="true" />
+                            <span className="text-sm font-medium">Salaire annuel</span>
+                        </div>
+
+                        <div className="hidden sm:block w-px h-6 bg-primary-light/50 shrink-0" aria-hidden="true" />
+                        <div className="sm:hidden border-t border-primary-light/30" aria-hidden="true" />
+
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <label htmlFor="job-salary-min" className="sr-only">Salaire minimum</label>
+                            <input
+                                id="job-salary-min"
+                                type="number"
+                                min="0"
+                                step="1000"
+                                inputMode="numeric"
+                                value={salaryMin}
+                                onChange={(e) => setSalaryMin(e.target.value)}
+                                placeholder="Min (ex: 30000)"
+                                className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
+                            />
+                        </div>
+
+                        <span className="text-font-primary-dark/40 text-sm shrink-0" aria-hidden="true">—</span>
+
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <label htmlFor="job-salary-max" className="sr-only">Salaire maximum</label>
+                            <input
+                                id="job-salary-max"
+                                type="number"
+                                min="0"
+                                step="1000"
+                                inputMode="numeric"
+                                value={salaryMax}
+                                onChange={(e) => setSalaryMax(e.target.value)}
+                                placeholder="Max (ex: 60000)"
+                                className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
+                            />
+                        </div>
+
+                        {(salaryMin || salaryMax) && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setSalaryMin("");
+                                    setSalaryMax("");
+                                }}
+                                className="text-xs font-semibold text-primary hover:underline shrink-0"
+                            >
+                                Réinitialiser
+                            </button>
+                        )}
                     </div>
 
                     {/* mots-clés libres (front-end, back-end...) */}
