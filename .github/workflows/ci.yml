@@ -9,21 +9,13 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build-client:
     runs-on: self-hosted
+    container: node:20 # Exécute tout le job dans un environnement Node propre
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4.2.0
-        with:
-          node-version: '26.x'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm run install:all
@@ -33,15 +25,10 @@ jobs:
 
   build-server:
     runs-on: self-hosted
+    container: node:20
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4.2.0
-        with:
-          node-version: '26.x'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm run install:all
@@ -52,15 +39,10 @@ jobs:
   lint-client:
     needs: [build-client, build-server]
     runs-on: self-hosted
+    container: node:20
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4.2.0
-        with:
-          node-version: '26.x'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm run install:all
@@ -71,15 +53,10 @@ jobs:
   lint-server:
     needs: [build-client, build-server]
     runs-on: self-hosted
+    container: node:20
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4.2.0
-        with:
-          node-version: '26.x'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm run install:all
@@ -90,15 +67,10 @@ jobs:
   test-server:
     needs: [build-client, build-server]
     runs-on: self-hosted
+    container: node:20
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4.2.0
-        with:
-          node-version: '26.x'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm run install:all
