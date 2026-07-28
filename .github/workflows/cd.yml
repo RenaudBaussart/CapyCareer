@@ -1,0 +1,46 @@
+name: CapyCareer CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CapyCareer CI Pipeline"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  push-to-registry:
+    runs-on: self-hosted
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    permissions:
+      contents: read
+      packages: write 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Client image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: true
+          tags: ghcr.io/vincentlesniak/capymock/capycareer-client:latest
+
+      - name: Build and push Server image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          push: true
+          tags: ghcr.io/vincentlesniak/capymock/capycareer-server:latest
