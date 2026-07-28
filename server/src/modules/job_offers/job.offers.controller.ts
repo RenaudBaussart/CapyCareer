@@ -3,6 +3,7 @@ import { pool } from '../../config/database';
 import { z } from "zod";
 import { BadRequestError, NotFoundError, InternalServerError } from '../../core/errors/HttpError';
 import { createJobFullOffer } from "./job.offers.service";
+import { env } from '../../config/env';
 
 /**
  * récupère la liste des offres d'emploi paginée pour la page d'accueil
@@ -254,7 +255,7 @@ const totalJobOffersCount = async (req: Request, res: Response, next: NextFuncti
  */
 const refreshJobOffers = async (req: Request, res: Response, next: NextFunction) => {
     // récupère l'URL du webhook depuis les variables d'environnement
-    const webhookUrl = process.env.N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL;
+    const webhookUrl = env.N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL;
 
     try {
         // vérifie que l'URL du webhook est bien configurée
@@ -286,4 +287,24 @@ const refreshJobOffers = async (req: Request, res: Response, next: NextFunction)
         next(error);
     }
 };
-export { getJobOffers, getJobOfferById, createJobOffer, updateJobOffer, deleteJobOffer, totalJobOffersCount, refreshJobOffers };
+
+/**
+ * recup la date de la dernière mise à jour/synchronisation des offres
+ * @param req la requête HTTP
+ * @param res la réponse HTTP contenant la date de dernière synchro
+ * @param next la fonction pour transmettre les erreurs au middleware d'erreur
+ */
+const getLastSyncDate = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        // recup date + récente
+        const [rows] = await pool.execute<any[]>(
+            "SELECT MAX(updated_at) as last_sync FROM Job_Offers;"
+        );
+
+        // return result
+        res.status(200).json({ last_sync: rows[0].last_sync });
+    } catch (error) {
+        next(error);
+    }
+};
+export { getJobOffers, getJobOfferById, createJobOffer, updateJobOffer, deleteJobOffer, totalJobOffersCount, refreshJobOffers, getLastSyncDate };

@@ -1,19 +1,21 @@
 import { Router } from 'express';
-import { 
-    getJobOffers, 
-    getJobOfferById, 
-    createJobOffer, 
-    updateJobOffer, 
-    deleteJobOffer, 
+import {
+    getJobOffers,
+    getJobOfferById,
+    createJobOffer,
+    updateJobOffer,
+    deleteJobOffer,
     totalJobOffersCount,
-    refreshJobOffers
+    refreshJobOffers,
+    getLastSyncDate
 } from './job.offers.controller';
 
 const router = Router();
 
 router.get('/', getJobOffers);
 router.get('/count', totalJobOffersCount);
-router.get('/refresh', refreshJobOffers);
+router.post('/refresh', refreshJobOffers);
+router.get('/last-sync', getLastSyncDate);
 router.get('/:id', getJobOfferById);
 router.post('/', createJobOffer);
 router.put('/:id', updateJobOffer);
