@@ -2,20 +2,29 @@ import fs from 'fs';
 import path from 'path';
 import { z } from 'zod';
 
-const envPath = path.resolve(__dirname, '../../../.env');
-let envConfig = {};
-try {
-  const envFile = fs.readFileSync(envPath, 'utf-8');
-  envConfig = envFile.split('\n').reduce((acc: { [key: string]: string }, line) => {
-    const [key, value] = line.split('=');
-    if (key && value) {
-      acc[key.trim()] = value.trim();
-    }
-    return acc;
-  }, {});
-} catch (error) {
-  console.error("Could not read .env file:", error);
+let envPath = path.resolve(process.cwd(), '.env');
+if (!fs.existsSync(envPath)) {
+  envPath = path.resolve(process.cwd(), '../.env'); 
 }
+let envConfig: Record<string, string | undefined> = { ...process.env };
+
+try {
+  if (fs.existsSync(envPath)) {
+    const envFile = fs.readFileSync(envPath, 'utf-8');
+    const parsedFile = envFile.split('\n').reduce((acc: Record<string, string>, line) => {
+      const [key, value] = line.split('=');
+      if (key && value) {
+        acc[key.trim()] = value.trim().replace(/^["']|["']$/g, ''); 
+      }
+      return acc;
+    }, {});
+    
+    envConfig = { ...parsedFile, ...process.env };
+  }
+} catch (error) {
+  console.warn("Impossible de lire le fichier .env local, utilisation des variables d'environnement du système.");
+}
+
 
 // zod schema pour valider les variables d'environnement
 const envSchema = z.object({
