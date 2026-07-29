@@ -1,4 +1,4 @@
-## Environnement d'exécution (Docker)
+## ADR - Environnement d'exécution (Docker)
 
 * **Décision :** Utilisation de Docker et Docker Compose pour la conteneurisation de la plateforme.
 

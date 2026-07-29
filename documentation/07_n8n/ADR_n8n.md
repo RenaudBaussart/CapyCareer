@@ -1,4 +1,4 @@
-## Stratégie d'ingestion de données (n8n)
+## ADR - Stratégie d'ingestion de données (n8n)
 
 * **Décision :** Implémentation d'un flux n8n pour l'ETL (Extraction, Transformation, Chargement) des offres de la source obligatoire.
 
