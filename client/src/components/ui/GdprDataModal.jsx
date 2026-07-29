@@ -1,4 +1,4 @@
-// fichier gerant modale affichage & export datas RGPD
+// fichier gerant modale affichage & export data rgpd
 
 import { useEffect } from "react";
 import { X, Download, ShieldCheck, User, Mail, AtSign, FileText, Calendar, Shield, Clock, Image as ImageIcon } from "lucide-react";
@@ -34,25 +34,31 @@ export default function GdprDataModal({
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
 
-            {/* modal ref pour detecter le clic */}
-            <div ref={modalRef} className="bg-bone-light/95 dark:bg-bone-light/95 w-full max-w-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.2)] border border-white/50 dark:border-white/10 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]">
+            <div
+                ref={modalRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="gdpr-modal-title"
+                className="bg-bone-light/95 dark:bg-bone-light/95 w-full max-w-xl rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.2)] border border-white/50 dark:border-white/10 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]"
+            >
 
                 {/* haut */}
-                <div className="flex justify-between items-center p-6 border-b border-primary-dark/10 shrink-0">
-                    <h3 className="text-xl font-bold text-font-primary-dark flex items-center gap-2">
-                        <ShieldCheck className="w-6 h-6 text-primary" />
+                <header className="flex justify-between items-center p-6 border-b border-primary-dark/10 shrink-0">
+                    <h3 id="gdpr-modal-title" className="text-xl font-bold text-font-primary-dark flex items-center gap-2">
+                        <ShieldCheck className="w-6 h-6 text-primary" aria-hidden="true" />
                         Mes données personnelles
                     </h3>
                     <button
                         onClick={onClose}
+                        aria-label="Fermer la modale"
                         className="text-font-primary-dark/40 hover:text-font-primary-dark transition-colors focus:outline-none"
                     >
-                        <X className="w-6 h-6" />
+                        <X className="w-6 h-6" aria-hidden="true" />
                     </button>
-                </div>
+                </header>
 
-                {/* contenu */}
-                <div className="p-6 overflow-y-auto flex-1 space-y-4">
+                {/* contenu avec tabindex (scroll clavier) */}
+                <div tabIndex={0} className="p-6 overflow-y-auto flex-1 space-y-4 focus:outline-none focus:ring-2 focus:ring-primary/50">
                     {isLoading ? (
                         <div className="flex justify-center items-center py-12">
                             <span className="text-font-primary-dark/60 font-medium animate-pulse">
@@ -70,7 +76,7 @@ export default function GdprDataModal({
 
                                 <div className="bg-bone/50 dark:bg-black/20 p-3.5 rounded-2xl border border-white/40 flex items-center gap-3">
                                     <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
-                                        <User className="w-5 h-5" />
+                                        <User className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="overflow-hidden">
                                         <p className="text-xs text-font-primary-dark/60 font-medium">Nom & Prénom</p>
@@ -82,7 +88,7 @@ export default function GdprDataModal({
 
                                 <div className="bg-bone/50 dark:bg-black/20 p-3.5 rounded-2xl border border-white/40 flex items-center gap-3">
                                     <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
-                                        <AtSign className="w-5 h-5" />
+                                        <AtSign className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="overflow-hidden">
                                         <p className="text-xs text-font-primary-dark/60 font-medium">Pseudo public</p>
@@ -94,7 +100,7 @@ export default function GdprDataModal({
 
                                 <div className="bg-bone/50 dark:bg-black/20 p-3.5 rounded-2xl border border-white/40 flex items-center gap-3 sm:col-span-2">
                                     <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
-                                        <Mail className="w-5 h-5" />
+                                        <Mail className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="overflow-hidden">
                                         <p className="text-xs text-font-primary-dark/60 font-medium">Adresse email</p>
@@ -106,7 +112,7 @@ export default function GdprDataModal({
 
                                 <div className="bg-bone/50 dark:bg-black/20 p-3.5 rounded-2xl border border-white/40 flex items-center gap-3">
                                     <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
-                                        <Shield className="w-5 h-5" />
+                                        <Shield className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="overflow-hidden">
                                         <p className="text-xs text-font-primary-dark/60 font-medium">Rôle sur le site</p>
@@ -118,7 +124,7 @@ export default function GdprDataModal({
 
                                 <div className="bg-bone/50 dark:bg-black/20 p-3.5 rounded-2xl border border-white/40 flex items-center gap-3">
                                     <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
-                                        <Calendar className="w-5 h-5" />
+                                        <Calendar className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="overflow-hidden">
                                         <p className="text-xs text-font-primary-dark/60 font-medium">Date de création</p>
@@ -130,7 +136,7 @@ export default function GdprDataModal({
 
                                 <div className="bg-bone/50 dark:bg-black/20 p-3.5 rounded-2xl border border-white/40 flex items-center gap-3 sm:col-span-2">
                                     <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
-                                        <Clock className="w-5 h-5" />
+                                        <Clock className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="overflow-hidden">
                                         <p className="text-xs text-font-primary-dark/60 font-medium">Dernière connexion</p>
@@ -142,7 +148,7 @@ export default function GdprDataModal({
 
                                 <div className="bg-bone/50 dark:bg-black/20 p-3.5 rounded-2xl border border-white/40 flex items-center gap-3 sm:col-span-2">
                                     <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
-                                        <ImageIcon className="w-5 h-5" />
+                                        <ImageIcon className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="overflow-hidden w-full">
                                         <p className="text-xs text-font-primary-dark/60 font-medium">Lien de l'avatar (Photo de profil)</p>
@@ -154,7 +160,7 @@ export default function GdprDataModal({
 
                                 <div className="bg-bone/50 dark:bg-black/20 p-3.5 rounded-2xl border border-white/40 flex items-center gap-3 sm:col-span-2">
                                     <div className="p-2.5 bg-primary/10 rounded-xl text-primary shrink-0">
-                                        <FileText className="w-5 h-5" />
+                                        <FileText className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="overflow-hidden">
                                         <p className="text-xs text-font-primary-dark/60 font-medium">Biographie</p>
@@ -174,7 +180,7 @@ export default function GdprDataModal({
                 </div>
 
                 {/* footer */}
-                <div className="p-6 bg-bone/30 dark:bg-black/5 flex justify-end gap-3 border-t border-primary-dark/10 shrink-0">
+                <footer className="p-6 bg-bone/30 dark:bg-black/5 flex justify-end gap-3 border-t border-primary-dark/10 shrink-0">
                     <button
                         onClick={onClose}
                         className="px-5 py-2.5 font-medium text-font-primary-dark border border-font-primary-dark/20 hover:bg-bone rounded-xl transition-colors"
@@ -186,10 +192,10 @@ export default function GdprDataModal({
                         disabled={isLoading || !data}
                         className="px-5 py-2.5 font-bold text-white rounded-xl transition-colors shadow-lg bg-primary hover:bg-primary-dark shadow-primary/30 flex items-center gap-2 disabled:opacity-50"
                     >
-                        <Download className="w-5 h-5" />
+                        <Download className="w-5 h-5" aria-hidden="true" />
                         Exporter en JSON
                     </button>
-                </div>
+                </footer>
             </div>
         </div>
     );
