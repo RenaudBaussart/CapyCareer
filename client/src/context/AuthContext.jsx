@@ -1,9 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 
 // import
-import { createContext, useState, useEffect } from "react";
-// fonction blacklist
-import { logoutApi } from "../services/auth.service";
+import { createContext, useState, useEffect, useCallback } from "react";
+// fonction blacklist + vérification session
+import { logoutApi, checkSession } from "../services/auth.service";
+// registre du handler pour les 401 détectés par authFetch
+import { registerUnauthorizedHandler } from "../services/authFetch";
 // importer jwtDecode pour verif date expiration
 import { jwtDecode } from "jwt-decode";
 
@@ -18,6 +20,23 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     // prepare etat pour stocker si la verif est encore en cours
     const [isLoading, setIsLoading] = useState(true);
+
+    // deconnexion silencieuse (sans appel au blacklist, car le compte est déjà invalide côté serveur :
+    // token blacklisté, ou compte banni/supprimé -> appeler logoutApi renverrait probablement une erreur)
+    const forceLogout = useCallback(() => {
+        localStorage.removeItem("capy_token");
+        localStorage.removeItem("capy_user");
+        sessionStorage.removeItem("capy_token");
+        sessionStorage.removeItem("capy_user");
+
+        setToken(null);
+        setUser(null);
+    }, []);
+
+    // enregistre forceLogout comme handler global pour les 401 détectés par authFetch
+    useEffect(() => {
+        registerUnauthorizedHandler(forceLogout);
+    }, [forceLogout]);
 
     // sexecute uniquement au loading du site
     useEffect(() => {
@@ -58,6 +77,19 @@ export function AuthProvider({ children }) {
         }
         setIsLoading(false);
     }, []);
+
+    // vérifie périodiquement que le compte est toujours valide (détecte bannissement en cours de session)
+    useEffect(() => {
+        if (!token) return;
+
+        checkSession(token);
+
+        const interval = setInterval(() => {
+            checkSession(token);
+        }, 60000); // toutes les 60 secondes
+
+        return () => clearInterval(interval);
+    }, [token]);
 
     // fonction call pour se co
     const login = (newToken, userData) => {

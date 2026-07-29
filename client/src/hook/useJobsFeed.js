@@ -50,7 +50,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
 
   // evite de refetch si loffre a déjà été consultée
   const detailsCache = useRef(new Map());
-  const { saved, toggleSave } = useSavedJobs();
+  const { saved, toggleSave, removeSaved } = useSavedJobs();
 
   // modal plein écran en mobile
   const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false);
@@ -120,7 +120,6 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   useEffect(() => {
     if (mode !== "saved") return;
     if (saved.size === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSavedDetails([]);
       setSavedError(null);
       return;
@@ -144,15 +143,33 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     )
       .then((results) => {
         if (cancelled) return;
-        const ok = results
-          .filter((r) => r.status === "fulfilled")
-          .map((r) => r.value);
-        const failedCount = results.length - ok.length;
+
+        const ok = [];
+        const deletedIds = [];
+        let otherFailuresCount = 0;
+
+        results.forEach((result, index) => {
+          if (result.status === "fulfilled") {
+            ok.push(result.value);
+          } else if (result.reason?.message === "Offre introuvable") {
+            // l'offre a été supprimée côté serveur : on la retire des sauvegardes
+            deletedIds.push(ids[index]);
+          } else {
+            // autre erreur (réseau, serveur...) : on ne désenregistre pas, juste un message d'erreur
+            otherFailuresCount += 1;
+          }
+        });
+
+        deletedIds.forEach((id) => {
+          detailsCache.current.delete(id);
+          removeSaved(id);
+        });
+
         setSavedDetails(ok);
 
         setSavedError(
-          failedCount > 0
-            ? `${failedCount} offre(s) sauvegardée(s) ne sont plus disponibles.`
+          otherFailuresCount > 0
+            ? `${otherFailuresCount} offre(s) sauvegardée(s) n'ont pas pu être chargées.`
             : null,
         );
       })
@@ -163,7 +180,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     return () => {
       cancelled = true;
     };
-  }, [mode, saved, fetchJobOfferDetail]);
+  }, [mode, saved, fetchJobOfferDetail, removeSaved]);
 
   const availableTags = useMemo(() => {
     return Array.from(
