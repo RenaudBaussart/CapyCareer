@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+// fichier contient blocs interface (badges, tags, card offre, detail offre)
 
 // composants d'affichage réutilisés par JobsSection.jsx, regroupés ici pour ne pas multiplier les fichiers
 
@@ -96,7 +97,7 @@ export function KeywordChip({ label, onRemove }) {
     );
 }
 
-// champs libre pour ajouter des mots-clés
+// champs libre pour ajouter des mots cles
 
 export function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
     const [inputValue, setInputValue] = useState("");
@@ -110,7 +111,7 @@ export function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
                 setInputValue("");
             }
         }
-        // permet de supprimer le dernier tag avec Backspace si le champ est vide
+        // permet de supprimer dernier tag avec Backspace SI champ est vide
         if (e.key === "Backspace" && inputValue === "" && keywords.length > 0) {
             onRemoveKeyword(keywords[keywords.length - 1]);
         }
@@ -142,7 +143,7 @@ export function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
     );
 }
 
-// carte liste offres
+// card liste offres
 
 export function JobCard({ job, isSelected, isSaved, isAuthenticated, onSelect, onToggleSave }) {
 
@@ -150,29 +151,28 @@ export function JobCard({ job, isSelected, isSaved, isAuthenticated, onSelect, o
 
     return (
         <div
-            onClick={onSelect}
-            onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onSelect();
-                }
-            }}
-            role="button"
-            tabIndex={0}
-            aria-pressed={isSelected}
-            className={`bg-bone-light rounded-2xl p-4 border cursor-pointer transition-all hover:shadow-[0_0_15px_rgba(0,0,0,0.15)] focus:outline-none focus:ring-2 focus:ring-primary ${isSelected
+            className={`relative bg-bone-light rounded-2xl p-4 border transition-all hover:shadow-[0_0_15px_rgba(0,0,0,0.15)] ${isSelected
                 ? "border-primary shadow-[0_0_15px_rgba(0,0,0,0.15)]"
                 : "border-primary-light/40 shadow-[0_0_15px_rgba(0,0,0,0.06)]"
                 }`}
         >
             <div className="flex items-start justify-between gap-2">
                 <div>
-                    <p className="font-semibold text-sm leading-snug text-font-primary-dark">{job.title}</p>
+                    {/* titre */}
+                    <button
+                        type="button"
+                        onClick={onSelect}
+                        aria-current={isSelected ? "true" : "false"}
+                        className="font-semibold text-sm leading-snug text-font-primary-dark text-left focus:outline-none focus:ring-2 focus:ring-primary focus:rounded after:absolute after:inset-0"
+                    >
+                        {job.title}
+                    </button>
                     <p className="text-xs mt-0.5 text-font-primary-dark/60">{job.company}</p>
                     <p className="text-xs flex items-center gap-1 mt-0.5 text-font-primary-dark/60">
                         <MapPin size={11} aria-hidden="true" /> {formatLocation(job)}
                     </p>
                 </div>
+
 
                 <button
                     type="button"
@@ -183,7 +183,7 @@ export function JobCard({ job, isSelected, isSaved, isAuthenticated, onSelect, o
                         onToggleSave();
                     }}
                     disabled={!isAuthenticated}
-                    className={`p-1.5 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${isAuthenticated ? "hover:bg-primary-light/10" : "opacity-40 cursor-not-allowed"}`}
+                    className={`relative z-10 p-1.5 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${isAuthenticated ? "hover:bg-primary-light/10" : "opacity-40 cursor-not-allowed"}`}
                     aria-label={isAuthenticated ? (isSaved ? "Retirer des offres sauvegardées" : "Sauvegarder l'offre") : "Connectez-vous pour enregistrer une offre"}
                     aria-pressed={isSaved}
                 >
@@ -208,14 +208,14 @@ export function JobCard({ job, isSelected, isSaved, isAuthenticated, onSelect, o
     );
 }
 
-// detail offre selectionnée
+// detail offre selectionnee
 
-// onClose n'est utilisé que sur mobile 
+// onclose que sur mobile 
 export function JobDetail({ job, isSaved, isAuthenticated, onToggleSave, onClose }) {
-    // etat pour afficher un feedback juste après la copie du lien
+    // etat pour afficher feedback juste apres la copie du lien
     const [isCopied, setIsCopied] = useState(false);
 
-    // copie le lien de l'offre dans le presse-papier
+    // copie link dans presse papier
     const handleShare = async () => {
         try {
             await navigator.clipboard.writeText(job.url);
@@ -270,7 +270,7 @@ export function JobDetail({ job, isSaved, isAuthenticated, onToggleSave, onClose
                             <Share2 size={17} className="text-font-primary-dark" aria-hidden="true" />
                         )}
                     </button>
-                    {/* bouton fermeture, visible uniquement en modal mobile */}
+                    {/* btn fermeture, visible uniquement en modal mobile */}
                     <button
                         type="button"
                         onClick={onClose}
@@ -290,41 +290,41 @@ export function JobDetail({ job, isSaved, isAuthenticated, onToggleSave, onClose
             </div>
 
             <a
-            href={job.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => {
-                // empêche l'ouverture de l'offre si non connecté
-                if (!isAuthenticated) e.preventDefault();
-            }}
-            aria-disabled={!isAuthenticated}
-            className={`inline-block text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark ${isAuthenticated ? "bg-primary text-light hover:bg-primary-dark" : "bg-primary/40 text-light/80 cursor-not-allowed"}`}
+                href={job.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                    // empeche l'ouverture de l'offre si non connecté
+                    if (!isAuthenticated) e.preventDefault();
+                }}
+                aria-disabled={!isAuthenticated}
+                className={`inline-block text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark ${isAuthenticated ? "bg-primary text-light hover:bg-primary-dark" : "bg-primary/40 text-light/80 cursor-not-allowed"}`}
             >
-            Postuler — Voir l'offre
-        </a>
+                Postuler — Voir l'offre
+            </a>
             {
-        !isAuthenticated && (
-            <p className="text-xs text-font-primary-dark/50 mt-2">Connectez-vous pour postuler à cette offre.</p>
-        )
-    }
+                !isAuthenticated && (
+                    <p className="text-xs text-font-primary-dark/50 mt-2">Connectez-vous pour postuler à cette offre.</p>
+                )
+            }
 
-    <div className="mt-7 pt-6 border-t border-primary-light/30">
-        <h3 className="flex items-center gap-2 font-semibold text-font-primary-dark mb-2">
-            <Briefcase size={16} aria-hidden="true" /> Détails de l'emploi
-        </h3>
-        <dl className="grid grid-cols-2 gap-y-2 text-sm mb-5">
-            <dt className="text-font-primary-dark/60">Entreprise</dt>
-            <dd className="font-medium text-font-primary-dark">{job.company}</dd>
-            <dt className="text-font-primary-dark/60">Lieu</dt>
-            <dd className="font-medium text-font-primary-dark">{formatLocation(job)}</dd>
-            <dt className="text-font-primary-dark/60">Salaire</dt>
-            <dd className="font-medium text-font-primary-dark">{formatSalary(job) || "Non précisé"}</dd>
-        </dl>
-        <h3 className="font-semibold text-font-primary-dark mb-2">Description du poste</h3>
-        <p className="text-sm leading-relaxed text-font-primary-dark/70 whitespace-pre-line">
-            {truncate(job.description, 500)}
-        </p>
-    </div>
+            <div className="mt-7 pt-6 border-t border-primary-light/30">
+                <h3 className="flex items-center gap-2 font-semibold text-font-primary-dark mb-2">
+                    <Briefcase size={16} aria-hidden="true" /> Détails de l'emploi
+                </h3>
+                <dl className="grid grid-cols-2 gap-y-2 text-sm mb-5">
+                    <dt className="text-font-primary-dark/60">Entreprise</dt>
+                    <dd className="font-medium text-font-primary-dark">{job.company}</dd>
+                    <dt className="text-font-primary-dark/60">Lieu</dt>
+                    <dd className="font-medium text-font-primary-dark">{formatLocation(job)}</dd>
+                    <dt className="text-font-primary-dark/60">Salaire</dt>
+                    <dd className="font-medium text-font-primary-dark">{formatSalary(job) || "Non précisé"}</dd>
+                </dl>
+                <h3 className="font-semibold text-font-primary-dark mb-2">Description du poste</h3>
+                <p className="text-sm leading-relaxed text-font-primary-dark/70 whitespace-pre-line">
+                    {truncate(job.description, 500)}
+                </p>
+            </div>
         </article >
     );
 }
