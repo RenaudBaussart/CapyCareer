@@ -35,24 +35,28 @@ export default function ConfirmModal({
 
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            {/* ref modal pour detecter le clic */}
+
             <div
                 ref={modalRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="confirm-modal-title"
                 className="bg-bone-light/95 dark:bg-bone-light/95 w-full max-w-lg rounded-3xl shadow-[0_0_30px_rgba(0,0,0,0.2)] border border-white/50 dark:border-white/10 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200"
             >
 
                 {/* haut */}
                 <div className="flex justify-between items-start p-6 border-b border-primary-dark/10">
-                    <h3 className="text-xl font-bold text-font-primary-dark flex items-center gap-2 pr-4">
-                        {isDestructive && <AlertTriangle className="w-6 h-6 text-red-500 shrink-0" />}
+                    <h3 id="confirm-modal-title" className="text-xl font-bold text-font-primary-dark flex items-center gap-2 pr-4">
+                        {isDestructive && <AlertTriangle className="w-6 h-6 text-red-500 shrink-0" aria-hidden="true" />}
                         {title}
                     </h3>
                     <button
                         onClick={onClose}
                         disabled={isLoading}
+                        aria-label="Fermer la modale"
                         className="text-font-primary-dark/40 hover:text-font-primary-dark transition-colors focus:outline-none shrink-0"
                     >
-                        <X className="w-6 h-6" />
+                        <X className="w-6 h-6" aria-hidden="true" />
                     </button>
                 </div>
 
