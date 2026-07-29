@@ -13,6 +13,7 @@ export const jobOfferSchema = z.object({
     salary_max: z.number().nullable().optional().openapi({ description: "Maximum salary." }),
     salary_min: z.number().nullable().optional().openapi({ description: "Minimum salary." }),
     currency: z.string().nullable().optional().openapi({ description: "Currency for the salary." }),
+    tag: z.array(z.string()).nullable().optional().openapi({ description: "Tags for the job offer." }),
 }).openapi('JobOffer');
 
 export const jobOfferDetailSchema = jobOfferSchema.extend({
@@ -24,6 +25,7 @@ export const jobOfferDetailSchema = jobOfferSchema.extend({
     salary_max: z.number().nullable().openapi({ description: "Maximum salary." }),
     salary_min: z.number().nullable().openapi({ description: "Minimum salary." }),
     currency: z.string().nullable().openapi({ description: "Currency for the salary." }),
+    tag: z.array(z.string()).nullable().optional().openapi({ description: "Tags for the job offer." }),
 }).openapi('JobOfferDetail');
 
 export const jobOfferFullSchema = z.object({
@@ -42,4 +44,5 @@ export const jobOfferFullSchema = z.object({
     salary_max: z.number().nullable().openapi({ description: "Maximum salary." }),
     salary_min: z.number().nullable().openapi({ description: "Minimum salary." }),
     currency: z.string().nullable().openapi({ description: "Currency for the salary." }),
+    tag: z.array(z.string()).nullable().optional().openapi({ description: "Tags for the job offer." }),
 }).openapi('JobOfferFull');
