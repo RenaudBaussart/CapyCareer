@@ -19,9 +19,6 @@ export default function AdminDashboard() {
         candidats: "...",
         entreprises: "...",
         offresActives: "...",
-        // warning : fictif pour le moment
-        doublons: 8,
-        erreursApi: 3
     });
 
     // call api lors du chargement du component pour recuperer les stats reelles
@@ -114,7 +111,7 @@ export default function AdminDashboard() {
                                     title="Offres Actives"
                                     value={stats.offresActives}
                                     icon={Briefcase}
-                                    trendText="Synchronisees ajd"
+                                    trendText="Synchronisées"
                                     trendColor="text-font-primary-dark"
                                     colorClass="bg-accent-deep/10 text-accent-dark"
                                 />

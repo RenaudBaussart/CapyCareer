@@ -6,6 +6,7 @@ import { useAdminJobs } from "../../hook/useAdminJobs";
 import MainNavbar from "../../components/layout/MainNavbar";
 import JobDataGrid from "../../components/admin/JobDataGrid";
 import AdminActionModal from "../../components/admin/modals/AdminActionModal";
+import JobEditModal from "../../components/admin/modals/JobEditModal";
 import Pagination from "../../components/ui/Pagination";
 // icone
 import { Search, Briefcase, Trash2 } from "lucide-react";
@@ -26,7 +27,11 @@ export default function AdminJobs() {
         currentPage,
         setCurrentPage,
         isTheEnd,
-        totalJobsCount
+        totalJobsCount,
+        isEditModalOpen,
+        setIsEditModalOpen,
+        jobToEdit,
+        submitEditJob
     } = useAdminJobs();
 
     // conf modale
@@ -69,7 +74,7 @@ export default function AdminJobs() {
                             </p>
                         </div>
 
-                         {/* barre de recherche component */}
+                        {/* barre de recherche component */}
                         <div className="relative w-full md:w-72 shrink-0">
                             <input
                                 type="text"
@@ -100,8 +105,8 @@ export default function AdminJobs() {
                                     searchQuery={searchQuery}
                                 />
 
-                                {/* pagination component (masqué si recherche active) */}
-                                {(!searchQuery && (jobs.length > 0 || currentPage > 0)) && (
+                                {/* pagination component */}
+                                {(jobs.length > 0 || currentPage > 0) && (
                                     <Pagination
                                         currentPage={currentPage}
                                         isTheEnd={isTheEnd}
@@ -127,6 +132,14 @@ export default function AdminJobs() {
                 icon={currentModal.icon}
                 confirmBtnClass={currentModal.btnColor}
                 iconColorClass={currentModal.iconBg}
+            />
+
+            {/* modal edition offre*/}
+            <JobEditModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                job={jobToEdit}
+                onSave={submitEditJob}
             />
         </div>
     );
