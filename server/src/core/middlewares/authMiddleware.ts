@@ -22,10 +22,18 @@ export const middlewareAuth = async (req: Request, res: Response, next: NextFunc
     return res.status(401).json({ error: 'No token provided' });
   }
 
-  try {
-    const decoded = jwtTool.verify(token, process.env.JWT_SECRET as string) as any;
-    req.member = decoded;
+  let decoded: any;
 
+  try {
+    decoded = jwtTool.verify(token, process.env.JWT_SECRET as string) as any;
+  } catch (jwtError) {
+    // token invalide, expiré ou malformé -> 401, pas 500
+    return res.status(401).json({ error: 'Token invalide ou expiré. Veuillez vous reconnecter.' });
+  }
+
+  req.member = decoded;
+
+  try {
     const [blacklistedTokens]: any = await pool.execute(
         "SELECT 1 FROM Blacklist WHERE token = ?",
         [token]
@@ -35,9 +43,21 @@ export const middlewareAuth = async (req: Request, res: Response, next: NextFunc
         return res.status(401).json({ error: 'Token révoqué. Veuillez vous reconnecter.' });
     }
 
+    // vérifie que le compte existe toujours (détecte les comptes supprimés)
+    const [users]: any = await pool.execute(
+        "SELECT email FROM User_ WHERE PK_id = ?",
+        [decoded.id]
+    );
+
+    if (users.length === 0) {
+        return res.status(401).json({ error: 'Ce compte n\'existe plus. Veuillez vous reconnecter.' });
+    }
+
+    const memberEmail = users[0].email;
+
     const [banned]: any = await pool.execute(
-        "SELECT 1 FROM Banned WHERE email = (SELECT email FROM User_ WHERE PK_id = ?)",
-        [decoded.id] 
+        "SELECT 1 FROM Banned WHERE email = ?",
+        [memberEmail]
     );
 
     if (banned.length > 0) {
@@ -47,6 +67,7 @@ export const middlewareAuth = async (req: Request, res: Response, next: NextFunc
     next();
 
   } catch (error) {
+      // ici uniquement les vraies erreurs serveur (DB down, etc.)
       console.error("Erreur dans le middleware d'authentification :", error);
       return res.status(500).json({ error: 'Erreur interne du serveur' });
   }
