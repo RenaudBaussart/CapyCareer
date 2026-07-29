@@ -294,12 +294,16 @@
         -96
       ],
       "id": "97740a39-b7ec-4d5c-aace-889528c675db",
-      "name": "Basic LLM Chain"
+      "name": "Basic LLM Chain",
+      "executeOnce": true,
+      "retryOnFail": true
     },
     {
       "parameters": {
-        "model": "=choix_pole_emploi",
-        "options": {}
+        "model": "choix_pole_emploi:latest",
+        "options": {
+          "keepAlive": "5m"
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.lmOllama",
       "typeVersion": 1,
@@ -319,7 +323,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT * FROM `Job_Offers` WHERE `tag` IS NULL LIMIT 10;",
+        "query": "SELECT * FROM `Job_Offers` WHERE `tag` IS NULL LIMIT 5;",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
@@ -353,6 +357,7 @@
         "valuesToSend": {
           "values": [
             {
+              "column": "tag",
               "value": "={{ $json.tag }}"
             }
           ]
@@ -703,7 +708,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "7240d80d-efad-4141-960d-8bc764c11650",
+  "versionId": "03d281fe-af3d-4775-9ea7-402f0f1bfb15",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "d4d03c9ffcd461a7e6a7b5d02ffa4a5e6a869024df4c2306f38b1b3b8280fdd0"
