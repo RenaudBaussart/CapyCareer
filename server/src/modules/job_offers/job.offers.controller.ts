@@ -29,7 +29,7 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
         // recupere filtre de recherche
         const { q, lieu, salaryMin, salaryMax } = req.query;
 
-        let query = "SELECT PK_id, title, description, contract_type, city, country, company, url, remote, hybrid, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE active = 1";
+        let query = "SELECT PK_id, title, description, contract_type, city, country, company, url, remote, hybrid, publish_date, salary_max, salary_min, currency, tag FROM Job_Offers WHERE active = 1";
         const queryParams: any[] = [];
 
         // SI la recherche globale/ID est présente
@@ -73,6 +73,15 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
 
         //typage du tableau de result
         const offers = rows as any[];
+
+        // Parse the 'tag' string into an array for each offer
+        offers.forEach(offer => {
+            if (offer.tag && typeof offer.tag === 'string') {
+                offer.tag = offer.tag.split(',').map((s: string) => s.trim());
+            } else {
+                offer.tag = []; // Ensure it's an array even if null or not a string
+            }
+        });
 
         if (offers.length === 0 && page > 1) {
             throw new NotFoundError("Aucune offre d'emploi trouvée pour cette page.");
@@ -118,11 +127,17 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
 
         // cherche l'offre correspondante en base de données
         const [rows] = await pool.execute<any[]>(
-            "SELECT PK_id, title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE PK_id = ?;",
+            "SELECT PK_id, title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency, tag FROM Job_Offers WHERE PK_id = ?;",
             [jobId]
         );
 
         const offer = (rows as any[])[0] as any;
+
+        if (offer && offer.tag && typeof offer.tag === 'string') {
+            offer.tag = offer.tag.split(',').map((s: string) => s.trim());
+        } else if (offer) {
+            offer.tag = [];
+        }
 
         if (!offer) {
             //lève une 404 si aucun résultat ne correspond
@@ -161,7 +176,8 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
         }
 
         // déstructure les champs nécessaires
-        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency } = jobOffer;
+        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency, tag } = jobOffer;
+        const tagString = tag ? tag.join(', ') : null;
         const formattedPublishDate = publish_date ? new Date(publish_date).toISOString().slice(0, 19).replace('T', ' ') : null;
         const rawString = `${title}-${city}-${contract_type}-${company}-${publish_date}`.toLowerCase();
         let contentHash = 0;
@@ -173,8 +189,8 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
         const finalHash = Math.abs(contentHash).toString(16)
         //insère la nouvelle offre en base de données
         const [result] = await pool.execute(
-            "INSERT INTO Job_Offers (content_hash ,title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-            [finalHash, title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency]
+            "INSERT INTO Job_Offers (content_hash ,title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency, tag) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            [finalHash, title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, tagString]
         );
 
         // confirme la création avec l'id généré
@@ -220,15 +236,16 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
         }
 
         // déstructure les données validées
-        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency } = jobOffer;
+        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency, tag } = jobOffer;
+        const tagString = tag ? tag.join(', ') : null;
         const formattedPublishDate = publish_date ? new Date(publish_date).toISOString().slice(0, 19).replace('T', ' ') : null;
 
         console.log("3. Exécution de la requête SQL avec le titre:", title);
 
         //exécute la requête de mise à jour sql
         const [result] = await pool.execute(
-            "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, remote = ?, hybrid = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ? WHERE PK_id = ?;",
-            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, id]
+            "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, remote = ?, hybrid = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ?, tag = ? WHERE PK_id = ?;",
+            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, tagString, id]
         );
 
         console.log("4. Résultat brut de MySQL (affectedRows, changedRows):", result);
