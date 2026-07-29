@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "install:all": "npm install && npm install --prefix server && npm install --prefix client",
-    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "n8n": "npx n8n start",
+    "setup:ai": "docker cp Modelfile ollama:/Modelfile && docker exec ollama ollama create choix_pole_emploi -f /Modelfile"
   },
   "devDependencies": {
     "@types/sanitize-html": "^2.16.1",
