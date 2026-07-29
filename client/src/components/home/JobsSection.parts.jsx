@@ -19,6 +19,22 @@ export function getWorkMode(job) {
     return "Sur site";
 }
 
+export function formatSalary(job) {
+    const { salary_min, salary_max, currency } = job;
+
+    if (!salary_min && !salary_max) return null;
+
+    const currencySymbol = currency === "EUR" ? "€" : currency === "USD" ? "$" : (currency || "");
+
+    if (salary_min && salary_max) {
+        return `${salary_min.toLocaleString("fr-FR")} - ${salary_max.toLocaleString("fr-FR")} ${currencySymbol}`;
+    }
+
+    if (salary_min) return `À partir de ${salary_min.toLocaleString("fr-FR")} ${currencySymbol}`;
+
+    return `Jusqu'à ${salary_max.toLocaleString("fr-FR")} ${currencySymbol}`;
+}
+
 export function truncate(text, maxLength) {
     if (!text || text.length <= maxLength) return text;
     return `${text.slice(0, maxLength).trim()}…`;
@@ -130,6 +146,8 @@ export function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
 
 export function JobCard({ job, isSelected, isSaved, isAuthenticated, onSelect, onToggleSave }) {
 
+    const salaryLabel = formatSalary(job);
+
     return (
         <div
             onClick={onSelect}
@@ -178,8 +196,13 @@ export function JobCard({ job, isSelected, isSaved, isAuthenticated, onSelect, o
                 </button>
             </div>
 
-            <div className="mt-3">
+            <div className="flex items-center flex-wrap gap-2 mt-3">
                 <Badge label={job.contract_type} />
+                {salaryLabel && (
+                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-deep-primary/10 text-deep-primary">
+                        {salaryLabel}
+                    </span>
+                )}
             </div>
         </div>
     );
@@ -267,37 +290,41 @@ export function JobDetail({ job, isSaved, isAuthenticated, onToggleSave, onClose
             </div>
 
             <a
-                href={job.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                    // empêche l'ouverture de l'offre si non connecté
-                    if (!isAuthenticated) e.preventDefault();
-                }}
-                aria-disabled={!isAuthenticated}
-                className={`inline-block text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark ${isAuthenticated ? "bg-primary text-light hover:bg-primary-dark" : "bg-primary/40 text-light/80 cursor-not-allowed"}`}
+            href={job.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+                // empêche l'ouverture de l'offre si non connecté
+                if (!isAuthenticated) e.preventDefault();
+            }}
+            aria-disabled={!isAuthenticated}
+            className={`inline-block text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark ${isAuthenticated ? "bg-primary text-light hover:bg-primary-dark" : "bg-primary/40 text-light/80 cursor-not-allowed"}`}
             >
-                Postuler — Voir l'offre
-            </a>
-            {!isAuthenticated && (
-                <p className="text-xs text-font-primary-dark/50 mt-2">Connectez-vous pour postuler à cette offre.</p>
-            )}
+            Postuler — Voir l'offre
+        </a>
+            {
+        !isAuthenticated && (
+            <p className="text-xs text-font-primary-dark/50 mt-2">Connectez-vous pour postuler à cette offre.</p>
+        )
+    }
 
-            <div className="mt-7 pt-6 border-t border-primary-light/30">
-                <h3 className="flex items-center gap-2 font-semibold text-font-primary-dark mb-2">
-                    <Briefcase size={16} aria-hidden="true" /> Détails de l'emploi
-                </h3>
-                <dl className="grid grid-cols-2 gap-y-2 text-sm mb-5">
-                    <dt className="text-font-primary-dark/60">Entreprise</dt>
-                    <dd className="font-medium text-font-primary-dark">{job.company}</dd>
-                    <dt className="text-font-primary-dark/60">Lieu</dt>
-                    <dd className="font-medium text-font-primary-dark">{formatLocation(job)}</dd>
-                </dl>
-                <h3 className="font-semibold text-font-primary-dark mb-2">Description du poste</h3>
-                <p className="text-sm leading-relaxed text-font-primary-dark/70 whitespace-pre-line">
-                    {truncate(job.description, 500)}
-                </p>
-            </div>
+    <div className="mt-7 pt-6 border-t border-primary-light/30">
+        <h3 className="flex items-center gap-2 font-semibold text-font-primary-dark mb-2">
+            <Briefcase size={16} aria-hidden="true" /> Détails de l'emploi
+        </h3>
+        <dl className="grid grid-cols-2 gap-y-2 text-sm mb-5">
+            <dt className="text-font-primary-dark/60">Entreprise</dt>
+            <dd className="font-medium text-font-primary-dark">{job.company}</dd>
+            <dt className="text-font-primary-dark/60">Lieu</dt>
+            <dd className="font-medium text-font-primary-dark">{formatLocation(job)}</dd>
+            <dt className="text-font-primary-dark/60">Salaire</dt>
+            <dd className="font-medium text-font-primary-dark">{formatSalary(job) || "Non précisé"}</dd>
+        </dl>
+        <h3 className="font-semibold text-font-primary-dark mb-2">Description du poste</h3>
+        <p className="text-sm leading-relaxed text-font-primary-dark/70 whitespace-pre-line">
+            {truncate(job.description, 500)}
+        </p>
+    </div>
         </article >
     );
 }

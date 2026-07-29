@@ -10,6 +10,9 @@ export const jobOfferSchema = z.object({
     city: z.string().openapi({ description: "City where the job is located." }),
     country: z.string().openapi({ description: "Country where the job is located." }),
     company: z.string().openapi({ description: "Company offering the job." }),
+    salary_max: z.number().nullable().optional().openapi({ description: "Maximum salary." }),
+    salary_min: z.number().nullable().optional().openapi({ description: "Minimum salary." }),
+    currency: z.string().nullable().optional().openapi({ description: "Currency for the salary." }),
 }).openapi('JobOffer');
 
 export const jobOfferDetailSchema = jobOfferSchema.extend({
