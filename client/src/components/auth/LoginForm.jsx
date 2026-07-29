@@ -184,7 +184,7 @@ export default function LoginForm() {
           <div className="grow border-t border-primary-light/50"></div>
         </div>
 
-        {/* btn co google */}
+        {/* btn co google
         <button
           type="button"
           className="w-full mb-6 flex items-center justify-center gap-2 bg-bone-light text-font-primary border border-primary-light font-semibold py-3 px-4 rounded-3xl transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
@@ -193,6 +193,7 @@ export default function LoginForm() {
           <LogIn className="w-5 h-5" />
           Se connecter avec Google
         </button>
+          */}
 
       </form>
 
