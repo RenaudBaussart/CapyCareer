@@ -24,7 +24,7 @@
 
 * **Preuves :** Fichier JSON d'export du workflow n8n (sans les clés secrètes) dans le dépôt, et capture d'écran du pipeline en cours d'exécution.
 
-![alt text](n8n/image.png)
+![alt text](../../n8n/image.png)
 
 ---
 
