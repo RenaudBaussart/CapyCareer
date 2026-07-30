@@ -95,8 +95,8 @@ L'arborescence principale s'organise de la manière suivante :
 - **/client** : Interface candidat en React.js / Vite / Tailwind.
 - **/server** : L'API REST sécurisée, logique métier et intégration IA.
 - **/n8n** : Workflows d'automatisation et d'ingestion de données.
-- **/documentation** : Regroupe l'intégralité des documents de conception, de sécurité et d'études de marché.
-- **/ADR_Documentation** : Architecture Decision Records justifiant nos choix techniques.
+- **/documentation** : Regroupe l'intégralité des documents de conception, de sécurité, d'études de marché et ADR.
+
 
 ---
 
@@ -118,7 +118,7 @@ Pour garantir un outil fiable et respectueux des données, nous avons mis en pla
 Placez-vous dans le dossier **/server** et lancez :
 
 ```bash
-npm test
+npm run test
 ```
 
 Cette commande exécute la suite de tests Jest/Supertest pour vérifier l'intégrité de l'API.
