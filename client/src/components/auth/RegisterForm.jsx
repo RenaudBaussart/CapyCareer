@@ -43,24 +43,20 @@ export default function RegisterForm() {
     setApiError("");
 
     try {
-      // retire confirmation mdp & isole aux datas
-      // eslint-disable-next-line no-unused-vars
-      const { confirmPassword, ...formData } = data;
 
-      // structure data pour back
       const registerData = {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        firstname: formData.firstName,
-        lastname: formData.lastName,
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        firstname: data.firstName,
+        lastname: data.lastName,
         role: "candidat"
       };
 
-      // call service externe inscription
+      // call service externe register
       const result = await registerUser(registerData);
 
-      // SI back renvoie bien token à l'inscription
+      // SI back return bien token à l'inscription
       if (result && result.token) {
 
         // co luser avec ses datas
