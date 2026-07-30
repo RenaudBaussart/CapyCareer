@@ -56,10 +56,10 @@ export default function AdminNavbar() {
                             <Copy className="w-4 h-4 text-white" />
                             Doublons
                         </NavLink> */}
-                        <NavLink to="/admin/logs" className={navLinkClass}>
+                        {/* <NavLink to="/admin/logs" className={navLinkClass}>
                             <Terminal className="w-4 h-4 text-white" />
                             Logs
-                        </NavLink>
+                        </NavLink> */}
                         <NavLink to="/admin/profile" className={navLinkClass}>
                             <User className="w-4 h-4 text-white" />
                             Mon Profil
