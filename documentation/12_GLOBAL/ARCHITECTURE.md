@@ -58,7 +58,7 @@ CapyCareer/
 │   ├── 12_GLOBAL_ADR/          # Choix d'architecture globale et technologique
 │   └── 13_WCAG_2.1_AA/         # Audits d'accessibilité (Axe DevTools) et de perf (Lighthouse)
 │
-├── n8n/                        # 🤖 AUTOMATISATION & IA
+├── n8n/                        # AUTOMATISATION & IA
 │   ├── Job_Agreggator.json     # Fichier d'export du workflow n8n
 │   └── image.png               # Aperçu du workflow
 │
