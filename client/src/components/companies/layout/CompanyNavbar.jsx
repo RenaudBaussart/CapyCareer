@@ -2,7 +2,7 @@
 
 // import
 import { useState, useContext } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 // component 
 import ProfileMenu from "../../layout/ProfileMenu";
@@ -12,7 +12,7 @@ import { HandednessContext } from "../../../context/HandednessContext";
 // hook
 import { useTheme } from "../../../hook/useTheme";
 // icone
-import { Home, Users, Briefcase, UserPlus, LogIn, Menu, X, User, LogOut, Sun, Moon } from "lucide-react";
+import { Home, Briefcase, UserPlus, LogIn, Menu, X, User, LogOut, Sun, Moon } from "lucide-react";
 
 export default function CompanyNavbar() {
 

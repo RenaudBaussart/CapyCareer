@@ -35,6 +35,7 @@ export default function CompanyRegisterForm() {
 
         try {
             // retire confirmation mdp & structure pour le back
+            // eslint-disable-next-line no-unused-vars
             const { confirmPassword, ...formData } = data;
 
             const registerData = {

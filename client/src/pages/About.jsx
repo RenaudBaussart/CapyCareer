@@ -7,9 +7,6 @@ import MainNavbar from "../components/layout/MainNavbar";
 import Footer from "../components/layout/Footer";
 // icones
 import { Users, Code } from "lucide-react";
-// img
-import Leaves from "../assets/images/Leaves.png";
-import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 // datas de la squad
 const teamMembers = [

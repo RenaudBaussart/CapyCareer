@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSavedJobs } from "./useSavedJobs";
-import { formatLocation } from "../components/home/JobsSection.parts";
+// import { formatLocation } from "../components/home/JobsSection.parts";
 
 // état & logique du fil d'offres (recherche, pagination, sélection, offres sauvegardées)
 export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
@@ -120,6 +120,8 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   useEffect(() => {
     if (mode !== "saved") return;
     if (saved.size === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      // TODO : refactor pour eviter le rendu en cascade
       setSavedDetails([]);
       setSavedError(null);
       return;
