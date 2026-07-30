@@ -8,10 +8,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1184,
-        -128
+        832,
+        160
       ],
-      "id": "7b1c4985-effc-44ac-ab35-7a9d3a11410e",
+      "id": "53ab8551-18a4-41f8-868b-64cdba0e0a8a",
       "name": "Wait",
       "webhookId": "04ebfba1-e76f-44f0-bf8a-51e9aab4b3d6"
     },
@@ -29,10 +29,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        352,
-        -144
+        0,
+        144
       ],
-      "id": "11734e83-2866-4ae7-a3ad-141692ec5ccb",
+      "id": "e88727f6-3488-4727-91cf-2632db24d7ff",
       "name": "Schedule Trigger"
     },
     {
@@ -46,10 +46,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        352,
-        -288
+        0,
+        0
       ],
-      "id": "5f7537b8-811b-42d8-b195-d784a4b9e5d9",
+      "id": "4741a174-84f9-42a1-a145-c332b54fc4c8",
       "name": "refresh-capycareer",
       "webhookId": "4dccdc7e-278a-442c-b397-aabbfccfa670"
     },
@@ -62,10 +62,10 @@
       "type": "n8n-nodes-base.n8nTrigger",
       "typeVersion": 1,
       "position": [
-        352,
-        16
+        0,
+        304
       ],
-      "id": "65c0316f-37eb-49e9-ba2b-ec784438ed78",
+      "id": "4ca79625-8e60-4885-be06-d53101730573",
       "name": "n8n Trigger"
     },
     {
@@ -91,19 +91,15 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        672,
-        -144
+        320,
+        144
       ],
-      "id": "bd0d8d8e-cebb-4c0b-8fde-4208debf169d",
+      "id": "74486980-48ef-42c4-ae7b-61d214b63685",
       "name": "HTTP Request WLD",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "aoM8H7ArxvuZ0cJ4",
-          "name": "Header Auth account"
-        },
-        "httpBearerAuth": {
-          "id": "7pVWiWAv02k0k10j",
-          "name": "Bearer Auth account"
+          "id": "",
+          "name": ""
         }
       }
     },
@@ -134,10 +130,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        896,
-        -144
+        544,
+        144
       ],
-      "id": "de7f586b-6fe7-43cd-9bf5-00ea35914fbd",
+      "id": "cd843a24-0844-4fb8-8c61-002d08661b8f",
       "name": "If offers true"
     },
     {
@@ -149,10 +145,10 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        1232,
-        -288
+        880,
+        0
       ],
-      "id": "d94eba02-d195-42af-ac89-f3f83476d740",
+      "id": "5ebcb936-eb32-4e0f-a260-93422e930502",
       "name": "Split 1 item to offers nb"
     },
     {
@@ -238,10 +234,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1440,
-        -288
+        1088,
+        0
       ],
-      "id": "897effec-aebb-4cb8-ad3c-b2008785944c",
+      "id": "ba2d8c9b-1dfd-4b33-ad6d-f71bdd77b673",
       "name": "get what we need"
     },
     {
@@ -251,10 +247,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1616,
-        -288
+        1264,
+        0
       ],
-      "id": "8d9a6c39-36e5-47cb-aea7-4bae1a54914d",
+      "id": "6fc58b13-5547-4c69-9622-e0e60794e30d",
       "name": "sanitize"
     },
     {
@@ -271,15 +267,15 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        1872,
-        -288
+        1520,
+        0
       ],
-      "id": "66d5d14d-3d91-4269-b272-dd2b5f2314a9",
+      "id": "50a063c7-d9df-48b9-910c-500bd816cc60",
       "name": "Upsert in database",
       "credentials": {
         "mySql": {
-          "id": "4h7Vb7PBI0qrIJXd",
-          "name": "MySQL account"
+          "id": "",
+          "name": ""
         }
       }
     },
@@ -290,10 +286,10 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        2048,
-        -96
+        1952,
+        192
       ],
-      "id": "97740a39-b7ec-4d5c-aace-889528c675db",
+      "id": "7a740e70-cf3a-4e30-9fc8-d3246d63c864",
       "name": "Basic LLM Chain",
       "executeOnce": true,
       "retryOnFail": true
@@ -308,36 +304,36 @@
       "type": "@n8n/n8n-nodes-langchain.lmOllama",
       "typeVersion": 1,
       "position": [
-        2048,
-        176
+        1952,
+        464
       ],
-      "id": "c0ce2bad-c73e-4fc5-98ba-b11d4a738480",
+      "id": "7742168a-b6bc-42ba-b9b9-fee0e3b3bb2b",
       "name": "Ollama Model",
       "credentials": {
         "ollamaApi": {
-          "id": "BwZ44dmOuiP7mBwu",
-          "name": "Ollama account"
+          "id": "",
+          "name": ""
         }
       }
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT * FROM `Job_Offers` WHERE `tag` IS NULL LIMIT 5;",
+        "query": "SELECT * FROM `Job_Offers` \nWHERE `tag` IS NULL \nAND `description` IS NOT NULL \nAND TRIM(`description`) != '' \nLIMIT 1;",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        1408,
-        -96
+        1056,
+        192
       ],
-      "id": "fc3d5ffc-9718-4def-ab98-00e297b989e2",
+      "id": "5d51e2cd-b55b-4f0a-a3e6-bbf94cece991",
       "name": "Execute a SQL query",
       "credentials": {
         "mySql": {
-          "id": "4h7Vb7PBI0qrIJXd",
-          "name": "MySQL account"
+          "id": "",
+          "name": ""
         }
       }
     },
@@ -367,15 +363,15 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        2608,
-        -96
+        2512,
+        192
       ],
-      "id": "e8f0db08-1535-4c68-9ee7-7f8bebebdb53",
+      "id": "390b9f57-bb23-4351-9226-f8897ef22515",
       "name": "Update rows in a table",
       "credentials": {
         "mySql": {
-          "id": "4h7Vb7PBI0qrIJXd",
-          "name": "MySQL account"
+          "id": "",
+          "name": ""
         }
       }
     },
@@ -402,10 +398,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2400,
-        -96
+        2304,
+        192
       ],
-      "id": "5e023f3b-8f55-4f1d-aaa8-3cdfb325cf98",
+      "id": "e9f3d72b-004a-4b64-956c-6ac0771e5878",
       "name": "tag-feature-second-input"
     },
     {
@@ -431,10 +427,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1840,
-        -96
+        1744,
+        192
       ],
-      "id": "1f877a52-1b14-4164-9bf7-c8e47a924960",
+      "id": "d38d0ca7-e6d9-425b-aa5c-fa86ffef4b1a",
       "name": "tag-feature-first-input"
     },
     {
@@ -464,10 +460,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        1616,
-        -96
+        1392,
+        192
       ],
-      "id": "c185d8a8-c695-4691-8184-45450130f78d",
+      "id": "95bddb1d-5ece-4217-bffb-5becbc02fb96",
       "name": "If"
     },
     {
@@ -475,10 +471,10 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1824,
-        128
+        1728,
+        416
       ],
-      "id": "bf624ee3-c8f5-4548-a82e-423f469d0177",
+      "id": "d061bc5e-8c95-486e-9d06-c3cdb205502c",
       "name": "No Operation, do nothing"
     },
     {
@@ -486,10 +482,10 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        2144,
-        -288
+        1792,
+        0
       ],
-      "id": "7000bba8-d54a-4da8-97c9-529f7c7209a4",
+      "id": "ebbc97b0-0aaf-46bb-852a-0a1c76c7859e",
       "name": "No Operation, do nothing1"
     }
   ],
@@ -702,18 +698,18 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "03d281fe-af3d-4775-9ea7-402f0f1bfb15",
+  "versionId": "d67c4e1f-995d-4255-be08-1570a7ee2a38",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "d4d03c9ffcd461a7e6a7b5d02ffa4a5e6a869024df4c2306f38b1b3b8280fdd0"
+    "instanceId": "e99b2f943eb00b6c2144826182c5a0db027d7637ac942e20cbe892dda90956fa"
   },
   "nodeGroups": [],
-  "id": "ockVmPlboPYS9pl7",
+  "id": "NtVjfymWC05mYgnT",
   "tags": []
 }
