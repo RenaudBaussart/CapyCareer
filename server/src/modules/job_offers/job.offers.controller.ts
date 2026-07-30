@@ -34,14 +34,14 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
 
         // SI la recherche globale/ID est présente
         if (search) {
-            if (!isNaN(Number(search))) {
-                query += " AND (PK_id = ? OR title LIKE ? OR company LIKE ?)";
-                queryParams.push(Number(search), `%${search}%`, `%${search}%`);
-            } else {
-                query += " AND (title LIKE ? OR company LIKE ?)";
-                queryParams.push(`%${search}%`, `%${search}%`);
-            }
-        }
+    if (!isNaN(Number(search))) {
+        query += " AND PK_id LIKE ?";
+        queryParams.push(`%${search}%`);
+    } else {
+        query += " AND (title LIKE ? OR company LIKE ?)";
+        queryParams.push(`%${search}%`, `%${search}%`);
+    }
+}
 
         // filtres spécifiques
         if (q && typeof q === "string") {

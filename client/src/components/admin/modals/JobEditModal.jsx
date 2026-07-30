@@ -50,7 +50,7 @@ export default function JobEditModal({ isOpen, onClose, onSave, job }) {
             <div ref={modalRef} className="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
                 <h2 className="text-xl font-bold text-font-primary-dark mb-4">Modifier l'offre</h2>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-gray-900">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium mb-1">Titre du poste</label>
