@@ -82,6 +82,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // récupère la première page d'offres au montage, et à chaque changement de filtre (débouncé)
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoadingList(true);
     setListError(null);
 
@@ -232,13 +233,14 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
       return matchTags;
     });
   }, [jobs, selectedTags]);
-
+  
   // liste affichée selon l'onglet actif
   const visibleJobs = mode === "feed" ? filtered : savedDetails;
-
+  
   // ajuste la sélection quand les résultats affichés changent
   useEffect(() => {
     if (visibleJobs.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedId(null);
       return;
     }
@@ -253,6 +255,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // récupère le détail de l'offre sélectionnée
   useEffect(() => {
     if (selectedId == null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedDetail(null);
       return;
     }
