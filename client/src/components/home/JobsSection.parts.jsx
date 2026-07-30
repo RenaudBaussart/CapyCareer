@@ -175,6 +175,8 @@ export function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword, sugge
                             <button
                                 type="button"
                                 onMouseDown={(e) => {
+                                    // empêche le blur de l'input de se déclencher avant le clic,
+                                    // ce qui pourrait faire disparaître la liste avant que la sélection soit traitée
                                     e.preventDefault();
                                     selectSuggestion(suggestion);
                                 }}
@@ -350,31 +352,31 @@ export function JobDetail({ job, isSaved, isAuthenticated, onToggleSave, onClose
                 aria-disabled={!isAuthenticated}
                 className={`inline-block text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark ${isAuthenticated ? "bg-primary text-light hover:bg-primary-dark" : "bg-primary/40 text-light/80 hover:bg-primary/50"}`}
             >
-                Postuler — Voir l'offre
-            </a>
+            Postuler — Voir l'offre
+        </a>
             {
-                !isAuthenticated && (
-                    <p className="text-xs text-font-primary-dark/50 mt-2">Connectez-vous pour postuler à cette offre.</p>
-                )
-            }
+        !isAuthenticated && (
+            <p className="text-xs text-font-primary-dark/50 mt-2">Connectez-vous pour postuler à cette offre.</p>
+        )
+    }
 
-            <div className="mt-7 pt-6 border-t border-primary-light/30">
-                <h3 className="flex items-center gap-2 font-semibold text-font-primary-dark mb-2">
-                    <Briefcase size={16} aria-hidden="true" /> Détails de l'emploi
-                </h3>
-                <dl className="grid grid-cols-2 gap-y-2 text-sm mb-5">
-                    <dt className="text-font-primary-dark/60">Entreprise</dt>
-                    <dd className="font-medium text-font-primary-dark">{job.company}</dd>
-                    <dt className="text-font-primary-dark/60">Lieu</dt>
-                    <dd className="font-medium text-font-primary-dark">{formatLocation(job)}</dd>
-                    <dt className="text-font-primary-dark/60">Salaire</dt>
-                    <dd className="font-medium text-font-primary-dark">{formatSalary(job) || "Non précisé"}</dd>
-                </dl>
-                <h3 className="font-semibold text-font-primary-dark mb-2">Description du poste</h3>
-                <p className="text-sm leading-relaxed text-font-primary-dark/70 whitespace-pre-line">
-                    {truncate(job.description, 500)}
-                </p>
-            </div>
+    <div className="mt-7 pt-6 border-t border-primary-light/30">
+        <h3 className="flex items-center gap-2 font-semibold text-font-primary-dark mb-2">
+            <Briefcase size={16} aria-hidden="true" /> Détails de l'emploi
+        </h3>
+        <dl className="grid grid-cols-2 gap-y-2 text-sm mb-5">
+            <dt className="text-font-primary-dark/60">Entreprise</dt>
+            <dd className="font-medium text-font-primary-dark">{job.company}</dd>
+            <dt className="text-font-primary-dark/60">Lieu</dt>
+            <dd className="font-medium text-font-primary-dark">{formatLocation(job)}</dd>
+            <dt className="text-font-primary-dark/60">Salaire</dt>
+            <dd className="font-medium text-font-primary-dark">{formatSalary(job) || "Non précisé"}</dd>
+        </dl>
+        <h3 className="font-semibold text-font-primary-dark mb-2">Description du poste</h3>
+        <p className="text-sm leading-relaxed text-font-primary-dark/70 whitespace-pre-line">
+            {truncate(job.description, 500)}
+        </p>
+    </div>
         </article >
     );
 }

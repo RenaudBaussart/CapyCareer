@@ -58,9 +58,11 @@ export function useAdminJobs() {
                 setIsLoading(false);
             }
         };
-
-        // ajoute delai debounce
-        loadJobs();
+        // pour eviter une surchage de l'API sur la recherch
+        const delaySearch = setTimeout(() => {
+            loadJobs();
+        }, 300);
+        return () => clearTimeout(delaySearch);
     }, [currentPage, searchQuery]);
 
     // fonction pour editer une offre
