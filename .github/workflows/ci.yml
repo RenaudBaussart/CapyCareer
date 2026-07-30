@@ -16,7 +16,7 @@ jobs:
     container: node:20
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install dependencies
         run: npm run install:all
@@ -29,7 +29,7 @@ jobs:
     container: node:20
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install dependencies
         run: npm run install:all
@@ -43,7 +43,7 @@ jobs:
     container: node:20
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install dependencies
         run: npm run install:all
@@ -57,7 +57,7 @@ jobs:
     container: node:20
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install dependencies
         run: npm run install:all
@@ -86,7 +86,7 @@ jobs:
       N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL: "https://localhost/webhook/test"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install dependencies
         run: npm run install:all

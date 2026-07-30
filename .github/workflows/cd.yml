@@ -31,16 +31,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Convert repository owner to lowercase
+        run: echo "REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
       - name: Build and push Client image
         uses: docker/build-push-action@v5
         with:
           context: ./client
           push: true
-          tags: ghcr.io/vincentlesniak/capymock/capycareer-client:latest
+          tags: ghcr.io/${{ env.REPO_OWNER }}/capycareer-client:latest
 
       - name: Build and push Server image
         uses: docker/build-push-action@v5
         with:
           context: ./server
           push: true
-          tags: ghcr.io/vincentlesniak/capymock/capycareer-server:latest
+          tags: ghcr.io/${{ env.REPO_OWNER }}/capycareer-server:latest
