@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import request from "supertest";
 import express from "express";
 import { getMyProfile, updateMyProfile, deleteMyProfile } from "./member.controller";
@@ -7,14 +8,12 @@ import { MemberService } from "./member.service";
 import { errorHandlerMiddleware } from "../../core/errors/errorHandlerMiddleware";
 import { NotFoundError, InternalServerError } from "../../core/errors/HttpError";
 
-// On utilise le même mock de middleware, avec l'injection dans req.member
 jest.mock("../../core/middlewares/authMiddleware", () => ({
     middlewareAuth: jest.fn((req: any, res: any, next: any) => {
         const token = req.headers.authorization?.split(" ")[1];
         if (!token) {
             return res.status(401).json({ error: "No token provided" });
         }
-        // Le contrôleur a besoin de req.member, pas de req.user !
         req.member = { id: 1, email: "jojo@gmail.com", role: "candidat" };
         next();
     })

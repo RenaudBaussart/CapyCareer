@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // fichier de configuration pour la connexion à la base de données MySQL OVH
 import mysql from 'mysql2/promise';
 import { env } from './env';
