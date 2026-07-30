@@ -8,10 +8,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        832,
-        160
+        720,
+        864
       ],
-      "id": "53ab8551-18a4-41f8-868b-64cdba0e0a8a",
+      "id": "7eb27cbd-23c5-46c0-a0ef-86e21b741275",
       "name": "Wait",
       "webhookId": "04ebfba1-e76f-44f0-bf8a-51e9aab4b3d6"
     },
@@ -29,10 +29,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        0,
-        144
+        -64,
+        768
       ],
-      "id": "e88727f6-3488-4727-91cf-2632db24d7ff",
+      "id": "faeb781a-a4a2-4ec6-8aef-0a9d6cbffb8b",
       "name": "Schedule Trigger"
     },
     {
@@ -46,10 +46,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        0,
-        0
+        -64,
+        624
       ],
-      "id": "4741a174-84f9-42a1-a145-c332b54fc4c8",
+      "id": "dfa1e95d-9027-4141-bc65-fd7e52818660",
       "name": "refresh-capycareer",
       "webhookId": "4dccdc7e-278a-442c-b397-aabbfccfa670"
     },
@@ -62,10 +62,10 @@
       "type": "n8n-nodes-base.n8nTrigger",
       "typeVersion": 1,
       "position": [
-        0,
-        304
+        -64,
+        928
       ],
-      "id": "4ca79625-8e60-4885-be06-d53101730573",
+      "id": "e133cf64-4bd3-430a-bd59-ecc656eeaf79",
       "name": "n8n Trigger"
     },
     {
@@ -91,10 +91,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        320,
-        144
+        256,
+        768
       ],
-      "id": "74486980-48ef-42c4-ae7b-61d214b63685",
+      "id": "2be4cb44-7be1-4c29-8b45-de81fe1df5dd",
       "name": "HTTP Request WLD",
       "credentials": {
         "httpHeaderAuth": {
@@ -105,39 +105,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "fd43125f-390d-47fd-a4a0-522695e716e8",
-              "leftValue": "={{ $json.values.length }}",
-              "rightValue": 0,
-              "operator": {
-                "type": "number",
-                "operation": "gt"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        544,
-        144
-      ],
-      "id": "cd843a24-0844-4fb8-8c61-002d08661b8f",
-      "name": "If offers true"
-    },
-    {
-      "parameters": {
         "fieldToSplitOut": "values",
         "include": "=",
         "options": {}
@@ -145,10 +112,10 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        880,
-        0
+        768,
+        592
       ],
-      "id": "5ebcb936-eb32-4e0f-a260-93422e930502",
+      "id": "91c611e2-83d6-4758-8c09-dc69d0c7507d",
       "name": "Split 1 item to offers nb"
     },
     {
@@ -234,10 +201,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1088,
-        0
+        992,
+        592
       ],
-      "id": "ba2d8c9b-1dfd-4b33-ad6d-f71bdd77b673",
+      "id": "00736715-8363-4267-b9e3-c94218277bdd",
       "name": "get what we need"
     },
     {
@@ -247,10 +214,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1264,
-        0
+        1216,
+        592
       ],
-      "id": "6fc58b13-5547-4c69-9622-e0e60794e30d",
+      "id": "6de2c181-b6a5-4eea-a8ae-a269aa620862",
       "name": "sanitize"
     },
     {
@@ -267,10 +234,10 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        1520,
-        0
+        1440,
+        592
       ],
-      "id": "50a063c7-d9df-48b9-910c-500bd816cc60",
+      "id": "34b3c526-e6c8-44e9-8fec-c82e9e0380df",
       "name": "Upsert in database",
       "credentials": {
         "mySql": {
@@ -286,10 +253,10 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        1952,
-        192
+        1680,
+        800
       ],
-      "id": "7a740e70-cf3a-4e30-9fc8-d3246d63c864",
+      "id": "ddee6e2f-eb20-4101-aabf-ce697dbd353d",
       "name": "Basic LLM Chain",
       "executeOnce": true,
       "retryOnFail": true
@@ -304,10 +271,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmOllama",
       "typeVersion": 1,
       "position": [
-        1952,
-        464
+        1680,
+        1024
       ],
-      "id": "7742168a-b6bc-42ba-b9b9-fee0e3b3bb2b",
+      "id": "950b1432-5841-4e95-b791-ced267ef6f49",
       "name": "Ollama Model",
       "credentials": {
         "ollamaApi": {
@@ -325,10 +292,10 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        1056,
-        192
+        992,
+        800
       ],
-      "id": "5d51e2cd-b55b-4f0a-a3e6-bbf94cece991",
+      "id": "a9c9a1fe-bfde-42e9-9002-b2c289d2efbc",
       "name": "Execute a SQL query",
       "credentials": {
         "mySql": {
@@ -363,10 +330,10 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        2512,
-        192
+        2352,
+        800
       ],
-      "id": "390b9f57-bb23-4351-9226-f8897ef22515",
+      "id": "9d68b176-65eb-46fd-8795-f8ca7d98b3e7",
       "name": "Update rows in a table",
       "credentials": {
         "mySql": {
@@ -398,10 +365,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2304,
-        192
+        2080,
+        800
       ],
-      "id": "e9f3d72b-004a-4b64-956c-6ac0771e5878",
+      "id": "c39ba374-67d7-457e-aa39-eed5bdfc9773",
       "name": "tag-feature-second-input"
     },
     {
@@ -427,10 +394,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1744,
-        192
+        1440,
+        800
       ],
-      "id": "d38d0ca7-e6d9-425b-aa5c-fa86ffef4b1a",
+      "id": "e90ece9e-6bc6-4883-b1a2-a7997797873b",
       "name": "tag-feature-first-input"
     },
     {
@@ -460,10 +427,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        1392,
-        192
+        1216,
+        800
       ],
-      "id": "95bddb1d-5ece-4217-bffb-5becbc02fb96",
+      "id": "4b2ef9dd-a776-40aa-b076-476768006e89",
       "name": "If"
     },
     {
@@ -471,10 +438,10 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1728,
-        416
+        1440,
+        1024
       ],
-      "id": "d061bc5e-8c95-486e-9d06-c3cdb205502c",
+      "id": "62540a38-7b85-44b5-bd42-3413df76e62c",
       "name": "No Operation, do nothing"
     },
     {
@@ -482,11 +449,123 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1792,
-        0
+        1680,
+        592
       ],
-      "id": "ebbc97b0-0aaf-46bb-852a-0a1c76c7859e",
+      "id": "396989a6-c3d8-4a66-bfa5-7ba5af8d193d",
       "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE Job_Offers\nSET active = 0\nWHERE publish_date < DATE_SUB(NOW(), INTERVAL 2 MONTH)\n  AND active = 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        720,
+        1168
+      ],
+      "id": "54c8f3ee-beb7-4a0b-971e-b1b4f4be4430",
+      "name": "update offer status",
+      "credentials": {
+        "mySql": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fd43125f-390d-47fd-a4a0-522695e716e8",
+              "leftValue": "={{ $json.values.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        496,
+        768
+      ],
+      "id": "4285632d-6ea9-4b98-832e-c80b82b2b4bc",
+      "name": "If offers true"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 416,
+        "width": 1616
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        752
+      ],
+      "id": "7d3027a9-0a8c-4bad-b3e8-4a81ca340cae",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 560,
+        "width": 1728,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        528
+      ],
+      "id": "958c78c9-64e1-47c3-92d8-1bfadda8552a",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 224,
+        "width": 480,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1120
+      ],
+      "id": "f8d3d049-7993-48d4-a123-332c6d98a3f3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        912,
+        1168
+      ],
+      "id": "fd508a91-ee37-4b51-8892-40f972524001",
+      "name": "No Operation, do nothing2"
     }
   ],
   "pinData": {},
@@ -540,29 +619,6 @@
         [
           {
             "node": "If offers true",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If offers true": {
-      "main": [
-        [
-          {
-            "node": "Split 1 item to offers nb",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Wait",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Execute a SQL query",
             "type": "main",
             "index": 0
           }
@@ -696,6 +752,45 @@
           }
         ]
       ]
+    },
+    "update offer status": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If offers true": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split 1 item to offers nb",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "update offer status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -704,12 +799,12 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "d67c4e1f-995d-4255-be08-1570a7ee2a38",
+  "versionId": "19ee9767-fef9-435a-85b4-8379f2dd4aac",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "e99b2f943eb00b6c2144826182c5a0db027d7637ac942e20cbe892dda90956fa"
+    "instanceId": "71c69179a565032d9a17b59c00b8427f050d9a963b19930b78e4951a9f7835bd"
   },
   "nodeGroups": [],
-  "id": "NtVjfymWC05mYgnT",
+  "id": "iEqX2NPAmZftrJVj",
   "tags": []
 }
