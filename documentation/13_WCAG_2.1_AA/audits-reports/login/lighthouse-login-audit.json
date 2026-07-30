@@ -1,0 +1,70 @@
+{
+  "lighthouseVersion": "13.3.0",
+  "requestedUrl": "http://example.com/login",
+  "mainDocumentUrl": "http://example.com/login",
+  "finalDisplayedUrl": "http://example.com/login",
+  "finalUrl": "http://example.com/login",
+  "fetchTime": "2026-07-30T18:55:41.820Z",
+  "gatherMode": "navigation",
+  "runWarnings": [],
+  "userAgent": "Mozilla/5.0 (Compatible; Lighthouse)",
+  "environment": {
+    "networkUserAgent": "Mozilla/5.0 (Mobile)",
+    "hostUserAgent": "Mozilla/5.0",
+    "benchmarkIndex": 1868,
+    "credits": {
+      "axe-core": "4.11.4"
+    }
+  },
+  "audits": {
+    "is-on-https": {
+      "id": "is-on-https",
+      "title": "Uses HTTPS",
+      "description": "All sites should be protected with HTTPS.",
+      "score": 1,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          { "key": "url", "valueType": "url", "label": "Insecure URL" },
+          { "key": "resolution", "valueType": "text", "label": "Request Resolution" }
+        ],
+        "items": []
+      }
+    },
+    "valid-source-maps": {
+      "id": "valid-source-maps",
+      "title": "Page has valid source maps",
+      "description": "Source maps translate minified code to the original source code.",
+      "score": 1,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          { "key": "scriptUrl", "valueType": "url", "label": "URL" },
+          { "key": "sourceMapUrl", "valueType": "url", "label": "Map URL" }
+        ],
+        "items": [
+          {
+            "scriptUrl": "http://example.com/src/pages/Login.jsx",
+            "subItems": { "type": "subitems", "items": [] }
+          }
+        ]
+      }
+    }
+  },
+  "categories": {
+    "accessibility": {
+      "title": "Accessibility",
+      "score": 1
+    },
+    "best-practices": {
+      "title": "Best Practices",
+      "score": 1
+    },
+    "seo": {
+      "title": "SEO",
+      "score": 1
+    }
+  }
+}
