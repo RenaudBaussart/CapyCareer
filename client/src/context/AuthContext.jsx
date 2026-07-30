@@ -62,8 +62,9 @@ export function AuthProvider({ children }) {
     // prepare etat pour stocker infos (nom, mail...)
     const [user, setUser] = useState(initialAuth.user);
     // prepare etat pour stocker si la verif est encore en cours
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading] = useState(false);
 
+    
     // deconnexion silencieuse
     const forceLogout = useCallback(() => {
         localStorage.removeItem("capy_token");

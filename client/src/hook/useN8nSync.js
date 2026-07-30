@@ -20,10 +20,27 @@ export function useN8nSync() {
         }
     };
 
-    // charge la date au lancement de la page
+    // charge la date au lancement de la page de manière isolée
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        fetchLastSync();
+        let isMounted = true;
+
+        const loadInitialSync = async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/jobs/last-sync`);
+                if (response.ok && isMounted) {
+                    const data = await response.json();
+                    setLastSyncTime(data.last_sync);
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération de la dernière synchro :", error);
+            }
+        };
+
+        loadInitialSync();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     const triggerSync = async () => {

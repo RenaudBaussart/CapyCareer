@@ -84,8 +84,13 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // récupère la première page d'offres au montage, et à chaque changement de filtre (débouncé)
   useEffect(() => {
     let cancelled = false;
-    setListError(null);
-    setIsLoadingList(true);
+    
+    queueMicrotask(() => {
+      if (!cancelled) {
+        setListError(null);
+        setIsLoadingList(true);
+      }
+    });
 
     fetchJobOffers({
       page: 0,
@@ -125,14 +130,20 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   useEffect(() => {
     if (mode !== "saved") return;
     if (saved.size === 0) {
-      setSavedDetails([]);
-      setSavedError(null);
+      queueMicrotask(() => {
+        setSavedDetails([]);
+        setSavedError(null);
+      });
       return;
     }
 
     let cancelled = false;
-    setIsLoadingSaved(true);
-    setSavedError(null);
+    queueMicrotask(() => {
+      if (!cancelled) {
+        setIsLoadingSaved(true);
+        setSavedError(null);
+      }
+    });
 
     const ids = Array.from(saved);
 
@@ -241,7 +252,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   useEffect(() => {
     if (visibleJobs.length === 0) {
       if (selectedId !== null) {
-        setSelectedId(null);
+        queueMicrotask(() => setSelectedId(null));
       }
       return;
     }
@@ -249,14 +260,14 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     const stillVisible = visibleJobs.some((job) => job.PK_id === selectedId);
 
     if (!stillVisible) {
-      setSelectedId(visibleJobs[0].PK_id);
+      queueMicrotask(() => setSelectedId(visibleJobs[0].PK_id));
     }
   }, [visibleJobs, selectedId]);
 
   // recup detail offre ciblée
   useEffect(() => {
     if (selectedId == null) {
-      setSelectedDetail(null);
+      queueMicrotask(() => setSelectedDetail(null));
       return;
     }
 
