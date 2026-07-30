@@ -109,12 +109,12 @@ export function useUserProfile() {
     const handleCVUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            console.log("Fichier CV sélectionné :", file.name);
+           
         }
     };
 
     const disableNotifications = () => {
-        console.log("Demande de désactivation des notifications");
+
     };
 
     // logique rgpd

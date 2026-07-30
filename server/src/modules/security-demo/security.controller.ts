@@ -13,7 +13,7 @@ export async function insecureLoginDemo(req: Request, res: Response) {
     try {
         const sql = `SELECT PK_id, username, hashed_password FROM User_ WHERE username = '${username}'`;
         
-        console.log("⚠️ Requête exécutée (Vulnérable) :", sql);
+        // console.log("⚠️ Requête exécutée (Vulnérable) :", sql);
 
         const [rows]: any = await attackPool.query(sql);
 
@@ -68,7 +68,7 @@ export async function bruteForceLoginDemo(req: Request, res: Response) {
     try {
         const sql = `SELECT PK_id, username, hashed_password FROM User_ WHERE username = '${username}' AND hashed_password = '${password}'`;
         
-        console.log("⚠️ Requête Force Brute exécutée :", sql);
+        // console.log("⚠️ Requête Force Brute exécutée :", sql);
 
         const [rows]: any = await attackPool.query(sql);
 

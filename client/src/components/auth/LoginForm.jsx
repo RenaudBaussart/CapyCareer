@@ -69,7 +69,6 @@ export default function LoginForm() {
           roleId: decodedToken.role
         });
 
-        console.log("Connexion réussie !", result);
 
         // redirection selon le role (FK_role_id)
         switch (decodedToken.role) {

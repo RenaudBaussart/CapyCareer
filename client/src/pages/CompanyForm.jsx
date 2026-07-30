@@ -59,7 +59,7 @@ export default function CompanyForm() {
 
     // WARNING: à remplacer par un appel API (formulaire d'édition à construire)
     function handleEditJob(jobId) {
-        console.log("Modifier l'offre :", jobId);
+        
     }
 
     function handleDeleteJob(jobId) {
