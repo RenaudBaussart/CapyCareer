@@ -11,7 +11,7 @@ export const createJobFullOffer = (payload: fullJobOffer) => {
 export const updateJobFullOffer = (payload: updateJobOffer) => {
     return updateJobOfferSchema.parse(payload);
 };
-// transforme un string de tags en tableau de tags, en supprimant les espaces et les caractères spéciaux
+
 export function parseTagString(raw: unknown): string[] {
     if (!raw || typeof raw !== 'string') return [];
 
@@ -22,6 +22,6 @@ export function parseTagString(raw: unknown): string[] {
     const segments = looksLikeDashList ? dashSegments : raw.split(',');
 
     return segments
-        .map((s) => s.trim().replace(/^[-(\[]+|[)\]]+$/g, '').trim())
+        .map((s) => s.trim().replace(/^[-([]+|[)\]]+$/g, '').trim())
         .filter((s) => s.length > 0 && s.length <= 60);
 }
