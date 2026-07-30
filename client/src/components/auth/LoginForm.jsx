@@ -69,7 +69,6 @@ export default function LoginForm() {
           roleId: decodedToken.role
         });
 
-        console.log("Connexion réussie !", result);
 
         // redirection selon le role (FK_role_id)
         switch (decodedToken.role) {
@@ -142,7 +141,7 @@ export default function LoginForm() {
         <div>
           <div className="flex justify-end mb-1">
             <Link to="/forgot-password" className="text-xs text-accent font-medium hover:text-accent-dark hover:underline">
-              Mot de passe oublié ?
+              {/* Mot de passe oublié ? */}
             </Link>
           </div>
 

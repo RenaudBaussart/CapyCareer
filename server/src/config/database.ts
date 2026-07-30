@@ -23,6 +23,6 @@ pool.getConnection()
         connection.release();
     })
     .catch(err => {
-        console.error('Échec de la connexion MySQL:', err.message);
+        // console.error('Échec de la connexion MySQL:', err.message);
         process.exit(1);
     });

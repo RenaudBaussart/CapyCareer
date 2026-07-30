@@ -215,14 +215,14 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
             throw new BadRequestError("Identifiant d'offre invalide.");
         }
 
-        console.log(`\n--- 🕵️ DÉBUT UPDATE OFFRE #${id} ---`);
-        console.log("1. Données brutes reçues du Front (req.body):", req.body.title, req.body.company);
+        // console.log(`\n--- DÉBUT UPDATE OFFRE #${id} ---`);
+        // console.log("1. Données brutes reçues du Front (req.body):", req.body.title, req.body.company);
 
         let jobOffer;
         try {
             //contrôle les données envoyées avec le schéma zod
             jobOffer = createJobFullOffer(req.body);
-            console.log("2. Données validées par Zod:", jobOffer.title, jobOffer.company);
+            // console.log("2. Données validées par Zod:", jobOffer.title, jobOffer.company);
         } catch (error: any) {
             console.error("❌ Erreur de validation Zod:", error);
             // si l'erreur est une validation zod renvoie une réponse 400
@@ -240,7 +240,7 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
         const tagString = tag ? tag.join(', ') : null;
         const formattedPublishDate = publish_date ? new Date(publish_date).toISOString().slice(0, 19).replace('T', ' ') : null;
 
-        console.log("3. Exécution de la requête SQL avec le titre:", title);
+        // console.log("3. Exécution de la requête SQL avec le titre:", title);
 
         //exécute la requête de mise à jour sql
         const [result] = await pool.execute(
@@ -248,7 +248,7 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
             [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, tagString, id]
         );
 
-        console.log("4. Résultat brut de MySQL (affectedRows, changedRows):", result);
+        // console.log("4. Résultat brut de MySQL (affectedRows, changedRows):", result);
 
         if ((result as any).affectedRows === 0) {
             // signale que l'offre n'existe pas en base

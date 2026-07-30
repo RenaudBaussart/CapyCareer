@@ -24,6 +24,21 @@ export default function JobEditModal({ isOpen, onClose, onSave, job }) {
         }
     }, [job, isOpen]);
 
+
+    useEffect(() => {
+        if (isOpen) {
+            const timer = setTimeout(() => {
+                const pickerLabels = document.querySelectorAll('.ql-picker-label');
+                pickerLabels.forEach((label) => {
+                    if (!label.getAttribute('aria-label')) {
+                        label.setAttribute('aria-label', 'Style de texte');
+                    }
+                });
+            }, 50);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     // prev: pour pas ecraser les champs
@@ -47,42 +62,50 @@ export default function JobEditModal({ isOpen, onClose, onSave, job }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div ref={modalRef} className="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-                <h2 className="text-xl font-bold text-font-primary-dark mb-4">Modifier l'offre</h2>
+
+            <div
+                ref={modalRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="edit-job-title"
+                className="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto"
+            >
+                <h2 id="edit-job-title" className="text-xl font-bold text-font-primary-dark mb-4">Modifier l'offre</h2>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-gray-900">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium mb-1">Titre du poste</label>
-                            <input name="title" value={formData.title || ""} onChange={handleChange} className="w-full border rounded-lg p-2" required />
+                            <label htmlFor="title" className="block text-sm font-medium mb-1">Titre du poste</label>
+                            <input id="title" name="title" value={formData.title || ""} onChange={handleChange} className="w-full border rounded-lg p-2" required />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Entreprise</label>
-                            <input name="company" value={formData.company || ""} onChange={handleChange} className="w-full border rounded-lg p-2" required />
+                            <label htmlFor="company" className="block text-sm font-medium mb-1">Entreprise</label>
+                            <input id="company" name="company" value={formData.company || ""} onChange={handleChange} className="w-full border rounded-lg p-2" required />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Type de contrat</label>
-                            <input name="contract_type" value={formData.contract_type || ""} onChange={handleChange} className="w-full border rounded-lg p-2" />
+                            <label htmlFor="contract_type" className="block text-sm font-medium mb-1">Type de contrat</label>
+                            <input id="contract_type" name="contract_type" value={formData.contract_type || ""} onChange={handleChange} className="w-full border rounded-lg p-2" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Ville</label>
-                            <input name="city" value={formData.city || ""} onChange={handleChange} className="w-full border rounded-lg p-2" />
+                            <label htmlFor="city" className="block text-sm font-medium mb-1">Ville</label>
+                            <input id="city" name="city" value={formData.city || ""} onChange={handleChange} className="w-full border rounded-lg p-2" />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium mb-1">Lien URL</label>
-                        <input name="url" value={formData.url || ""} onChange={handleChange} className="w-full border rounded-lg p-2" />
+                        <label htmlFor="url" className="block text-sm font-medium mb-1">Lien URL</label>
+                        <input id="url" name="url" value={formData.url || ""} onChange={handleChange} className="w-full border rounded-lg p-2" />
                     </div>
 
                     <div className="flex flex-col">
-                        <label className="block text-sm font-medium mb-1">Description de l'offre</label>
+                        <label id="description-label" className="block text-sm font-medium mb-1">Description de l'offre</label>
                         <div className="h-64 mb-12">
                             <ReactQuill
                                 theme="snow"
                                 value={formData.description || ""}
                                 onChange={handleDescriptionChange}
                                 className="h-full"
+                                aria-labelledby="description-label"
                             />
                         </div>
                     </div>
