@@ -189,7 +189,8 @@ describe("Job Offers API", () => {
         });
 
         it("should return 500 if the webhook URL is not configured", async () => {
-            env.N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL = undefined;
+            // remove the webhook URL config for this test
+            delete (env as any).N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL;
 
             const response = await request(app).post("/api/jobs/refresh");
 
