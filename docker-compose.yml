@@ -52,6 +52,7 @@ services:
       - ATTACK_DB_PASSWORD=${ATTACK_DB_PASSWORD} # mot de passe OVH
       - ATTACK_DB_NAME=${ATTACK_DB_NAME} # nom exact de la base de données d'attaque.
       - ATTACK_DB_PORT=${ATTACK_DB_PORT} # port de connexion à la base de données d'attaque
+      - N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL=${N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL} # URL du webhook n8n pour rafraîchir les offres d'emploi, permettant au backend de déclencher des workflows automatisés dans n8n.
     networks:
       - app-network 
       # Connecte le backend au réseau virtuel privé.
@@ -104,12 +105,41 @@ services:
       - n8n
     networks:
       - app-network
+  
+  # ollama (IA en local)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: always
+    networks:
+      - app-network
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ollama-init
+    environment:
+      - OLLAMA_HOST=ollama:11434 
+    volumes:
+      - ./Modelfile:/Modelfile 
+    command: create choix_pole_emploi -f /Modelfile
+    depends_on:
+      ollama:
+        condition: service_started
+      n8n:
+        condition: service_started 
+    networks:
+      - app-network
 
 # Déclaration des volumes
 volumes: 
   n8n_data: 
   # Crée un volume nommé "n8n_data" pour stocker les données persistantes de n8n, garantissant que les workflows et configurations ne sont pas perdus lors des redémarrages ou mises à jour du conteneur.
-
+  ollama_data:
+  # Crée un volume nommé "ollama_data" pour stocker les données persistantes de l'IA Ollama, assurant que les modèles et configurations restent intacts même après le redémarrage ou la mise à jour du conteneur.
 networks: 
 # Déclaration des réseaux
   app-network: 

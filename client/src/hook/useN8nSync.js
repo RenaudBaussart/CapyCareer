@@ -1,36 +1,57 @@
 // fichier gerant le hook de la synchronisation n8n
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function useN8nSync() {
-    // indique si une synchro est en cours
     const [isSyncing, setIsSyncing] = useState(false);
-    // stocke le dernier etat de la synchro
     const [lastSyncStatus, setLastSyncStatus] = useState("success");
+    const [lastSyncTime, setLastSyncTime] = useState(null);
 
-    // fonction appeée pour lancer une synchro
+    // fonction qui recupere la date de dernier refresh
+    const fetchLastSync = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/jobs/last-sync`);
+            if (response.ok) {
+                const data = await response.json();
+                setLastSyncTime(data.last_sync);
+            }
+        } catch (error) {
+            console.error("Erreur lors de la récupération de la dernière synchro :", error);
+        }
+    };
+
+    // charge la date au lancement de la page
+    useEffect(() => {
+        fetchLastSync();
+    }, []);
+
     const triggerSync = async () => {
-        // mode chargement
         setIsSyncing(true);
-        // reboot le statut avant new synchro
         setLastSyncStatus("idle");
 
         try {
-            // WARNING: call api à mettre
-            // const response = await fetch('/api/n8n/sync', { method: 'POST' });
+            // cibler la route refresh pour les offres
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/jobs/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
 
-            // fake api
-            await new Promise(resolve => setTimeout(resolve, 2500));
-            // en cas de reussite
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
             setLastSyncStatus("success");
+            // Rafraîchir la date après une synchro réussie
+            await fetchLastSync();
         } catch (error) {
-            // en cas derreur
+            console.error("Erreur lors de la synchronisation avec n8n :", error);
             setLastSyncStatus("error");
         } finally {
-            // desactive mode chargement peut importe lissu
             setIsSyncing(false);
         }
     };
 
-    return { isSyncing, lastSyncStatus, triggerSync };
+    return { isSyncing, lastSyncStatus, lastSyncTime, triggerSync };
 }

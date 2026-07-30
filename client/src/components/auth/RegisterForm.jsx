@@ -59,18 +59,26 @@ export default function RegisterForm() {
       // call service externe inscription
       const result = await registerUser(registerData);
 
-      // SI un token est renvoyé 
-      if (result.token) {
-        // alors il est stocké & luser est co
-        contextLogin(result.token, { username: data.username });
-      }
+      // SI back renvoie bien token à l'inscription
+      if (result && result.token) {
 
-      console.log("Inscription réussie !", result);
-      navigate("/");
+        // co luser avec ses datas
+        const userInfos = result.user || {
+          username: registerData.username,
+          email: registerData.email,
+          role: "candidat"
+        };
+
+        contextLogin(result.token, userInfos);
+        navigate("/");
+
+      } else {
+        // SI back ne renvoie pas de token alors redirection login
+        navigate("/login");
+      }
 
     } catch (error) {
       console.error("Erreur d'inscription :", error.message);
-
       setApiError(getFriendlyErrorMessage(error.message));
     }
   };
@@ -110,8 +118,8 @@ export default function RegisterForm() {
               <label htmlFor="lastName" className="sr-only">Nom</label>
               <input
                 className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.lastName
-                    ? "border-2 border-red-600 focus:ring-red-500"
-                    : "border-primary-light focus:ring-primary"
+                  ? "border-2 border-red-600 focus:ring-red-500"
+                  : "border-primary-light focus:ring-primary"
                   }`}
                 id="lastName"
                 type="text"
@@ -130,8 +138,8 @@ export default function RegisterForm() {
               <label htmlFor="firstName" className="sr-only">Prénom</label>
               <input
                 className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.firstName
-                    ? "border-2 border-red-600 focus:ring-red-500"
-                    : "border-primary-light focus:ring-primary"
+                  ? "border-2 border-red-600 focus:ring-red-500"
+                  : "border-primary-light focus:ring-primary"
                   }`}
                 id="firstName"
                 type="text"
@@ -152,8 +160,8 @@ export default function RegisterForm() {
           <label htmlFor="username" className="sr-only">Identifiant de connexion</label>
           <input
             className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.username
-                ? "border-2 border-red-600 focus:ring-red-500"
-                : "border-primary-light focus:ring-primary"
+              ? "border-2 border-red-600 focus:ring-red-500"
+              : "border-primary-light focus:ring-primary"
               }`}
             id="username"
             type="text"
@@ -171,8 +179,8 @@ export default function RegisterForm() {
           <label htmlFor="email" className="sr-only">Adresse email</label>
           <input
             className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.email
-                ? "border-2 border-red-600 focus:ring-red-500"
-                : "border-primary-light focus:ring-primary"
+              ? "border-2 border-red-600 focus:ring-red-500"
+              : "border-primary-light focus:ring-primary"
               }`}
             id="email"
             type="email"
@@ -222,7 +230,7 @@ export default function RegisterForm() {
           <div className="grow border-t border-primary-light/50"></div>
         </div>
 
-        {/* btn co google */}
+        {/* btn co google
         <button
           type="button"
           className="w-full mb-6 flex items-center justify-center gap-2 bg-bone-light text-font-primary-dark border border-primary-light font-semibold py-3 px-4 rounded-3xl transition-colors focus:ring-2 focus:ring-primary focus:outline-none"
@@ -231,6 +239,7 @@ export default function RegisterForm() {
           <UserPlus className="w-5 h-5" />
           S'inscrire avec Google
         </button>
+        */}
 
         <Link
           to="/register-company"

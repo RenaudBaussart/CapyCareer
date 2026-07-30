@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+
+extendZodWithOpenApi(z);
 
 export const jobOfferSchema = z.object({
     PK_id: z.number().int().openapi({ description: "Primary key of the job offer." }),
@@ -7,6 +10,10 @@ export const jobOfferSchema = z.object({
     city: z.string().openapi({ description: "City where the job is located." }),
     country: z.string().openapi({ description: "Country where the job is located." }),
     company: z.string().openapi({ description: "Company offering the job." }),
+    salary_max: z.number().nullable().optional().openapi({ description: "Maximum salary." }),
+    salary_min: z.number().nullable().optional().openapi({ description: "Minimum salary." }),
+    currency: z.string().nullable().optional().openapi({ description: "Currency for the salary." }),
+    tag: z.array(z.string()).nullable().optional().openapi({ description: "Tags for the job offer." }),
 }).openapi('JobOffer');
 
 export const jobOfferDetailSchema = jobOfferSchema.extend({
@@ -18,6 +25,7 @@ export const jobOfferDetailSchema = jobOfferSchema.extend({
     salary_max: z.number().nullable().openapi({ description: "Maximum salary." }),
     salary_min: z.number().nullable().openapi({ description: "Minimum salary." }),
     currency: z.string().nullable().openapi({ description: "Currency for the salary." }),
+    tag: z.array(z.string()).nullable().optional().openapi({ description: "Tags for the job offer." }),
 }).openapi('JobOfferDetail');
 
 export const jobOfferFullSchema = z.object({
@@ -36,4 +44,5 @@ export const jobOfferFullSchema = z.object({
     salary_max: z.number().nullable().openapi({ description: "Maximum salary." }),
     salary_min: z.number().nullable().openapi({ description: "Minimum salary." }),
     currency: z.string().nullable().openapi({ description: "Currency for the salary." }),
+    tag: z.array(z.string()).nullable().optional().openapi({ description: "Tags for the job offer." }),
 }).openapi('JobOfferFull');

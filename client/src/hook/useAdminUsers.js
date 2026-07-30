@@ -19,7 +19,7 @@ export function useAdminUsers(roleToManage) {
         const fetchUsers = async () => {
             try {
                 const token = localStorage.getItem("capy_token") || sessionStorage.getItem("capy_token");
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/members?role=${roleToManage}`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/members?role=${roleToManage}`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -47,7 +47,7 @@ export function useAdminUsers(roleToManage) {
             try {
                 const token = localStorage.getItem("capy_token") || sessionStorage.getItem("capy_token");
 
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/banned`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/banned`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -94,7 +94,7 @@ export function useAdminUsers(roleToManage) {
         try {
             if (modalConfig.actionType === 'ban') {
                 // appel api pour ban
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/members/ban?email=${targetEmail}`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/members/ban?email=${targetEmail}`, {
                     method: 'DELETE',
                     headers: { "Authorization": `Bearer ${token}` }
                 });
@@ -112,7 +112,7 @@ export function useAdminUsers(roleToManage) {
 
             } else if (modalConfig.actionType === 'unban') {
                 // call api pour unban
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/members/unban?email=${targetEmail}`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/members/unban?email=${targetEmail}`, {
                     method: 'DELETE',
                     headers: { "Authorization": `Bearer ${token}` }
                 });

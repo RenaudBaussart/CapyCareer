@@ -2,8 +2,7 @@
 
 // import
 import { useState, useContext } from "react";
-import { NavLink, Link} from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 // component 
 import ProfileMenu from "./ProfileMenu";
 // context
@@ -19,20 +18,18 @@ export default function Navbar() {
 
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  // récupère le token pour savoir si l'utilisateur est connecté
-  const { token } = useContext(AuthContext);
+
+  // cible token savoir user co
+  const { token, logout } = useContext(AuthContext);
   const isAuthenticated = !!token;
 
-  // cible fonction logout & hook pour navigation
-  const { logout } = useContext(AuthContext);
-
-  // récupère la préférence gaucher/droitier pour inverser la barre mobile
+  // recupere prefere
   const { isRightHanded } = useContext(HandednessContext);
 
-  // récupère le thème
+  // recupere le thème
   const { theme, toggleTheme } = useTheme();
 
-  // fonction qui gere la vraie deconnexion
+  // fonction qui gere deconnexion
   const handleLogout = () => {
     logout();
     setIsOpen(false);
@@ -80,7 +77,6 @@ export default function Navbar() {
               </NavLink>
             )}
 
-            {/* WARNING: liens à cacher si luser est co */}
             {!isAuthenticated && (
               <>
                 <NavLink to="/register" className={navLinkClass}>
@@ -116,11 +112,12 @@ export default function Navbar() {
           </button>
 
           {/* partie droite menu profile */}
-          <ProfileMenu
-            roleName="CapyCareer"
-            profileLink="/candidate/profile"
-          />
-
+          {isAuthenticated && (
+            <ProfileMenu
+              roleName="CapyCareer"
+              profileLink="/candidate/profile"
+            />
+          )}
 
         </div>
 
@@ -144,6 +141,7 @@ export default function Navbar() {
               <NavLink
                 to="/candidate/profile"
                 className={mobileNavLinkClass}
+                onClick={() => setIsOpen(false)}
               >
                 <User className="w-4 h-4" />
                 Mon Profil
@@ -169,7 +167,6 @@ export default function Navbar() {
             {/* link (profil & deconnexion) mobile */}
             {isAuthenticated && (
               <>
-
                 <NavLink
                   to="/"
                   className="flex items-center gap-2 py-3 px-2 rounded-md font-medium text-red-400 hover:bg-red-500/10 transition-colors"

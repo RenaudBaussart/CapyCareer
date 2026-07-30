@@ -4,19 +4,18 @@
 // import
 import { useAdminDuplicates } from "../../hook/useAdminDuplicates";
 // component
-import AdminNavbar from "../../components/admin/layout/AdminNavbar";
+import MainNavbar from "../../components/layout/MainNavbar";
 import DuplicateDataGrid from "../../components/admin/DuplicateDataGrid";
 import AdminActionModal from "../../components/admin/modals/AdminActionModal";
-import Leaves from "../../assets/images/Leaves.png";
 // icone
 import { Search, CopyPlus, Trash2, Check } from "lucide-react";
 
 export default function AdminDuplicates() {
     // call le hook (datas, fonctions)
-    const { 
-        duplicates, 
-        searchQuery, 
-        setSearchQuery, 
+    const {
+        duplicates,
+        searchQuery,
+        setSearchQuery,
         isModalOpen,
         setIsModalOpen,
         modalConfig,
@@ -49,27 +48,27 @@ export default function AdminDuplicates() {
     const currentModal = modalConfig.actionType ? modalContentMap[modalConfig.actionType] : {};
 
     return (
-        <div 
-            className="bg-main-layout">
-            <AdminNavbar />
+        <div
+            className="bg-main-layout flex flex-col min-h-screen">
+            <MainNavbar />
 
-            <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col">
-                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-8 md:p-10 w-full flex-1 flex flex-col">
-                    
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col">
+                <div className="bg-bone-light/60 backdrop-blur-2xl rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.10)] border border-white/50 p-5 sm:p-8 md:p-10 w-full flex-1 flex flex-col">
+
                     {/* haut de page (recherche) */}
-                    <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h1 className="text-3xl font-bold text-font-primary-dark flex items-center gap-3">
-                                <CopyPlus className="w-8 h-8 text-primary" />
-                                Gestion des Doublons
+                    <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="min-w-0">
+                            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-font-primary-dark flex items-center gap-2 sm:gap-3">
+                                <CopyPlus className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
+                                <span className="truncate">Gestion des Doublons</span>
                             </h1>
-                            <p className="text-deep-primary mt-1">
+                            <p className="text-deep-primary mt-1 text-sm sm:text-base">
                                 Vérifiez les offres signalées par l'IA. Conservez les faux positifs ou supprimez les doublons.
                             </p>
                         </div>
 
                         <div className="relative w-full md:w-72">
-                            <input 
+                            <input
                                 type="text"
                                 placeholder="Rechercher une offre..."
                                 value={searchQuery}
@@ -82,10 +81,10 @@ export default function AdminDuplicates() {
 
                     {/* tableau doublons */}
                     <div className="bg-bone-light/40 rounded-2xl p-2 border border-white/50 flex-1">
-                        <DuplicateDataGrid 
-                            duplicates={duplicates} 
+                        <DuplicateDataGrid
+                            duplicates={duplicates}
                             handleKeep={requestKeep}
-                            handleDelete={requestDelete} 
+                            handleDelete={requestDelete}
                         />
                     </div>
 
@@ -93,11 +92,11 @@ export default function AdminDuplicates() {
             </main>
 
             {/* modale */}
-            <AdminActionModal 
+            <AdminActionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={executeAction}
-                
+
                 title={currentModal.title}
                 message={currentModal.message}
                 confirmText={currentModal.confirmText}

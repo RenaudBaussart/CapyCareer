@@ -11,7 +11,9 @@ export const pool = mysql.createPool({
   port: env.OVH_DB_PORT,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
 });
 
 // Teste la connexion à la base de données MySQL OVH au démarrage du serveur
@@ -21,6 +23,6 @@ pool.getConnection()
         connection.release();
     })
     .catch(err => {
-        console.error('Échec de la connexion MySQL:', err.message);
+        // console.error('Échec de la connexion MySQL:', err.message);
         process.exit(1);
     });

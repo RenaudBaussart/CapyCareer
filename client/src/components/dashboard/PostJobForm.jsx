@@ -30,8 +30,6 @@ export default function PostJobForm({ onSubmitJob }) {
 
     // fonction appelée si le form est valide
     const onSubmit = async (data) => {
-        // WARNING: connecter à l'API de création d'offre
-        console.log("Nouvelle offre :", data);
         onSubmitJob?.(data);
         reset();
     };

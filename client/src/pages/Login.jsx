@@ -4,7 +4,7 @@
 // component
 import LoginForm from "../components/auth/LoginForm";
 import Footer from "../components/layout/Footer";
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import { Link } from "react-router-dom";
 import CapyWriteVideo from "../assets/images/CapyWrite.mp4"
 import Leaves from "../assets/images/Leaves.png"
@@ -14,7 +14,7 @@ export default function Login() {
     return (
         // conteneur principal
         <main className="bg-main-layout">
-            <Navbar />
+            <MainNavbar />
 
             {/* conteneur principal contenu */}
             <div className="grow flex items-center justify-center p-6 lg:p-12">
@@ -33,7 +33,7 @@ export default function Login() {
                             <div className="max-w-2xl mx-auto text-center ">
                                 <h1 className="text-4xl font-bold text-font-primary-dark ">Bienvenue !</h1>
                                 <p className="text-font-primary-dark">
-                                    Pour commencer, veuillez vous connecter ou vous inscrire via votre compte Google.
+                                    Pour commencer, veuillez vous connecter {/* ou vous inscrire via votre compte Google */}.
                                 </p>
 
 

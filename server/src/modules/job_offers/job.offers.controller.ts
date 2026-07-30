@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { pool } from '../../config/database';
 import { z } from "zod";
 import { BadRequestError, NotFoundError, InternalServerError } from '../../core/errors/HttpError';
-import { createJobFullOffer } from "./job.offers.service";
+import { createJobFullOffer, parseTagString } from "./job.offers.service";
+import { env } from '../../config/env';
 
 /**
  * récupère la liste des offres d'emploi paginée pour la page d'accueil
@@ -13,38 +14,100 @@ import { createJobFullOffer } from "./job.offers.service";
 const getJobOffers = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const page = parseInt(req.query.page as string) || 1;
+        // recupere le param sil existe dans query
+        const search = req.query.search as string || "";
 
-        // vérifie si la page est un nombre positif valide
+        // verif si la page est nbr positif
         if (page < 1) {
             throw new BadRequestError("Le numéro de page doit être un entier positif.");
         }
 
         const limit = 50;
-        //calcule le décalage pour la pagination
+        // calcule le decalage pour la pagination
         const offset = (page - 1) * limit;
 
-        // récupère 51 offres au lieu de 50 pour anticiper la page suivante
-        const [rows] = await pool.query(
-            "SELECT PK_id, title, contract_type, city, country, company FROM Job_Offers ORDER BY publish_date DESC LIMIT ? OFFSET ?;",
-            [limit + 1, offset]
-        );
+        // recupere filtre de recherche
+        const { q, lieu, salaryMin, salaryMax, tags } = req.query;
 
-        //typage du tableau de résultats
+        let query = "SELECT PK_id, title, description, contract_type, city, country, company, url, remote, hybrid, publish_date, salary_max, salary_min, currency, tag FROM Job_Offers WHERE active = 1";
+        const queryParams: any[] = [];
+
+        // SI la recherche globale/ID est présente
+        if (search) {
+    if (!isNaN(Number(search))) {
+        query += " AND PK_id LIKE ?";
+        queryParams.push(`%${search}%`);
+    } else {
+        query += " AND (title LIKE ? OR company LIKE ?)";
+        queryParams.push(`%${search}%`, `%${search}%`);
+    }
+}
+
+        // filtres spécifiques
+        if (q && typeof q === "string") {
+            query += " AND (title LIKE ? OR company LIKE ?)";
+            queryParams.push(`%${q}%`, `%${q}%`);
+        }
+
+        if (lieu && typeof lieu === "string") {
+            query += " AND (city LIKE ? OR country LIKE ?)";
+            queryParams.push(`%${lieu}%`, `%${lieu}%`);
+        }
+
+        if (salaryMin && !isNaN(Number(salaryMin))) {
+            query += " AND (salary_max >= ? OR (salary_max IS NULL AND salary_min >= ?))";
+            queryParams.push(Number(salaryMin), Number(salaryMin));
+        }
+
+        if (salaryMax && !isNaN(Number(salaryMax))) {
+            query += " AND (salary_min <= ? OR (salary_min IS NULL AND salary_max <= ?))";
+            queryParams.push(Number(salaryMax), Number(salaryMax));
+        }
+
+        // filtre mots-clés/tags : chaque mot-clé doit apparaître dans le titre OU dans la colonne tag
+        // tags peut arriver comme une chaîne unique ("React,TypeScript") ou un tableau (plusieurs query params identiques)
+        if (tags) {
+            const tagList = Array.isArray(tags)
+                ? tags as string[]
+                : (tags as string).split(",").map((t) => t.trim()).filter(Boolean);
+
+            if (tagList.length > 0) {
+                // chaque mot-clé doit matcher (titre OU tag) -> on ET-combine les mots-clés (tous doivent matcher)
+                const tagConditions = tagList.map(() => "(title LIKE ? OR tag LIKE ?)").join(" AND ");
+                query += ` AND (${tagConditions})`;
+                tagList.forEach((t) => {
+                    queryParams.push(`%${t}%`, `%${t}%`);
+                });
+            }
+        }
+
+        // ajoute le tri & la limite pour la pagination
+        query += " ORDER BY publish_date DESC LIMIT ? OFFSET ?;";
+        queryParams.push(limit + 1, offset);
+
+        // recup 51 offres pour anticiper la page suivante (prise en compte des filtres)
+        const [rows] = await pool.query(query, queryParams);
+
+        //typage du tableau de result
         const offers = rows as any[];
+
+        offers.forEach(offer => {
+            offer.tag = parseTagString(offer.tag);
+        });
 
         if (offers.length === 0 && page > 1) {
             throw new NotFoundError("Aucune offre d'emploi trouvée pour cette page.");
         }
 
-        // détermine si la fin de la table est atteinte
+        // SI la fin de la table bdd atteint
         const isTheEnd = offers.length <= limit;
 
         if (!isTheEnd) {
-            //vire le 51ème élément bonus si il existe
+            //vire le 51ème élément bonus sil existe
             offers.pop();
         }
 
-        // renvoie la réponse bien structurée au client
+        // return result
         res.status(200).json({
             job_offers: offers,
             is_the_end: isTheEnd
@@ -54,6 +117,7 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
         next(error);
     }
 };
+
 
 /**
  * récupère le détail d'une offre d'emploi spécifique grâce à son id
@@ -75,11 +139,15 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
 
         // cherche l'offre correspondante en base de données
         const [rows] = await pool.execute<any[]>(
-            "SELECT PK_id, title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency FROM Job_Offers WHERE PK_id = ?;",
-            [id]
+            "SELECT PK_id, title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency, tag FROM Job_Offers WHERE PK_id = ?;",
+            [jobId]
         );
 
         const offer = (rows as any[])[0] as any;
+
+        if (offer) {
+            offer.tag = parseTagString(offer.tag);
+        }
 
         if (!offer) {
             //lève une 404 si aucun résultat ne correspond
@@ -118,7 +186,8 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
         }
 
         // déstructure les champs nécessaires
-        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency } = jobOffer;
+        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency, tag } = jobOffer;
+        const tagString = tag ? tag.join(', ') : null;
         const formattedPublishDate = publish_date ? new Date(publish_date).toISOString().slice(0, 19).replace('T', ' ') : null;
         const rawString = `${title}-${city}-${contract_type}-${company}-${publish_date}`.toLowerCase();
         let contentHash = 0;
@@ -130,8 +199,8 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
         const finalHash = Math.abs(contentHash).toString(16)
         //insère la nouvelle offre en base de données
         const [result] = await pool.execute(
-            "INSERT INTO Job_Offers (content_hash ,title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-            [finalHash, title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency]
+            "INSERT INTO Job_Offers (content_hash ,title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency, tag) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            [finalHash, title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, tagString]
         );
 
         // confirme la création avec l'id généré
@@ -156,11 +225,16 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
             throw new BadRequestError("Identifiant d'offre invalide.");
         }
 
+        // console.log(`\n--- DÉBUT UPDATE OFFRE #${id} ---`);
+        // console.log("1. Données brutes reçues du Front (req.body):", req.body.title, req.body.company);
+
         let jobOffer;
         try {
             //contrôle les données envoyées avec le schéma zod
             jobOffer = createJobFullOffer(req.body);
+            // console.log("2. Données validées par Zod:", jobOffer.title, jobOffer.company);
         } catch (error: any) {
+            console.error("❌ Erreur de validation Zod:", error);
             // si l'erreur est une validation zod renvoie une réponse 400
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
@@ -172,13 +246,19 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
         }
 
         // déstructure les données validées
-        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency } = jobOffer;
+        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency, tag } = jobOffer;
+        const tagString = tag ? tag.join(', ') : null;
         const formattedPublishDate = publish_date ? new Date(publish_date).toISOString().slice(0, 19).replace('T', ' ') : null;
+
+        // console.log("3. Exécution de la requête SQL avec le titre:", title);
+
         //exécute la requête de mise à jour sql
         const [result] = await pool.execute(
-            "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, remote = ?, hybrid = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ? WHERE PK_id = ?;",
-            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, id]
+            "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, remote = ?, hybrid = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ?, tag = ? WHERE PK_id = ?;",
+            [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, tagString, id]
         );
+
+        // console.log("4. Résultat brut de MySQL (affectedRows, changedRows):", result);
 
         if ((result as any).affectedRows === 0) {
             // signale que l'offre n'existe pas en base
@@ -188,9 +268,11 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
         //répond que la modification est effectuée
         res.status(200).json({ message: "Offre d'emploi mise à jour avec succès." });
     } catch (error) {
+        console.error("❌ Erreur attrapée dans updateJobOffer:", error);
         next(error);
     }
 };
+
 
 /**
  * supprime une offre d'emploi existante en base de données
@@ -232,14 +314,63 @@ const deleteJobOffer = async (req: Request, res: Response, next: NextFunction) =
  * @param res la réponse HTTP contenant le nombre total d'offres
  * @param next la fonction pour transmettre les erreurs au middleware d'erreur
  */
+/**
+ * recup nbrtotal d'offres d'emploi actives (filtrees si recherche)
+ */
 const totalJobOffersCount = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // compte le nombre d'offres ayant le statut actif
-        const [rows] = await pool.execute<any[]>(
-            "SELECT COUNT(*) as total FROM Job_Offers WHERE active = 1;"
-        );
+        const search = req.query.search as string || "";
+        const { q, lieu, salaryMin, salaryMax, tags } = req.query;
 
-        //renvoie le résultat au client
+        let query = "SELECT COUNT(*) as total FROM Job_Offers WHERE active = 1";
+        const queryParams: any[] = [];
+
+        if (search) {
+            if (!isNaN(Number(search))) {
+                query += " AND (PK_id = ? OR title LIKE ? OR company LIKE ?)";
+                queryParams.push(Number(search), `%${search}%`, `%${search}%`);
+            } else {
+                query += " AND (title LIKE ? OR company LIKE ?)";
+                queryParams.push(`%${search}%`, `%${search}%`);
+            }
+        }
+
+        if (q && typeof q === "string") {
+            query += " AND (title LIKE ? OR company LIKE ?)";
+            queryParams.push(`%${q}%`, `%${q}%`);
+        }
+
+        if (lieu && typeof lieu === "string") {
+            query += " AND (city LIKE ? OR country LIKE ?)";
+            queryParams.push(`%${lieu}%`, `%${lieu}%`);
+        }
+
+        if (salaryMin && !isNaN(Number(salaryMin))) {
+            query += " AND (salary_max >= ? OR (salary_max IS NULL AND salary_min >= ?))";
+            queryParams.push(Number(salaryMin), Number(salaryMin));
+        }
+
+        if (salaryMax && !isNaN(Number(salaryMax))) {
+            query += " AND (salary_min <= ? OR (salary_min IS NULL AND salary_max <= ?))";
+            queryParams.push(Number(salaryMax), Number(salaryMax));
+        }
+
+        if (tags) {
+            const tagList = Array.isArray(tags)
+                ? tags as string[]
+                : (tags as string).split(",").map((t) => t.trim()).filter(Boolean);
+
+            if (tagList.length > 0) {
+                const tagConditions = tagList.map(() => "(title LIKE ? OR tag LIKE ?)").join(" AND ");
+                query += ` AND (${tagConditions})`;
+                tagList.forEach((t) => {
+                    queryParams.push(`%${t}%`, `%${t}%`);
+                });
+            }
+        }
+
+        const [rows] = await pool.execute<any[]>(query, queryParams);
+
         res.status(200).json({ total: rows[0].total });
     } catch (error) {
         next(error);
@@ -254,7 +385,7 @@ const totalJobOffersCount = async (req: Request, res: Response, next: NextFuncti
  */
 const refreshJobOffers = async (req: Request, res: Response, next: NextFunction) => {
     // récupère l'URL du webhook depuis les variables d'environnement
-    const webhookUrl = process.env.N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL;
+    const webhookUrl = env.N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL;
 
     try {
         // vérifie que l'URL du webhook est bien configurée
@@ -286,4 +417,24 @@ const refreshJobOffers = async (req: Request, res: Response, next: NextFunction)
         next(error);
     }
 };
-export { getJobOffers, getJobOfferById, createJobOffer, updateJobOffer, deleteJobOffer, totalJobOffersCount, refreshJobOffers };
+
+/**
+ * recup la date de la dernière mise à jour/synchronisation des offres
+ * @param req la requête HTTP
+ * @param res la réponse HTTP contenant la date de dernière synchro
+ * @param next la fonction pour transmettre les erreurs au middleware d'erreur
+ */
+const getLastSyncDate = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        // recup date + récente
+        const [rows] = await pool.execute<any[]>(
+            "SELECT MAX(updated_at) as last_sync FROM Job_Offers;"
+        );
+
+        // return result
+        res.status(200).json({ last_sync: rows[0].last_sync });
+    } catch (error) {
+        next(error);
+    }
+};
+export { getJobOffers, getJobOfferById, createJobOffer, updateJobOffer, deleteJobOffer, totalJobOffersCount, refreshJobOffers, getLastSyncDate };

@@ -6,13 +6,12 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Footer from "../components/layout/Footer";
-import Navbar from "../components/layout/Navbar";
+import MainNavbar from "../components/layout/MainNavbar";
 import PostJobForm from "../components/dashboard/PostJobForm";
 import CompanyJobsList from "../components/dashboard/CompanyJobsList";
 // icone
 import { PlusCircle, LayoutList, ArrowLeft } from "lucide-react";
 // img
-import Leaves from "../assets/images/Leaves.png";
 import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 // data
 import { COMPANY_JOBS_MOCK } from "../data/companyJobsMock";
@@ -94,7 +93,7 @@ export default function CompanyForm() {
 
     return (
         <main className="flex flex-col min-h-screen bg-bone text-font-primary-dark font-sans">
-            <Navbar />
+            <MainNavbar />
 
             <section className="bg-main-layout">
                 <div className="w-full p-10">
@@ -113,12 +112,12 @@ export default function CompanyForm() {
 
                         </div>
 
-                            <Link
-                                to="/company/dashboard/"
-                                className=" mb-5 flex items-center justify-center gap-2 flex-1 font-bold text-sm text-font-primary-dark hover:text-primary"
-                            >
-                            <ArrowLeft/>    Retour
-                            </Link>
+                        <Link
+                            to="/company/dashboard/"
+                            className=" mb-5 flex items-center justify-center gap-2 flex-1 font-bold text-sm text-font-primary-dark hover:text-primary"
+                        >
+                            <ArrowLeft />    Retour
+                        </Link>
 
                         {/* onglets */}
                         <div

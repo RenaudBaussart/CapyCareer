@@ -8,10 +8,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -96,
-        96
+        1184,
+        -128
       ],
-      "id": "feb1c635-7740-44db-84dd-8a803ac1b439",
+      "id": "7b1c4985-effc-44ac-ab35-7a9d3a11410e",
       "name": "Wait",
       "webhookId": "04ebfba1-e76f-44f0-bf8a-51e9aab4b3d6"
     },
@@ -29,10 +29,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        -928,
-        80
+        352,
+        -144
       ],
-      "id": "7a6ebd8f-201e-4edb-b4db-6be2a6055633",
+      "id": "11734e83-2866-4ae7-a3ad-141692ec5ccb",
       "name": "Schedule Trigger"
     },
     {
@@ -46,10 +46,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -928,
-        -64
+        352,
+        -288
       ],
-      "id": "4b352b51-dbec-44bb-bed9-196cf8606696",
+      "id": "5f7537b8-811b-42d8-b195-d784a4b9e5d9",
       "name": "refresh-capycareer",
       "webhookId": "4dccdc7e-278a-442c-b397-aabbfccfa670"
     },
@@ -62,10 +62,10 @@
       "type": "n8n-nodes-base.n8nTrigger",
       "typeVersion": 1,
       "position": [
-        -928,
-        240
+        352,
+        16
       ],
-      "id": "c1d4feae-9ecd-45e2-94e1-e266c0403ff3",
+      "id": "65c0316f-37eb-49e9-ba2b-ec784438ed78",
       "name": "n8n Trigger"
     },
     {
@@ -91,15 +91,19 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -608,
-        80
+        672,
+        -144
       ],
-      "id": "f366e741-5b34-4c0f-9da7-92677a01e95d",
+      "id": "bd0d8d8e-cebb-4c0b-8fde-4208debf169d",
       "name": "HTTP Request WLD",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "",
-          "name": ""
+          "id": "aoM8H7ArxvuZ0cJ4",
+          "name": "Header Auth account"
+        },
+        "httpBearerAuth": {
+          "id": "7pVWiWAv02k0k10j",
+          "name": "Bearer Auth account"
         }
       }
     },
@@ -130,10 +134,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -384,
-        80
+        896,
+        -144
       ],
-      "id": "94249630-7d1a-4402-bfdb-0d712497d099",
+      "id": "de7f586b-6fe7-43cd-9bf5-00ea35914fbd",
       "name": "If offers true"
     },
     {
@@ -145,10 +149,10 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -48,
-        -64
+        1232,
+        -288
       ],
-      "id": "726232de-805f-42b2-9689-79109c19f139",
+      "id": "d94eba02-d195-42af-ac89-f3f83476d740",
       "name": "Split 1 item to offers nb"
     },
     {
@@ -234,10 +238,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        176,
-        -64
+        1440,
+        -288
       ],
-      "id": "e10ab8d0-3587-415f-a1ae-71adea3ddd79",
+      "id": "897effec-aebb-4cb8-ad3c-b2008785944c",
       "name": "get what we need"
     },
     {
@@ -247,10 +251,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        432,
-        -64
+        1616,
+        -288
       ],
-      "id": "b67f5242-700d-477b-afa1-4f84e7743741",
+      "id": "8d9a6c39-36e5-47cb-aea7-4bae1a54914d",
       "name": "sanitize"
     },
     {
@@ -267,38 +271,226 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        672,
-        -64
+        1872,
+        -288
       ],
-      "id": "22fdd619-18a8-4cab-a3aa-389bbec79047",
+      "id": "66d5d14d-3d91-4269-b272-dd2b5f2314a9",
       "name": "Upsert in database",
       "credentials": {
         "mySql": {
-          "id": "",
-          "name": ""
+          "id": "4h7Vb7PBI0qrIJXd",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2048,
+        -96
+      ],
+      "id": "97740a39-b7ec-4d5c-aace-889528c675db",
+      "name": "Basic LLM Chain",
+      "executeOnce": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": "choix_pole_emploi:latest",
+        "options": {
+          "keepAlive": "5m"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        176
+      ],
+      "id": "c0ce2bad-c73e-4fc5-98ba-b11d4a738480",
+      "name": "Ollama Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "BwZ44dmOuiP7mBwu",
+          "name": "Ollama account"
         }
       }
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT COUNT(*) as total FROM Job_Offers;",
+        "query": "SELECT * FROM `Job_Offers` WHERE `tag` IS NULL LIMIT 5;",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        96,
-        288
+        1408,
+        -96
       ],
-      "id": "128f198e-d753-4ff0-8daf-cbd4da942c28",
-      "name": "how much offers in db ?",
+      "id": "fc3d5ffc-9718-4def-ab98-00e297b989e2",
+      "name": "Execute a SQL query",
       "credentials": {
         "mySql": {
-          "id": "",
-          "name": ""
+          "id": "4h7Vb7PBI0qrIJXd",
+          "name": "MySQL account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "Job_Offers",
+          "mode": "list",
+          "cachedResultName": "Job_Offers",
+          "cachedResultUrl": ""
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "PK_id",
+        "valueToMatchOn": "={{ $json.PK_id }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "tag",
+              "value": "={{ $json.tag }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        2608,
+        -96
+      ],
+      "id": "e8f0db08-1535-4c68-9ee7-7f8bebebdb53",
+      "name": "Update rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "4h7Vb7PBI0qrIJXd",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d468e53e-cd38-4246-bafa-b36085356626",
+              "name": "PK_id",
+              "value": "={{ $node[\"tag-feature-first-input\"].json.PK_id }}",
+              "type": "string"
+            },
+            {
+              "id": "4bd6357a-4b4a-4228-9763-ea56b52b0572",
+              "name": "tag",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2400,
+        -96
+      ],
+      "id": "5e023f3b-8f55-4f1d-aaa8-3cdfb325cf98",
+      "name": "tag-feature-second-input"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "409072f0-2436-498c-b559-711e6ace1e86",
+              "name": "PK_id",
+              "value": "={{ $json.PK_id }}",
+              "type": "number"
+            },
+            {
+              "id": "1180c4bb-f4d0-4850-8fb4-2b75c520b72a",
+              "name": "chatInput",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1840,
+        -96
+      ],
+      "id": "1f877a52-1b14-4164-9bf7-c8e47a924960",
+      "name": "tag-feature-first-input"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8ac07e7a-8b25-4c21-802d-486756607434",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1616,
+        -96
+      ],
+      "id": "c185d8a8-c695-4691-8184-45450130f78d",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        128
+      ],
+      "id": "bf624ee3-c8f5-4548-a82e-423f469d0177",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        -288
+      ],
+      "id": "7000bba8-d54a-4da8-97c9-529f7c7209a4",
+      "name": "No Operation, do nothing1"
     }
   ],
   "pinData": {},
@@ -374,7 +566,7 @@
         ],
         [
           {
-            "node": "how much offers in db ?",
+            "node": "Execute a SQL query",
             "type": "main",
             "index": 0
           }
@@ -414,9 +606,99 @@
         ]
       ]
     },
-    "how much offers in db ?": {
+    "Basic LLM Chain": {
       "main": [
-        []
+        [
+          {
+            "node": "tag-feature-second-input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tag-feature-second-input": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tag-feature-first-input": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "tag-feature-first-input",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert in database": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -424,17 +706,14 @@
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
-    "availableInMCP": false,
-    "timeSavedMode": "fixed",
-    "timezone": "Europe/Paris",
-    "callerPolicy": "workflowsFromSameOwner"
+    "availableInMCP": false
   },
-  "versionId": "645018bf-77b1-49eb-9090-1b0f709a5dc9",
+  "versionId": "03d281fe-af3d-4775-9ea7-402f0f1bfb15",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "6888813f73990a8dac112bbd6ccbc9ebd5532a8cd7b550a9fc22bddf2f93fe8a"
+    "instanceId": "d4d03c9ffcd461a7e6a7b5d02ffa4a5e6a869024df4c2306f38b1b3b8280fdd0"
   },
   "nodeGroups": [],
-  "id": "",
+  "id": "ockVmPlboPYS9pl7",
   "tags": []
 }

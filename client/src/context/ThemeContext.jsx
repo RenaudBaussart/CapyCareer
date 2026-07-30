@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 // contexte gérant le mode clair / sombre
 
 import { createContext, useState, useEffect } from "react";
