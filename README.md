@@ -32,11 +32,11 @@ La squad derrière CapyCareer :
 
 | Catégorie | Technologies |
 |------------|--------------|
-| **Front-end** | React 19, TypeScript, Vite, Tailwind CSS, React Router, React Hook Form, Zod, React Quill, Lucide React |
-| **Back-end** | Node.js, Express 5, TypeScript, MySQL, JWT, Bcrypt, Multer |
+| **Front-end** | React 19, TypeScript, Vite, Tailwind CSS, React Router, React Hook Form, Zod, React Quill, Lucide React, JWT-Decode |
+| **Back-end** | Node.js, Express 5, TypeScript, MySQL, JWT, Bcrypt, Multer, CORS, Morgan, Dotenv |
 | **Sécurité** | Helmet, Express Rate Limit, DOMPurify, Sanitize-HTML, Validator, Leo Profanity |
 | **Documentation & Tests** | Swagger (OpenAPI), Jest, Supertest |
-| **Outils** | ESLint, Prettier, Concurrently |
+| **Outils** | ESLint, Prettier, Concurrently, TSX, Nodemon |
 
 ## Prérequis
 
@@ -129,10 +129,16 @@ Cette commande exécute la suite de tests Jest/Supertest pour vérifier l'intég
 
 Pour que tout soit facilement accessible et auditable, nous avons centralisé tous les livrables dans le dossier [`/documentation`](./documentation). Vous y trouverez :
 
-- [`01_data_base`](./documentation/01_data_base) : Schémas et modèles documentés de la base de données.
-- [`02_backend`](./documentation/02_backend) : Documentation de l'API REST.
-- [`03_tests`](./documentation/03_tests) : Documentation relative aux tests et à leur exécution.
-- [`04_config`](./documentation/04_config) : Documentation de configuration du projet.
-- [`05_cybersecurite`](./documentation/05_cybersecurite) : Documentation des mesures de sécurité et de gestion des secrets.
-- [`06_market_research`](./documentation/06_market_research) : Étude de marché, positionnement concurrentiel et justification de la proposition de valeur.
-- [`ADR_Documentation`](./documentation/07_adr_documentation/) : Architecture Decision Records expliquant les choix techniques (Why, How, Trade-offs) concernant l'IA, la data et l'architecture générale.
+- [`01_data_base`](./documentation/01_data_base) : Schémas, scripts SQL et modèles documentés de la base de données.
+- [`02_backend`](./documentation/02_backend) : Documentation détaillée de l'API REST, des routes, middlewares et de l'authentification.
+- [`03_tests`](./documentation/03_tests) : Documentation relative aux tests unitaires/d'intégration et à leur exécution.
+- [`04_config`](./documentation/04_config) : Documentation de configuration du projet (tsconfig, jest, dépendances).
+- [`05_cybersecurite`](./documentation/05_cybersecurite) : Documentation des mesures de sécurité et de protection des données.
+- [`06_market_research`](./documentation/06_market_research) : Étude de marché, positionnement concurrentiel et analyse SWOT.
+- [`07_n8n`](./documentation/07_n8n) : Documentation et choix d'architecture (ADR) concernant l'automatisation n8n.
+- [`08_ai_documentation`](./documentation/08_ai_documentation) : Documentation liée à l'intégration de l'intelligence artificielle.
+- [`09_CI`](./documentation/09_CI) : Architecture Decision Record (ADR) sur l'intégration continue.
+- [`10_Deployement`](./documentation/10_Deployement) : Documentation du déploiement et de la conteneurisation Docker.
+- [`11_frontend`](./documentation/11_frontend) : Documentation des choix techniques front-end et des tableaux de bord.
+- [`12_GLOBAL`](./documentation/12_GLOBAL) : Architecture globale, rétrospectives, brainstorming et wireframes de conception.
+- [`13_WCAG_2.1_AA`](./documentation/13_WCAG_2.1_AA) : Rapports d'audit d'accessibilité et captures d'écran de conformité (Axe DevTools / Lighthouse).
