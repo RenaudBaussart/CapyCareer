@@ -7,24 +7,16 @@ import "react-quill-new/dist/quill.snow.css";
 
 export default function JobEditModal({ isOpen, onClose, onSave, job }) {
     // initialise data
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState(() => ({
+        title: job?.title || "",
+        company: job?.company || "",
+        contract_type: job?.contract_type || "",
+        city: job?.city || "",
+        url: job?.url || "",
+        description: job?.description || "",
+        ...job
+    }));
     const modalRef = useClickOutside(onClose);
-
-    useEffect(() => {
-        if (isOpen && job) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setFormData({
-                ...job,
-                title: job.title || "",
-                company: job.company || "",
-                contract_type: job.contract_type || "",
-                city: job.city || "",
-                url: job.url || "",
-                description: job.description || "",
-            });
-        }
-    }, [job, isOpen]);
-
 
     useEffect(() => {
         if (isOpen) {
