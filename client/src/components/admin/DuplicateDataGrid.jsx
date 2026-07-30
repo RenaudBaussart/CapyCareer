@@ -25,7 +25,7 @@ export default function DuplicateDataGrid({ duplicates, handleKeep, handleDelete
                     >
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
-                                <p className="font-medium text-font-primary-dark break-words">{dup.title}</p>
+                                <p className="font-medium text-font-primary-dark wrap-break-word">{dup.title}</p>
                                 <p className="text-sm text-font-primary-dark/70 truncate">{dup.company}</p>
                             </div>
                             <span className={`px-2 py-1 rounded-md text-xs font-medium w-fit shrink-0 ${dup.confidence >= 90 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'
