@@ -47,3 +47,46 @@ Pour faire fonctionner ce workflow, vous devez configurer les "Credentials" (inf
 *   **`httpHeaderAuth` pour WeLoveDevs** : Une clé d'API pour l'endpoint `https://epi-api.welovedevs.com`.
 *   **`mySql`** : Les informations de connexion à la base de données de l'application (hôte, utilisateur, mot de passe, nom de la base).
 *   **`ollamaApi`** : L'URL de base de votre instance Ollama locale (par exemple, `http://localhost:11434`).
+
+## Étapes de Configuration Manuelle
+
+Voici les étapes pour configurer l'environnement n8n et importer le workflow :
+
+1.  **Lancement de l'environnement Docker :**
+    - Assurez-vous que Docker est en cours d'exécution.
+    - Lancez les services (incluant n8n, la base de données et Ollama) avec la commande :
+      ```bash
+      docker-compose up
+      ```
+
+2.  **Connexion à n8n :**
+    - Ouvrez votre navigateur et accédez à l'interface de n8n, généralement `http://localhost:5678`.
+    - Créez un compte administrateur si c'est votre première connexion.
+
+3.  **Importation du Workflow :**
+    - Dans l'interface n8n, allez dans la section des workflows.
+    - Cliquez sur "Import from File" (Importer depuis un fichier).
+    - Sélectionnez le fichier `n8n/Job_Agreggator.json` depuis la racine du projet pour importer le workflow d'agrégation.
+
+4.  **Configuration des Credentials :**
+    - Dans le menu de gauche, allez dans "Credentials" et cliquez sur "Add credential".
+    - Vous devrez configurer les informations d'identification suivantes, qui sont requises par le workflow importé :
+
+    - **a. API WeLoveDevs (WLD) :**
+        - Type de credential : `Header Auth`
+        - Nom : `httpHeaderAuth` (ou un nom de votre choix)
+        - Nom du Header : `X-API-Key`
+        - Valeur du Header : *[votre clé d'API WeLoveDevs]*
+
+    - **b. Base de données MySQL :**
+        - Type de credential : `MySQL`
+        - Nom : `mySql` (ou un nom de votre choix)
+        - Remplissez les champs : Hôte, Nom de la base de données, Utilisateur et Mot de passe. Les valeurs se trouvent généralement dans votre fichier `docker-compose.yml` ou `.env`.
+
+    - **c. Modèle Ollama :**
+        - Type de credential : `Ollama API`
+        - Nom : `ollamaApi` (ou un nom de votre choix)
+        - URL de base : `http://ollama:11434` (c'est le nom du service Docker, accessible depuis le conteneur n8n).
+
+5.  **Activation du Workflow :**
+    - Une fois le workflow importé et les credentials configurés, n'oubliez pas d'activer le workflow en basculant l'interrupteur "Active" en haut à gauche de l'éditeur de workflow.
