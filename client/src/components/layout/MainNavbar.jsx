@@ -20,8 +20,8 @@ export default function MainNavbar() {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
             userRole = payload.role || "candidat";
-        } catch (error) {
-            console.error("Impossible de lire le token");
+        } catch {
+            // console.error("Impossible de lire le token");
         }
     }
 

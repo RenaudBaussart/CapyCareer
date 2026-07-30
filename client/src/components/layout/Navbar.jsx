@@ -2,14 +2,14 @@
 
 // import
 import { useState, useContext } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 // component 
 import ProfileMenu from "./ProfileMenu";
 // context
 import { AuthContext } from "../../context/AuthContext";
 import { HandednessContext } from "../../context/HandednessContext";
 // hook
-import { useHandedness } from "../../hook/useHandedness.js";
+// import { useHandedness } from "../../hook/useHandedness.js";
 // icone
 import { Home, Building2, UserPlus, LogIn, Menu, X, User, LogOut, Sun, Moon } from "lucide-react";
 import { useTheme } from "../../hook/useTheme";

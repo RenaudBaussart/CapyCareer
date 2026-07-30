@@ -22,6 +22,7 @@ export function useN8nSync() {
 
     // charge la date au lancement de la page
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchLastSync();
     }, []);
 

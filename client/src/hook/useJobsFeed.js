@@ -124,8 +124,8 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   useEffect(() => {
     if (mode !== "saved") return;
     if (saved.size === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       // TODO : refactor pour eviter le rendu en cascade
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSavedDetails([]);
       setSavedError(null);
       return;

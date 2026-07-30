@@ -9,8 +9,6 @@ import MainNavbar from "../components/layout/MainNavbar";
 import Footer from "../components/layout/Footer";
 // icones
 import { Terminal, Code2, ShieldAlert } from "lucide-react";
-// img
-import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function ApiDoc() {
   return (

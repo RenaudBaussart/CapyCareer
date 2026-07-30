@@ -195,7 +195,7 @@ export function useUserProfile() {
     };
 
     return {
-        profileData, handleChange, handleCVUpload, disableNotifications,
+        profileData, handleChange,
         requestAccountDeletion, isDeleteModalOpen, setIsDeleteModalOpen, executeAccountDeletion, isDeleting,
         requestSaveProfile, isSaveModalOpen, setIsSaveModalOpen, executeSaveProfile, isSaving,
         isGdprModalOpen, setIsGdprModalOpen, requestGdprData, downloadGdprData, gdprData, isLoadingGdpr

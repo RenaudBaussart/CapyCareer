@@ -2,7 +2,7 @@
 
 // import
 import { useState, useEffect } from "react";
-// import { fetchJobOffers, fetchJobOfferDetail } from "../services/jobs.service";
+import { fetchJobOffers } from "../services/jobs.service";
 
 export function useAdminJobs() {
     // etats principaux

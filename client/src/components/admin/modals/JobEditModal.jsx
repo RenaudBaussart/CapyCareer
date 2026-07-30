@@ -12,6 +12,7 @@ export default function JobEditModal({ isOpen, onClose, onSave, job }) {
 
     useEffect(() => {
         if (isOpen && job) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setFormData({
                 ...job,
                 title: job.title || "",

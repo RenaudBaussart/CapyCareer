@@ -6,7 +6,6 @@ import { useAdminLogs } from "../../hook/useAdminLogs";
 import MainNavbar from "../../components/layout/MainNavbar";
 import LogDataGrid from "../../components/admin/LogDataGrid";
 import AdminActionModal from "../../components/admin/modals/AdminActionModal";
-import Leaves from "../../assets/images/Leaves.png";
 // icone
 import { Search, Terminal, Trash2, ShieldAlert } from "lucide-react";
 

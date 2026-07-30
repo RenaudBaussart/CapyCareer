@@ -11,8 +11,6 @@ import PostJobForm from "../components/dashboard/PostJobForm";
 import CompanyJobsList from "../components/dashboard/CompanyJobsList";
 // icone
 import { PlusCircle, LayoutList, ArrowLeft } from "lucide-react";
-// img
-import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 // data
 import { COMPANY_JOBS_MOCK } from "../data/companyJobsMock";
 

@@ -2,11 +2,11 @@
 
 // import
 import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // call du hook
 import { useClickOutside } from "../../hook/useClickOutside";
 // icone
-import { ChevronDown, User, LogOut } from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
 // img
 import defaultLogo from "../../assets/logos/CapySquare.png";
 // contexte d'authentification
@@ -14,7 +14,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 export default function ProfileMenu({
     roleName = "Profil",
-    profileLink = "/profile",
+    // profileLink = "/profile",
     logoSrc = defaultLogo
 }) {
 
