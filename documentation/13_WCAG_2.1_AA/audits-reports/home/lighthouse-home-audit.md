@@ -18,7 +18,7 @@ Conformément aux exigences du projet, l'interface de **CapyCareer** respecte le
 **Rapport brut :**
 - Le rapport JSON épuré et validé pour cette page est disponible dans :
   ```
-  ./docs/accessibility-home-audit.json
+  ./docs/ligthouse-home-audit.json
   ```
 
 ## 3. Bonnes pratiques d'accessibilité appliquées (WCAG 2.1 AA)

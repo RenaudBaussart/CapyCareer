@@ -21,17 +21,17 @@ Les tests combinés démontrent un score parfait sur Lighthouse et une absence t
 ### 2.1. Page d'Accueil et Fil d'Offres (`/`)
 *   **Lighthouse :** Score de 100/100
 *   **Axe DevTools :** 0 violation détectée (0 critique, 0 sérieuse, 0 modérée, 0 mineure)
-*   *Fichiers de référence : `accessibility-home-audit.json`, `axe-home-audit.json`*
+*   *Fichiers de référence : `lighthouse-home-audit.json`, `axedev-home-audit.json`*
 
 ### 2.2. Page d'Inscription (`/register`)
 *   **Lighthouse :** Score de 100/100
 *   **Axe DevTools :** 0 violation détectée (0 critique, 0 sérieuse, 0 modérée, 0 mineure)
-*   *Fichiers de référence : `accessibility-register-audit.json`, `axe-register-audit.json`*
+*   *Fichiers de référence : `lighthouse-register-audit.json`, `axedev-register-audit.json`*
 
 ### 2.3. Page de Connexion (`/login`)
 *   **Lighthouse :** Score de 100/100
 *   **Axe DevTools :** 0 violation détectée (0 critique, 0 sérieuse, 0 modérée, 0 mineure)
-*   *Fichiers de référence : `accessibility-login-audit.json`, `axe-login-audit.json`*
+*   *Fichiers de référence : `lighthouse-login-audit.json`, `axedev-login-audit.json`*
 
 ---
 
