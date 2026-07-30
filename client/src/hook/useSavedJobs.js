@@ -1,6 +1,6 @@
 // hook gérant les offres sauvegardées
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const SAVED_JOBS_KEY = "capycareer_saved_jobs";
 
@@ -23,13 +23,23 @@ export function useSavedJobs() {
     }
   }, [saved]);
 
-  function toggleSave(id) {
+  const toggleSave = useCallback((id) => {
     setSaved((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
-  }
+  }, []);
 
-  return { saved, toggleSave };
+  // retire une offre sauvegardée si elle n'existe plus
+  const removeSaved = useCallback((id) => {
+    setSaved((prev) => {
+      if (!prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }, []);
+
+  return { saved, toggleSave, removeSaved };
 }

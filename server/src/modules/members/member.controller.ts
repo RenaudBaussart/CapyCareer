@@ -84,4 +84,11 @@ const deleteMyProfile = async (req: Request, res: Response, next: NextFunction) 
     }
 };
 
-export { getMyProfile, updateMyProfile, deleteMyProfile };
+/**
+ * vérifie que le token du membre est toujours valide (compte non ban/supprimé)
+ */
+const checkSession = async (req: Request, res: Response) => {
+    res.status(200).json({ valid: true });
+};
+
+export { getMyProfile, updateMyProfile, deleteMyProfile, checkSession };

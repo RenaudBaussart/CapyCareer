@@ -33,7 +33,7 @@ export default function Login() {
                             <div className="max-w-2xl mx-auto text-center ">
                                 <h1 className="text-4xl font-bold text-font-primary-dark ">Bienvenue !</h1>
                                 <p className="text-font-primary-dark">
-                                    Pour commencer, veuillez vous connecter ou vous inscrire via votre compte Google.
+                                    Pour commencer, veuillez vous connecter {/* ou vous inscrire via votre compte Google */}.
                                 </p>
 
 
