@@ -1,13 +1,17 @@
 import { z } from "zod";
-import { jobOfferFullSchema } from "./job.offers.schema";
+import { jobOfferFullSchema, updateJobOfferSchema } from "./job.offers.schema";
 
 export type fullJobOffer = z.infer<typeof jobOfferFullSchema>;
+export type updateJobOffer = z.infer<typeof updateJobOfferSchema>;
 
 export const createJobFullOffer = (payload: fullJobOffer) => {
     return jobOfferFullSchema.parse(payload);
-}
+};
 
-/* transforme la chaîne tag stockee en BDD en tableau de mots cles */
+export const updateJobFullOffer = (payload: updateJobOffer) => {
+    return updateJobOfferSchema.parse(payload);
+};
+// transforme un string de tags en tableau de tags, en supprimant les espaces et les caractères spéciaux
 export function parseTagString(raw: unknown): string[] {
     if (!raw || typeof raw !== 'string') return [];
 

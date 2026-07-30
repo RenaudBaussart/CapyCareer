@@ -22,7 +22,7 @@ jest.mock("../../config/database", () => ({
     }
 }));
 
-// Mock fetch
+// mock fetch
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
@@ -99,16 +99,30 @@ describe("Job Offers API", () => {
 
         it("should return 400 for an invalid ID", async () => {
             const response = await request(app).get("/api/jobs/invalid-id");
-            // This will be caught by the logic checking for a valid number, and if it proceeds, the DB mock will return nothing
-            (pool.execute as jest.Mock).mockResolvedValueOnce([[], []]);
-            expect(response.status).toBe(404); // As per current controller logic, non-existent job is a 404
+            expect(response.status).toBe(400);
         });
     });
 
     describe("POST /api/jobs", () => {
         it("should create a new job offer and return 201", async () => {
-            const newJob = { title: "New Job", company: "NewCo", url: "http://new.co", is_remote_job: false, is_hybride_job: false, publish_date: new Date().toISOString() };
-            (pool.execute as jest.Mock).mockResolvedValueOnce([{ insertId: 123 }, []]);
+            const newJob = { 
+                title: "Développeur Fullstack",
+                description: "Nous recherchons un développeur passionné pour rejoindre notre équipe.",
+                url: "http://new.co/apply",
+                contract_type: "CDI",
+                city: "Lyon",
+                country: "France",
+                company: "NewCo",
+                is_remote_job: false,
+                is_hybride_job: true,
+                publish_date: new Date().toISOString(),
+                salary_max: 55000,
+                salary_min: 45000,
+                currency: "EUR",
+                user_id: 1
+            };
+            // utilisation de pool.query car le controleur execute pool.query
+            (pool.query as jest.Mock).mockResolvedValueOnce([{ insertId: 123 }, []]);
 
             const response = await request(app).post("/api/jobs").send(newJob);
 
@@ -117,7 +131,7 @@ describe("Job Offers API", () => {
         });
 
         it("should return 400 on validation error", async () => {
-            const badJob = { title: "Bad Job" }; // Missing required fields
+            const badJob = { title: 12345 }; // mauvais type pour declencher l'erreur zod
 
             const response = await request(app).post("/api/jobs").send(badJob);
 
@@ -128,8 +142,24 @@ describe("Job Offers API", () => {
 
     describe("PUT /api/jobs/:id", () => {
         it("should update a job offer and return 200", async () => {
-            const updatedJob = { title: "Updated Job", company: "UpdatedCo", url: "http://updated.co", is_remote_job: true, is_hybride_job: false, publish_date: new Date().toISOString() };
-            (pool.execute as jest.Mock).mockResolvedValueOnce([{ affectedRows: 1 }, []]);
+            const updatedJob = { 
+                title: "Updated Job", 
+                company: "UpdatedCo", 
+                url: "http://updated.co",
+                description: "An updated description",
+                contract_type: "CDD",
+                city: "Bordeaux",
+                country: "France",
+                is_remote_job: true, 
+                is_hybride_job: false, 
+                publish_date: new Date().toISOString(),
+                salary_max: 65000,
+                salary_min: 50000,
+                currency: "EUR",
+                user_id: 1
+            };
+            // utilisation de pool.query car le controleur execute pool.query
+            (pool.query as jest.Mock).mockResolvedValueOnce([{ affectedRows: 1 }, []]);
 
             const response = await request(app).put("/api/jobs/1").send(updatedJob);
 
@@ -138,8 +168,12 @@ describe("Job Offers API", () => {
         });
 
         it("should return 404 if the job to update is not found", async () => {
-            const updatedJob = { title: "Non-existent Job", company: "GhostCo", url: "http://ghost.co", is_remote_job: false, is_hybride_job: false, publish_date: new Date().toISOString() };
-            (pool.execute as jest.Mock).mockResolvedValueOnce([{ affectedRows: 0 }, []]);
+            const updatedJob = { 
+                title: "Non-existent Job", 
+                company: "GhostCo"
+            };
+            // utilisation de pool.query car le controleur execute pool.query
+            (pool.query as jest.Mock).mockResolvedValueOnce([{ affectedRows: 0 }, []]);
 
             const response = await request(app).put("/api/jobs/999").send(updatedJob);
 
@@ -189,7 +223,6 @@ describe("Job Offers API", () => {
         });
 
         it("should return 500 if the webhook URL is not configured", async () => {
-            // remove the webhook URL config for this test
             delete (env as any).N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL;
 
             const response = await request(app).post("/api/jobs/refresh");

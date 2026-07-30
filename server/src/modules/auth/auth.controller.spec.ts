@@ -11,6 +11,15 @@ import { ConflictError, UnauthorizedError, InternalServerError } from "../../cor
 jest.mock("./auth.service");
 jest.mock("jsonwebtoken");
 
+jest.mock('../../core/middlewares/authMiddleware', () => ({
+    middlewareAuth: jest.fn((req: any, res: any, next: any) => {
+        // j'injecte un faux profil utilisateur dans la requête
+        req.user = { id: 1, role: 'member' };
+        req.token = 'fake-token';
+        next();
+    })
+}));
+
 jest.mock("../../core/errors/ErrorsLogger", () => ({
     logErrorToFile: jest.fn()
 }));
