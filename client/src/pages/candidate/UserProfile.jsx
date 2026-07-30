@@ -6,11 +6,11 @@ import { useUserProfile } from "../../hook/useUserProfile";
 import MainNavbar from "../../components/layout/MainNavbar";
 import ConfirmModal from "../../components/modals/ConfirmModal";
 import GdprDataModal from "../../components/ui/GdprDataModal";
-import { User, Mail, Save, GraduationCap, Upload, Shield, BellOff, Trash2, FileText } from "lucide-react";
+import { User, Mail, Save, GraduationCap, Shield, Trash2, FileText } from "lucide-react";
 
 export default function UserProfile() {
     const {
-        profileData, handleChange, handleCVUpload, disableNotifications,
+        profileData, handleChange,
         // var delete
         requestAccountDeletion, isDeleteModalOpen, setIsDeleteModalOpen, executeAccountDeletion, isDeleting,
         // var save

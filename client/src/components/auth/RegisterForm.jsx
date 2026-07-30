@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // schema zod
 import { registerSchema } from "../../schemas/auth.schema";
 // icone
-import { UserPlus } from "lucide-react";
+// import { UserPlus } from "lucide-react";
 // navigation
 import { Link, useNavigate } from "react-router-dom";
 // afficher/masquer mdp
@@ -44,6 +44,7 @@ export default function RegisterForm() {
 
     try {
       // retire confirmation mdp & isole aux datas
+      // eslint-disable-next-line no-unused-vars
       const { confirmPassword, ...formData } = data;
 
       // structure data pour back

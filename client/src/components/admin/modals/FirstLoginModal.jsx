@@ -7,16 +7,18 @@ const STORAGE_KEY = "capycareer_first_login_seen";
 const ANIMATION_DURATION = 250; // ms, doit matcher la durée du CSS (index.css)
 
 export default function FirstLoginModal() {
-    const [isVisible, setIsVisible] = useState(false);
+// initialisation SI pas dde clé cest true
+    const [isVisible, setIsVisible] = useState(() => !localStorage.getItem(STORAGE_KEY));
     const [isClosing, setIsClosing] = useState(false);
-
+    
+    // Le useEffect a été complètement supprimé
     // vérifie au montage si la modale a déjà été vue
-    useEffect(() => {
-        const hasSeenModal = localStorage.getItem(STORAGE_KEY);
-        if (!hasSeenModal) {
-            setIsVisible(true);
-        }
-    }, []);
+    // useEffect(() => {
+    //     const hasSeenModal = localStorage.getItem(STORAGE_KEY);
+    //     if (!hasSeenModal) {
+    //         setIsVisible(true);
+    //     }
+    // }, []);
 
     const handleClose = () => {
         setIsClosing(true);

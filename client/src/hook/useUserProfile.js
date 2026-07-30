@@ -106,17 +106,6 @@ export function useUserProfile() {
         }
     };
 
-    const handleCVUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-           
-        }
-    };
-
-    const disableNotifications = () => {
-
-    };
-
     // logique rgpd
 
     const requestGdprData = async () => {
