@@ -7,10 +7,6 @@ CREATE TABLE `Search_history` (
   `search_text` VARCHAR(150) NOT NULL
 );
 
-CREATE TABLE `Job_tags` (
-  `name` VARCHAR(100) PRIMARY KEY
-);
-
 CREATE TABLE `User_` (
   `PK_id` INT PRIMARY KEY AUTO_INCREMENT,
   `email` VARCHAR(100) UNIQUE NOT NULL,
@@ -35,14 +31,15 @@ CREATE TABLE `Job_Offers` (
   `city` VARCHAR(150),
   `country` VARCHAR(150),
   `FK_user_id` INT,
-  `is_remote_job` bool,
-  `is_hybride_job` bool,
+  `remote` bool,
+  `hybrid` bool,
   `publish_date` date,
   `salary_max` int,
   `salary_min` int,
   `currency` char(3),
   `company` varchar(250),
-  `active` bool
+  `active` bool,
+  `tag` TEXT
 );
 
 CREATE TABLE `Applied` (
@@ -57,12 +54,6 @@ CREATE TABLE `Searched` (
   PRIMARY KEY (`FK_user_id`, `FK_id_search_history`)
 );
 
-CREATE TABLE `defined` (
-  `FK_job_offer_id` int,
-  `FK_job_tag_name` VARCHAR(100),
-  PRIMARY KEY (`FK_job_offer_id`, `FK_job_tag_name`)
-);
-
 CREATE TABLE `Banned` (
   `PK_banned_id` INT PRIMARY KEY AUTO_INCREMENT,
   `email` VARCHAR(100) NOT NULL,
@@ -72,7 +63,7 @@ CREATE TABLE `Banned` (
 CREATE TABLE `Blacklist` (
   `PK_blacklist_id` INT PRIMARY KEY AUTO_INCREMENT,
   `token` VARCHAR(2048) NOT NULL,
-  `blacklist_at` date NOT NULL
+  `blacklisted_at` date NOT NULL
 );
 
 CREATE UNIQUE INDEX `User__index_0` ON `User_` (`email`);
@@ -88,7 +79,3 @@ ALTER TABLE `Applied` ADD FOREIGN KEY (`FK_job_offer_id`) REFERENCES `Job_Offers
 ALTER TABLE `Searched` ADD FOREIGN KEY (`FK_user_id`) REFERENCES `User_` (`PK_id`) ON DELETE CASCADE;
 
 ALTER TABLE `Searched` ADD FOREIGN KEY (`FK_id_search_history`) REFERENCES `Search_history` (`PK_id`) ON DELETE CASCADE;
-
-ALTER TABLE `defined` ADD FOREIGN KEY (`FK_job_offer_id`) REFERENCES `Job_Offers` (`PK_id`) ON DELETE CASCADE;
-
-ALTER TABLE `defined` ADD FOREIGN KEY (`FK_job_tag_name`) REFERENCES `Job_tags` (`name`) ON DELETE CASCADE;
