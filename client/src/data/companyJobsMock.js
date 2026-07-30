@@ -1,0 +1,85 @@
+// fichier de données de démo pour le dashboard entreprise
+// WARNING: fichier temporaire, à supprimer une fois l'API branchée
+export const COMPANY_JOBS_MOCK = [
+  {
+    id: "job-1",
+    title: "Software Engineer Fullstack - CDI Paris",
+    contractType: "CDI",
+    city: "Paris",
+    country: "France",
+    remote: false,
+    hybrid: true,
+    salaryMin: 42000,
+    salaryMax: 52000,
+    currency: "EUR",
+    description:
+      "Nous recherchons un·e développeur·se fullstack pour rejoindre notre équipe produit. Tu travailleras sur nos applications React/Node.js et participeras aux choix techniques.",
+    status: "active",
+    createdAt: "2025-11-02",
+    applicants: [
+      {
+        id: "app-1",
+        name: "Camille Bernard",
+        email: "camille.bernard@example.com",
+        appliedAt: "2025-11-05",
+        status: "pending",
+      },
+      {
+        id: "app-2",
+        name: "Yanis Ferreira",
+        email: "yanis.ferreira@example.com",
+        appliedAt: "2025-11-06",
+        status: "accepted",
+      },
+      {
+        id: "app-3",
+        name: "Sarah El Amrani",
+        email: "sarah.elamrani@example.com",
+        appliedAt: "2025-11-08",
+        status: "rejected",
+      },
+    ],
+  },
+  {
+    id: "job-2",
+    title: "Alternance - Chargé·e de recrutement",
+    contractType: "Alternance",
+    city: "Lyon",
+    country: "France",
+    remote: false,
+    hybrid: false,
+    salaryMin: null,
+    salaryMax: null,
+    currency: "EUR",
+    description:
+      "Dans le cadre de notre développement, nous recherchons un·e alternant·e pour accompagner nos équipes RH sur le sourcing et la pré-qualification des candidatures.",
+    status: "active",
+    createdAt: "2025-11-10",
+    applicants: [
+      {
+        id: "app-4",
+        name: "Lucas Petit",
+        email: "lucas.petit@example.com",
+        appliedAt: "2025-11-11",
+        status: "pending",
+      },
+    ],
+  },
+  {
+    id: "job-3",
+    title: "Stage - Data Analyst",
+    contractType: "Stage",
+    city: "Paris",
+    country: "France",
+    remote: true,
+    hybrid: false,
+    salaryMin: null,
+    salaryMax: null,
+    currency: "EUR",
+    description:
+      "Stage de 6 mois au sein de notre équipe data. Tu participeras à la construction de tableaux de bord et à l'analyse de nos indicateurs produits.",
+    status: "closed",
+    createdAt: "2025-09-20",
+    applicants: [],
+  },
+];

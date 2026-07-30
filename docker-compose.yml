@@ -1,0 +1,148 @@
+services: 
+
+# frontend
+  client: 
+    build:
+      context: ./client 
+      # Dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${CLIENT_PORT}:${CLIENT_PORT}" 
+      # "Port_Machine_Physique : Port_Conteneur" relie le port 5xxx du PC au port 5xxx du conteneur
+    volumes:
+      - ./client:/app 
+      # Synchronise le code source de du dossier physique ./client avec le dossier /app à l'intérieur du conteneur
+      - /app/node_modules 
+      # astuce de sécurité technique : empêche le volume précédent (notre PC) d'écraser le dossier node_modules généré par le système à l'intérieur du conteneur
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+      - SERVER_PORT=${SERVER_PORT}
+      # injecte une variable pour dire au code React à quelle adresse envoyer ses requêtes vers le backend
+    networks:
+      - app-network 
+      # Connecte ce conteneur au réseau virtuel privé que crée tout en bas
+
+  # backend
+  server: 
+    build:
+      context: ./server 
+      # Dockerfile: Dockerfile
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}" 
+      # Expose l'API sur le port 5xxx
+    volumes:
+      - ./server:/app 
+      # Synchronise le code source backend avec le dossier /app à l'intérieur du conteneur
+      - /app/node_modules 
+      # astuce de sécurité technique : empêche le volume précédent (notre PC) d'écraser le dossier node_modules généré par le système à l'intérieur du conteneur
+    environment: 
+      - OVH_DB_HOST=${OVH_DB_HOST} # adresse de la base de données distante chez OVH
+      - OVH_DB_USER=${OVH_DB_USER} # identifiant de connexion OVH
+      - OVH_DB_PASSWORD=${OVH_DB_PASSWORD} # mot de passe OVH
+      - OVH_DB_NAME=${OVH_DB_NAME} # nom exact de la base de données.
+      - OVH_DB_PORT=${OVH_DB_PORT} # port de connexion à la base de données
+      - WLD_API_KEY=${WLD_API_KEY} # clé secrète pour récupérer les offres WLD
+      - JWT_SECRET=${JWT_SECRET} # clé secrète pour signer les tokens JWT
+      - JWT_EXPIRATION=${JWT_EXPIRATION} # durée de validité des tokens JWT
+      - JWT_LONG_EXPIRATION=${JWT_LONG_EXPIRATION} # durée de validité des tokens JWT pour les sessions prolongées
+      - SALTROUNDS=${SALTROUNDS} # nombre de tours de salage pour le hachage des mots de passe
+      - ATTACK_DB_HOST=${ATTACK_DB_HOST} # adresse de la base de données d'attaque distante chez OVH
+      - ATTACK_DB_USER=${ATTACK_DB_USER} # identifiant de connexion OVH
+      - ATTACK_DB_PASSWORD=${ATTACK_DB_PASSWORD} # mot de passe OVH
+      - ATTACK_DB_NAME=${ATTACK_DB_NAME} # nom exact de la base de données d'attaque.
+      - ATTACK_DB_PORT=${ATTACK_DB_PORT} # port de connexion à la base de données d'attaque
+      - N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL=${N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL} # URL du webhook n8n pour rafraîchir les offres d'emploi, permettant au backend de déclencher des workflows automatisés dans n8n.
+    networks:
+      - app-network 
+      # Connecte le backend au réseau virtuel privé.
+
+  # n8n
+  n8n: 
+    image: docker.n8n.io/n8nio/n8n 
+    # Utilise l'image officielle de n8n, un outil d'automatisation de flux de travail.
+    ports:
+      - "${N8N_APP_PORT}:${N8N_APP_PORT}" 
+      # Expose le port ${N8N_APP_PORT} pour accéder à l'interface web de n8n depuis le navigateur.
+    environment:
+    # Injecte des variables d'environnement pour configurer n8n.
+      - N8N_HOST=${N8N_APP_HOST} # Permet à n8n d'écouter sur toutes les interfaces réseau du conteneur.
+      - N8N_PORT=${N8N_APP_PORT} # Indique à n8n d'utiliser le port 5678 pour son interface web.
+      - N8N_PROTOCOL=${N8N_APP_PROTOCOL} # Spécifie que n8n utilisera le protocole HTTP pour les communications.
+      - NODE_ENV=${N8N_APP_NODE_ENV} # Indique que n8n fonctionne en mode production, optimisant ainsi les performances et la sécurité.
+      - N8N_DIAGNOSTICS_ENABLED=false # Désactive l'envoi de données de diagnostic à n8n, protégeant ainsi la confidentialité des informations de l'utilisateur.
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=true # Désactive les notifications de mise à jour de n8n, évitant ainsi les interruptions ou distractions pour l'utilisateur.
+      - N8N_UNVERIFIED_PACKAGES_ENABLED=true
+      - N8N_COMPRESSION_NODE_MAX_DECOMPRESSED_SIZE_BYTES=2147483648
+      - N8N_COMPRESSION_NODE_MAX_ZIP_ENTRIES=5000
+      - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN} # Définit le jeton d'authentification pour sécuriser la communication entre n8n et les runners externes, garantissant que seules les instances autorisées peuvent exécuter des tâches.
+      - N8N_RUNNERS_TASK_TIMEOUT=60
+      - N8N_RUNNERS_BROKER_LISTEN_ADDRESS=0.0.0.0 # Configure n8n pour écouter sur toutes les interfaces réseau du conteneur pour les communications avec les runners.
+      - N8N_RUNNERS_TASK_REQUEST_TIMEOUT=${N8N_RUNNERS_TASK_REQUEST_TIMEOUT}
+      - N8N_RUNNERS_ENABLED=true
+    restart: always
+    # Assure que le conteneur n8n redémarre automatiquement en cas de plantage ou d'arrêt, garantissant ainsi une disponibilité continue.
+    depends_on:
+      - server
+      # Assure que le conteneur n8n ne démarre qu'après le démarrage du conteneur backend, garantissant que les services nécessaires sont disponibles.
+
+    volumes:
+      - n8n_data:/home/node/.n8n 
+      # Monte le volume nommé "n8n_data" dans le conteneur à l'emplacement /home/node/.n8n, permettant à n8n de stocker ses données persistantes (comme les workflows et configurations) de manière sécurisée et durable.
+    networks:
+      - app-network 
+      # Connecte n8n au réseau.
+
+  # n8n-runners c'est un conteneur qui va exécuter les tâches de n8n en parallèle, permettant d'améliorer les performances et la réactivité de l'application.
+  n8n-runners:
+    image: n8nio/runners:latest
+    container_name: n8n-runners
+    environment:
+      - N8N_RUNNERS_TASK_BROKER_URI=${N8N_RUNNERS_TASK_BROKER_URI}
+      - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+    restart: always
+    depends_on:
+      - n8n
+    networks:
+      - app-network
+  
+  # ollama (IA en local)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: always
+    networks:
+      - app-network
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ollama-init
+    environment:
+      - OLLAMA_HOST=ollama:11434 
+    volumes:
+      - ./Modelfile:/Modelfile 
+    command: create choix_pole_emploi -f /Modelfile
+    depends_on:
+      ollama:
+        condition: service_started
+      n8n:
+        condition: service_started 
+    networks:
+      - app-network
+
+# Déclaration des volumes
+volumes: 
+  n8n_data: 
+  # Crée un volume nommé "n8n_data" pour stocker les données persistantes de n8n, garantissant que les workflows et configurations ne sont pas perdus lors des redémarrages ou mises à jour du conteneur.
+  ollama_data:
+  # Crée un volume nommé "ollama_data" pour stocker les données persistantes de l'IA Ollama, assurant que les modèles et configurations restent intacts même après le redémarrage ou la mise à jour du conteneur.
+networks: 
+# Déclaration des réseaux
+  app-network: 
+  # Crée un réseau virtuel privé nommé "app-network" pour permettre aux conteneurs de communiquer entre eux de manière sécurisée et isolée.
+    driver: bridge 
+    # Utilise le pilote "bridge" pour créer un réseau isolé, permettant aux conteneurs de communiquer entre eux tout en restant séparés du réseau externe, offrant ainsi une couche supplémentaire de sécurité et de contrôle.

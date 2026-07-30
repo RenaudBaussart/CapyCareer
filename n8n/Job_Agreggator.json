@@ -1,0 +1,810 @@
+{
+  "name": "Job_Agreggator",
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        864
+      ],
+      "id": "7eb27cbd-23c5-46c0-a0ef-86e21b741275",
+      "name": "Wait",
+      "webhookId": "04ebfba1-e76f-44f0-bf8a-51e9aab4b3d6"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -64,
+        768
+      ],
+      "id": "faeb781a-a4a2-4ec6-8aef-0a9d6cbffb8b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "refresh-capycareer",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -64,
+        624
+      ],
+      "id": "dfa1e95d-9027-4141-bc65-fd7e52818660",
+      "name": "refresh-capycareer",
+      "webhookId": "4dccdc7e-278a-442c-b397-aabbfccfa670"
+    },
+    {
+      "parameters": {
+        "events": [
+          "init"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        928
+      ],
+      "id": "e133cf64-4bd3-430a-bd59-ecc656eeaf79",
+      "name": "n8n Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://epi-api.welovedevs.com/v1",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "size",
+              "value": "100"
+            },
+            {
+              "name": "page",
+              "value": "={{ $runIndex }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        256,
+        768
+      ],
+      "id": "2be4cb44-7be1-4c29-8b45-de81fe1df5dd",
+      "name": "HTTP Request WLD",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "values",
+        "include": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        768,
+        592
+      ],
+      "id": "91c611e2-83d6-4758-8c09-dc69d0c7507d",
+      "name": "Split 1 item to offers nb"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a45e635e-847d-49c8-8b38-58fc5b9b641c",
+              "name": "id",
+              "value": "={{ $itemIndex + 1 }}",
+              "type": "string"
+            },
+            {
+              "id": "273092dc-5912-41ce-9f76-62c86b0f809f",
+              "name": "name",
+              "value": "={{ $json.values.profession.langContent.en.name }}",
+              "type": "string"
+            },
+            {
+              "id": "9deeab26-ca17-4082-a049-9859e7f01d2a",
+              "name": "title",
+              "value": "={{ $json.values.title }}",
+              "type": "string"
+            },
+            {
+              "id": "1698f8ff-9faf-4b11-a9ea-9aedb35b3a20",
+              "name": "description",
+              "value": "={{ $json.values.mdDescription }}",
+              "type": "string"
+            },
+            {
+              "id": "53e2bf3a-1094-4a61-8b88-e6f08f675724",
+              "name": "url",
+              "value": "={{ $json.values.url }}",
+              "type": "string"
+            },
+            {
+              "id": "b71d8d12-e675-4634-9896-9962e2adbd23",
+              "name": "post_type",
+              "value": "={{ $json.values.contractTypes }}",
+              "type": "string"
+            },
+            {
+              "id": "2c6b7f8c-325b-4453-a7a2-753cb01773a4",
+              "name": "=location",
+              "value": "={{ $json.values.formattedPlaces }}",
+              "type": "array"
+            },
+            {
+              "id": "f2907468-4345-4417-b496-956aacf2b40e",
+              "name": "company",
+              "value": "={{ $json.values.smallCompany.companyName }}",
+              "type": "string"
+            },
+            {
+              "id": "cf33933a-9295-4167-bb1c-2772b8d92c9d",
+              "name": "start",
+              "value": "={{ $json.values.details.start }}",
+              "type": "string"
+            },
+            {
+              "id": "43f56815-23ce-4ee9-9f46-96dfb2fbee19",
+              "name": "status",
+              "value": "={{ $json.values.status }}",
+              "type": "string"
+            },
+            {
+              "id": "acbb01fe-3f37-4c9c-8829-cb42281db86b",
+              "name": "publish_date",
+              "value": "={{ $json.values.publishDate }}",
+              "type": "number"
+            },
+            {
+              "id": "71e25697-f4d1-49b5-8c6a-651d2945f442",
+              "name": "company",
+              "value": "={{ $json.values.smallCompany.companyName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        592
+      ],
+      "id": "00736715-8363-4267-b9e3-c94218277bdd",
+      "name": "get what we need"
+    },
+    {
+      "parameters": {
+        "jsCode": "const normalizedOffers = [];\n\n// Ajout de la plage \\u{1F1E6}-\\u{1F1FF} spécifique aux drapeaux (Regional Indicator Symbols)\nconst emojiRegex = /\\p{Extended_Pictographic}|[\\u{1F1E6}-\\u{1F1FF}\\u{1F300}-\\u{1F9FF}\\u{2600}-\\u{26FF}\\u{2700}-\\u{27BF}\\u{1FA00}-\\u{1FAFF}\\u{2B00}-\\u{2BFF}\\u{2300}-\\u{23FF}]/gu;\n\nfor (const item of $input.all()) {\n    const offer = item.json;\n    \n    // Nettoyage des emojis et drapeaux sur le titre\n    let title = offer.title || offer.name || \"Titre inconnu\";\n    title = title.replace(emojiRegex, '').trim();\n    \n    let description = offer.description || \"\";\n    \n    // Nettoyage des emojis et drapeaux sur la description\n    description = description.replace(emojiRegex, '');\n    \n    description = description\n        .replace(/<[^>]*>/g, ' ')\n        .replace(/\\*\\*/g, '')\n        .replace(/__/g, '')\n        .replace(/[ \\t]+/g, ' ')\n        .replace(/\\* /g, '- ')\n        .trim();\n\n    let contractType = \"NC\";\n    if (offer.post_type) {\n        if (offer.post_type.includes('permanent')) contractType = 'CDI';\n        else if (offer.post_type.includes('freelance')) contractType = 'Freelance';\n        else if (offer.post_type.includes('internship')) contractType = 'Stage';\n        else if (offer.post_type.includes('apprenticeship')) contractType = 'Alternance';\n        else if (offer.post_type.includes('partTime')) contractType = 'Temps partiel';\n        else if (offer.post_type.includes('fixedTerm')) contractType = 'CDD';\n        else contractType = offer.post_type.replace(/\\[|\\]|\"/g, '');\n    }\n\n    if (contractType === 'NC' && (description.toLowerCase().includes('cdd') || description.toLowerCase().includes('contrat à durée déterminée'))) {\n        contractType = 'CDD';\n    }\n\n    let city = null;\n    let country = null;\n    if (offer.location && offer.location.length > 0) {\n        const locParts = offer.location[0].split(',');\n        if (locParts.length > 1) {\n            city = locParts[0].trim();\n            country = locParts[1].trim();\n        } else {\n            country = locParts[0].trim();\n        }\n    }\n\n    const textToSearch = `${title} ${description}`.toLowerCase();\n    \n    const isRemote = textToSearch.includes('remote') || \n                     textToSearch.includes('télétravail') ||\n                     textToSearch.includes('home office');\n                     \n    const isHybrid = textToSearch.includes('hybride') ||\n                     textToSearch.includes('hybrid');\n\n    let salaryMin = null;\n    let salaryMax = null;\n    let currency = \"EUR\";\n    \n    const patterns = [\n        { regex: /(\\d{2,3})\\s*[\\/-]\\s*(\\d{2,3})\\s*k/i, multiplier: 1000 },\n        { regex: /(\\d{2,3})\\s*k\\s*€?\\s*(?:et|à)\\s*(\\d{2,3})\\s*k/i, multiplier: 1000 },\n        { regex: /(?:€|K)?\\s*(\\d{2,3})[\\s,.]?000\\s*(?:-|à)\\s*(?:€|K)?\\s*(\\d{2,3})[\\s,.]?000/i, multiplier: 1 },\n        { regex: /(\\d{2,3})\\s*k\\s*€/i, multiplier: 1000 }\n    ];\n\n    for (const p of patterns) {\n        const match = textToSearch.match(p.regex);\n        if (match) {\n            salaryMin = parseInt(match[1], 10) * p.multiplier;\n            salaryMax = match[2] ? parseInt(match[2], 10) * p.multiplier : salaryMin;\n            break;\n        }\n    }\n\n    if (salaryMin !== null && salaryMin < 1000) {\n        salaryMin = salaryMin * 1000;\n    }\n    if (salaryMax !== null && salaryMax < 1000) {\n        salaryMax = salaryMax * 1000;\n    }\n\n    if (textToSearch.includes('$') || textToSearch.includes('dollar')) {\n        currency = \"USD\";\n    }\n\n    const publishRaw = offer.publish_date || offer.published_at || null;\n    let publishDate = null;\n\n    if (publishRaw) {\n        const dateInMs = Math.floor(publishRaw / 1000);\n        const dateObj = new Date(dateInMs);\n        publishDate = dateObj.toISOString().slice(0, 19).replace('T', ' ');\n    }\n\n    // Récupération de l'entreprise (gestion de plusieurs formats possibles)\n    const company = offer.company_name || (offer.company && offer.company.name) || (typeof offer.company === 'string' ? offer.company : null);\n\n    const rawString = `${title}-${city}-${contractType}-${company}-${publishDate}`.toLowerCase();\n    let contentHash = 0;\n    for (let i = 0; i < rawString.length; i++) {\n        const char = rawString.charCodeAt(i);\n        contentHash = ((contentHash << 5) - contentHash) + char;\n        contentHash = contentHash & contentHash; \n    }\n    const finalHash = Math.abs(contentHash).toString(16);\n\n    normalizedOffers.push({\n        json: {\n            source: \"welovedevs\",\n            source_id: offer.url || finalHash,\n            company: company,\n            title: title,\n            description: description,\n            city: city,\n            country: country,\n            remote: isRemote,\n            hybrid: isHybrid,\n            contract_type: contractType,\n            salary_min: salaryMin,\n            salary_max: salaryMax,\n            currency: currency,\n            url: offer.url,\n            publish_date: publishDate,\n            content_hash: finalHash\n        }\n    });\n}\n\nreturn normalizedOffers;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1216,
+        592
+      ],
+      "id": "6de2c181-b6a5-4eea-a8ae-a269aa620862",
+      "name": "sanitize"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": {
+          "__rl": true,
+          "value": "Job_Offers",
+          "mode": "name"
+        },
+        "columnToMatchOn": "content_hash",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1440,
+        592
+      ],
+      "id": "34b3c526-e6c8-44e9-8fec-c82e9e0380df",
+      "name": "Upsert in database",
+      "credentials": {
+        "mySql": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1680,
+        800
+      ],
+      "id": "ddee6e2f-eb20-4101-aabf-ce697dbd353d",
+      "name": "Basic LLM Chain",
+      "executeOnce": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": "choix_pole_emploi:latest",
+        "options": {
+          "keepAlive": "5m"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        1024
+      ],
+      "id": "950b1432-5841-4e95-b791-ced267ef6f49",
+      "name": "Ollama Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM `Job_Offers` \nWHERE `tag` IS NULL \nAND `description` IS NOT NULL \nAND TRIM(`description`) != '' \nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        992,
+        800
+      ],
+      "id": "a9c9a1fe-bfde-42e9-9002-b2c289d2efbc",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "Job_Offers",
+          "mode": "list",
+          "cachedResultName": "Job_Offers",
+          "cachedResultUrl": ""
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "PK_id",
+        "valueToMatchOn": "={{ $json.PK_id }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "tag",
+              "value": "={{ $json.tag }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        2352,
+        800
+      ],
+      "id": "9d68b176-65eb-46fd-8795-f8ca7d98b3e7",
+      "name": "Update rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d468e53e-cd38-4246-bafa-b36085356626",
+              "name": "PK_id",
+              "value": "={{ $node[\"tag-feature-first-input\"].json.PK_id }}",
+              "type": "string"
+            },
+            {
+              "id": "4bd6357a-4b4a-4228-9763-ea56b52b0572",
+              "name": "tag",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2080,
+        800
+      ],
+      "id": "c39ba374-67d7-457e-aa39-eed5bdfc9773",
+      "name": "tag-feature-second-input"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "409072f0-2436-498c-b559-711e6ace1e86",
+              "name": "PK_id",
+              "value": "={{ $json.PK_id }}",
+              "type": "number"
+            },
+            {
+              "id": "1180c4bb-f4d0-4850-8fb4-2b75c520b72a",
+              "name": "chatInput",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1440,
+        800
+      ],
+      "id": "e90ece9e-6bc6-4883-b1a2-a7997797873b",
+      "name": "tag-feature-first-input"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8ac07e7a-8b25-4c21-802d-486756607434",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1216,
+        800
+      ],
+      "id": "4b2ef9dd-a776-40aa-b076-476768006e89",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        1024
+      ],
+      "id": "62540a38-7b85-44b5-bd42-3413df76e62c",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        592
+      ],
+      "id": "396989a6-c3d8-4a66-bfa5-7ba5af8d193d",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE Job_Offers\nSET active = 0\nWHERE publish_date < DATE_SUB(NOW(), INTERVAL 2 MONTH)\n  AND active = 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        720,
+        1168
+      ],
+      "id": "54c8f3ee-beb7-4a0b-971e-b1b4f4be4430",
+      "name": "update offer status",
+      "credentials": {
+        "mySql": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fd43125f-390d-47fd-a4a0-522695e716e8",
+              "leftValue": "={{ $json.values.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        496,
+        768
+      ],
+      "id": "4285632d-6ea9-4b98-832e-c80b82b2b4bc",
+      "name": "If offers true"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 416,
+        "width": 1616
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        752
+      ],
+      "id": "7d3027a9-0a8c-4bad-b3e8-4a81ca340cae",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 560,
+        "width": 1728,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        528
+      ],
+      "id": "958c78c9-64e1-47c3-92d8-1bfadda8552a",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 224,
+        "width": 480,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1120
+      ],
+      "id": "f8d3d049-7993-48d4-a123-332c6d98a3f3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        912,
+        1168
+      ],
+      "id": "fd508a91-ee37-4b51-8892-40f972524001",
+      "name": "No Operation, do nothing2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request WLD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request WLD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refresh-capycareer": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request WLD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request WLD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request WLD": {
+      "main": [
+        [
+          {
+            "node": "If offers true",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split 1 item to offers nb": {
+      "main": [
+        [
+          {
+            "node": "get what we need",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get what we need": {
+      "main": [
+        [
+          {
+            "node": "sanitize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sanitize": {
+      "main": [
+        [
+          {
+            "node": "Upsert in database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "tag-feature-second-input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tag-feature-second-input": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tag-feature-first-input": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "tag-feature-first-input",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert in database": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update offer status": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If offers true": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split 1 item to offers nb",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "update offer status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "19ee9767-fef9-435a-85b4-8379f2dd4aac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "71c69179a565032d9a17b59c00b8427f050d9a963b19930b78e4951a9f7835bd"
+  },
+  "nodeGroups": [],
+  "id": "iEqX2NPAmZftrJVj",
+  "tags": []
+}

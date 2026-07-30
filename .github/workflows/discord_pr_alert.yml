@@ -1,0 +1,16 @@
+name: Discord PR Alert
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  discord-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GitHub Actions Discord Webhook
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK_URL }}
+        with:
+          args: '@here La PR "${{ github.event.pull_request.title }}" a été créée par ${{ github.actor }}. Vérifie ici : ${{ github.event.pull_request.html_url }}'

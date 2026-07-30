@@ -1,0 +1,77 @@
+// fichier gerant le component menu profil
+
+// import
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+// call du hook
+import { useClickOutside } from "../../hook/useClickOutside";
+// icone
+import { ChevronDown, LogOut } from "lucide-react";
+// img
+import defaultLogo from "../../assets/logos/CapySquare.png";
+// contexte d'authentification
+import { AuthContext } from "../../context/AuthContextObject";
+
+export default function ProfileMenu({
+    roleName = "Profil",
+    // profileLink = "/profile",
+    logoSrc = defaultLogo
+}) {
+
+    // récupère le token pour savoir si l'utilisateur est connecté
+    const { token } = useContext(AuthContext);
+    const isAuthenticated = !!token;
+
+    // etat du menu deroulant
+    const [isOpen, setIsOpen] = useState(false);
+
+    // cible fonction logout & hook pour navigation
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    // appel du hook de clic
+    const menuRef = useClickOutside(() => {
+        setIsOpen(false);
+    });
+
+    // fonction qui gere la vraie deconnexion
+    const handleLogout = () => {
+        logout();
+        setIsOpen(false);
+        navigate("/login");
+    };
+
+    return (
+        // ref retournée par hook
+        <div className="relative flex items-center" ref={menuRef}>
+            {/* btn logo */}
+
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none"
+                    >
+                    <span className="text-xl font-bold text-light tracking-tight hidden sm:block">
+                        {roleName}
+                    </span>
+                    <img src={logoSrc} alt={`Logo ${roleName}`} width={40} height={40} className="h-10 w-auto" />
+
+                    {isAuthenticated && (
+                        <ChevronDown className={`w-4 h-4 text-light transition-transform duration-200 hidden lg:inline md:inline ${isOpen ? "rotate-180" : ""}`} />
+                    )}
+                </button>
+
+            {/* menu profil */}
+            {isOpen && isAuthenticated && (
+                <div className="absolute hidden lg:flex md:flex right-0 top-full mt-3 w-48 bg-bone-light/95 dark:bg-bone-light/95 backdrop-blur-md rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.15)] border border-white/50 dark:border-white/10 py-2 flex-col z-50">
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors text-left"
+                    >
+                        <LogOut className="w-4 h-4" />
+                        Se déconnecter
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}

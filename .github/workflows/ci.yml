@@ -1,0 +1,95 @@
+name: CapyCareer CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  build-client:
+    runs-on: self-hosted
+    container: node:20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: npm run install:all
+
+      - name: Build Check (Client)
+        run: npm run build --prefix client
+
+  build-server:
+    runs-on: self-hosted
+    container: node:20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: npm run install:all
+
+      - name: Build Check (Server)
+        run: cd server && npx tsc
+
+  lint-client:
+    needs: [build-client, build-server]
+    runs-on: self-hosted
+    container: node:20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: npm run install:all
+
+      - name: Lint Quality Checks (Client)
+        run: npm run lint --prefix client
+
+  lint-server:
+    needs: [build-client, build-server]
+    runs-on: self-hosted
+    container: node:20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: npm run install:all
+
+      - name: Lint Quality Checks (Server)
+        run: cd server && npx eslint .
+
+  test-server:
+    needs: [build-client, build-server]
+    runs-on: self-hosted
+    container: node:20
+    # Injection des variables de test nécessaires pour satisfaire le schéma Zod
+    env:
+      NODE_ENV: test
+      JWT_SECRET: ci_test_jwt_secret_key_12345
+      OVH_DB_HOST: localhost
+      OVH_DB_USER: mock_user
+      OVH_DB_PASSWORD: mock_password
+      OVH_DB_NAME: mock_db
+      OVH_DB_PORT: "3306"
+      ATTACK_DB_HOST: localhost
+      ATTACK_DB_USER: mock_user
+      ATTACK_DB_PASSWORD: mock_password
+      ATTACK_DB_NAME: mock_db
+      ATTACK_DB_PORT: "3306"
+      N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL: "https://localhost/webhook/test"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: npm run install:all
+
+      - name: Run Backend Tests
+        run: npm run test --prefix server
