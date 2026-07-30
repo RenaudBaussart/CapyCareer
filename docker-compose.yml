@@ -118,6 +118,22 @@ services:
     networks:
       - app-network
 
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ollama-init
+    environment:
+      - OLLAMA_HOST=ollama:11434 
+    volumes:
+      - ./Modelfile:/Modelfile 
+    command: create choix_pole_emploi -f /Modelfile
+    depends_on:
+      ollama:
+        condition: service_started
+      n8n:
+        condition: service_started 
+    networks:
+      - app-network
+
 # Déclaration des volumes
 volumes: 
   n8n_data: 
