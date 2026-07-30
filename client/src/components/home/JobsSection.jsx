@@ -2,7 +2,7 @@
 
 import { useContext, useEffect } from "react";
 import { useJobsFeed } from "../../hook/useJobsFeed";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContextObject";
 import { Search, MapPin, Bookmark, Sparkles, Apple, Banana, Citrus, Wallet } from "lucide-react";
 import { JobCard, JobDetail, KeywordTagInput } from "./JobsSection.parts";
 

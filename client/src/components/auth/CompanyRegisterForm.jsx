@@ -1,7 +1,7 @@
 // fichier du component qui gere validation, accessibilité champs & erreurs (version entreprise)
 
 import { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContextObject";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerCompanySchema } from "../../schemas/auth.schema";

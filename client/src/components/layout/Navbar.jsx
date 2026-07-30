@@ -6,7 +6,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 // component 
 import ProfileMenu from "./ProfileMenu";
 // context
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContextObject";
 import { HandednessContext } from "../../context/HandednessContext";
 // hook
 // import { useHandedness } from "../../hook/useHandedness.js";

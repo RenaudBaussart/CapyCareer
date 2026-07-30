@@ -3,7 +3,7 @@
 // import
 // context
 import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContextObject";
 // component
 import Navbar from "./Navbar";
 import CompanyNavbar from "../companies/layout/CompanyNavbar";

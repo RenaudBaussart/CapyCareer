@@ -1,7 +1,6 @@
-/* eslint-disable react-refresh/only-export-components */
-
 // import
-import { createContext, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { AuthContext } from "./AuthContextObject";
 // fonction blacklist + vérification session
 import { logoutApi, checkSession } from "../services/auth.service";
 // registre du handler pour les 401 détectés par authFetch
@@ -9,20 +8,63 @@ import { registerUnauthorizedHandler } from "../services/authFetch";
 // importer jwtDecode pour verif date expiration
 import { jwtDecode } from "jwt-decode";
 
-// creation contexte dauthentification
-export const AuthContext = createContext();
+// sexecute uniquement au loading du site (transformé en fonction synchrone)
+const getInitialAuth = () => {
+    // verif localStorage si luser a coché rester connecté
+    const storedToken = localStorage.getItem("capy_token") || sessionStorage.getItem("capy_token");
+    const storedUser = localStorage.getItem("capy_user") || sessionStorage.getItem("capy_user");
+
+    if (!storedToken || !storedUser) {
+        return { token: null, user: null };
+    }
+
+    try {
+        // lis le token pour connaitre date expiration
+        const decodedToken = jwtDecode(storedToken);
+        // date actuelle en sec
+        const currentTime = Date.now() / 1000;
+
+        // SI token est expiré
+        if (decodedToken.exp < currentTime) {
+            // compte déconnecté token supprimé
+            console.warn("Le token est expiré. Déconnexion automatique.");
+            localStorage.removeItem("capy_token");
+            localStorage.removeItem("capy_user");
+            sessionStorage.removeItem("capy_token");
+            sessionStorage.removeItem("capy_user");
+
+            return { token: null, user: null };
+        }
+
+        // SINON SI token encore valide
+        // alors connecte luser
+        return { token: storedToken, user: JSON.parse(storedUser) };
+
+    } catch (e) {
+        // SI token corrompu alors clean
+        console.error("Erreur lors du parsing ou de la vérification du token", e);
+        localStorage.removeItem("capy_token");
+        localStorage.removeItem("capy_user");
+        sessionStorage.removeItem("capy_token");
+        sessionStorage.removeItem("capy_user");
+
+        return { token: null, user: null };
+    }
+};
 
 // composant provider qui englobe lapp
 export function AuthProvider({ children }) {
-    // prepare etat pour stocker token
-    const [token, setToken] = useState(null);
-    // prepare etat pour stocker infos (nom, mail...)
-    const [user, setUser] = useState(null);
-    // prepare etat pour stocker si la verif est encore en cours
-    const [isLoading, setIsLoading] = useState(true);
+    // recuperation immediate data
+    const initialAuth = getInitialAuth();
 
-    // deconnexion silencieuse (sans appel au blacklist, car le compte est déjà invalide côté serveur :
-    // token blacklisté, ou compte banni/supprimé -> appeler logoutApi renverrait probablement une erreur)
+    // prepare etat pour stocker token
+    const [token, setToken] = useState(initialAuth.token);
+    // prepare etat pour stocker infos (nom, mail...)
+    const [user, setUser] = useState(initialAuth.user);
+    // prepare etat pour stocker si la verif est encore en cours
+    const [isLoading, setIsLoading] = useState(false);
+
+    // deconnexion silencieuse
     const forceLogout = useCallback(() => {
         localStorage.removeItem("capy_token");
         localStorage.removeItem("capy_user");
@@ -33,52 +75,12 @@ export function AuthProvider({ children }) {
         setUser(null);
     }, []);
 
-    // enregistre forceLogout comme handler global pour les 401 détectés par authFetch
+    // enregistre forceLogout
     useEffect(() => {
         registerUnauthorizedHandler(forceLogout);
     }, [forceLogout]);
 
-    // sexecute uniquement au loading du site
-    useEffect(() => {
-        // verif localStorage si luser a coché rester connecté
-        const storedToken = localStorage.getItem("capy_token") || sessionStorage.getItem("capy_token");
-        const storedUser = localStorage.getItem("capy_user") || sessionStorage.getItem("capy_user");
-
-        if (storedToken && storedUser) {
-            try {
-                // lis le token pour connaitre date expiration
-                const decodedToken = jwtDecode(storedToken);
-                // date actuelle en sec
-                const currentTime = Date.now() / 1000;
-
-                // SI token est expiré
-                if (decodedToken.exp < currentTime) {
-                    // compte déconnecté token supprimé
-                    console.warn("Le token est expiré. Déconnexion automatique.");
-                    localStorage.removeItem("capy_token");
-                    localStorage.removeItem("capy_user");
-                    sessionStorage.removeItem("capy_token");
-                    sessionStorage.removeItem("capy_user");
-                    // SINON SI token encore valide
-                } else {
-                    // alors connecte luser
-                    // eslint-disable-next-line react-hooks/set-state-in-effect
-                    setToken(storedToken);
-                    setUser(JSON.parse(storedUser));
-                }
-                // SI token corrompu alors clean
-            } catch (e) {
-                console.error("Erreur lors du parsing ou de la vérification du token", e);
-                localStorage.removeItem("capy_token");
-                localStorage.removeItem("capy_user");
-                sessionStorage.removeItem("capy_token");
-                sessionStorage.removeItem("capy_user");
-            }
-        }
-        setIsLoading(false);
-    }, []);
-
-    // vérifie périodiquement que le compte est toujours valide (détecte bannissement en cours de session)
+    // verifie que le compte est toujours valide
     useEffect(() => {
         if (!token) return;
 
@@ -86,7 +88,8 @@ export function AuthProvider({ children }) {
 
         const interval = setInterval(() => {
             checkSession(token);
-        }, 60000); // toutes les 60 secondes
+            // toutes les 60 secondes
+        }, 60000);
 
         return () => clearInterval(interval);
     }, [token]);

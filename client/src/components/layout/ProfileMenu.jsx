@@ -10,7 +10,7 @@ import { ChevronDown, LogOut } from "lucide-react";
 // img
 import defaultLogo from "../../assets/logos/CapySquare.png";
 // contexte d'authentification
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContextObject";
 
 export default function ProfileMenu({
     roleName = "Profil",

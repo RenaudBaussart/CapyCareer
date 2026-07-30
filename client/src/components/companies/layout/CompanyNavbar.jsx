@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 // component 
 import ProfileMenu from "../../layout/ProfileMenu";
 // context
-import { AuthContext } from "../../../context/AuthContext";
+import { AuthContext } from "../../../context/AuthContextObject";
 import { HandednessContext } from "../../../context/HandednessContext";
 // hook
 import { useTheme } from "../../../hook/useTheme";
