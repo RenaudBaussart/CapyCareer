@@ -1,4 +1,5 @@
-//fichier de configuration pour la connexion à la base de données MySQL OVH
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// fichier de configuration pour la connexion à la base de données MySQL OVH
 import mysql from 'mysql2/promise';
 import { env } from './env';
 
@@ -16,13 +17,14 @@ export const pool = mysql.createPool({
   keepAliveInitialDelay: 0
 });
 
-// Teste la connexion à la base de données MySQL OVH au démarrage du serveur
-pool.getConnection()
-    .then(connection => {
-        console.log('Connexion à la base de données MySQL OVH réussie');
-        connection.release();
-    })
-    .catch(err => {
-        // console.error('Échec de la connexion MySQL:', err.message);
-        process.exit(1);
-    });
+if (process.env.NODE_ENV !== 'test') {
+    pool.getConnection()
+        .then(connection => {
+            console.log('Connexion à la base de données MySQL OVH réussie');
+            connection.release();
+        })
+        .catch(err => {
+            // console.error('Échec de la connexion MySQL:', err.message);
+            process.exit(1);
+        });
+}
