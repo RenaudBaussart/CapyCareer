@@ -106,17 +106,6 @@ export function useUserProfile() {
         }
     };
 
-    const handleCVUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-           
-        }
-    };
-
-    const disableNotifications = () => {
-
-    };
-
     // logique rgpd
 
     const requestGdprData = async () => {
@@ -206,7 +195,7 @@ export function useUserProfile() {
     };
 
     return {
-        profileData, handleChange, handleCVUpload, disableNotifications,
+        profileData, handleChange,
         requestAccountDeletion, isDeleteModalOpen, setIsDeleteModalOpen, executeAccountDeletion, isDeleting,
         requestSaveProfile, isSaveModalOpen, setIsSaveModalOpen, executeSaveProfile, isSaving,
         isGdprModalOpen, setIsGdprModalOpen, requestGdprData, downloadGdprData, gdprData, isLoadingGdpr

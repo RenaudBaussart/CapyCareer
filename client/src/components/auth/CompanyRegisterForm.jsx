@@ -1,7 +1,7 @@
 // fichier du component qui gere validation, accessibilité champs & erreurs (version entreprise)
 
 import { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContextObject";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerCompanySchema } from "../../schemas/auth.schema";
@@ -34,16 +34,13 @@ export default function CompanyRegisterForm() {
         setApiError("");
 
         try {
-            // retire confirmation mdp & structure pour le back
-            const { confirmPassword, ...formData } = data;
-
             const registerData = {
-                username: formData.companyName,
-                email: formData.email,
-                password: formData.password,
-                firstname: formData.contactFirstName,
-                lastname: formData.contactLastName,
-                siret: formData.siret,
+                username: data.companyName,
+                email: data.email,
+                password: data.password,
+                firstname: data.contactFirstName,
+                lastname: data.contactLastName,
+                siret: data.siret,
                 role: "entreprise"
             };
 
@@ -54,8 +51,8 @@ export default function CompanyRegisterForm() {
             if (result && result.token) {
                 // prepare data user avec son role
                 const userInfos = result.user || {
-                    username: formData.companyName,
-                    email: formData.email,
+                    username: data.companyName,
+                    email: data.email,
                     role: "entreprise"
                 };
 

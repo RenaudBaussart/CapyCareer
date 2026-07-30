@@ -1,6 +1,8 @@
+// fichier gerant la centralisation & gestion logique metier etat & interactions du fil doffre demploi
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSavedJobs } from "./useSavedJobs";
-import { formatLocation } from "../components/home/JobsSection.parts";
+// import { formatLocation } from "../components/home/JobsSection.parts";
 
 // état & logique du fil d'offres (recherche, pagination, sélection, offres sauvegardées)
 export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
@@ -82,9 +84,13 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // récupère la première page d'offres au montage, et à chaque changement de filtre (débouncé)
   useEffect(() => {
     let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoadingList(true);
-    setListError(null);
+    
+    queueMicrotask(() => {
+      if (!cancelled) {
+        setListError(null);
+        setIsLoadingList(true);
+      }
+    });
 
     fetchJobOffers({
       page: 0,
@@ -124,14 +130,20 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   useEffect(() => {
     if (mode !== "saved") return;
     if (saved.size === 0) {
-      setSavedDetails([]);
-      setSavedError(null);
+      queueMicrotask(() => {
+        setSavedDetails([]);
+        setSavedError(null);
+      });
       return;
     }
 
     let cancelled = false;
-    setIsLoadingSaved(true);
-    setSavedError(null);
+    queueMicrotask(() => {
+      if (!cancelled) {
+        setIsLoadingSaved(true);
+        setSavedError(null);
+      }
+    });
 
     const ids = Array.from(saved);
 
@@ -190,7 +202,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     );
   }, [jobs]);
 
-  // liste de tous les tags techniques présents dans les offres chargées, pour l'autocomplétion
+  // liste de tous les tags techniques présents dans les offres chargées (autocomplétion)
   const availableKeywordTags = useMemo(() => {
     const allTags = jobs.flatMap((job) =>
       Array.isArray(job.tag) ? job.tag : [],
@@ -223,8 +235,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     setKeywords((prev) => prev.filter((k) => k !== keyword));
   }
 
-  // keywords/tags sont désormais filtrés côté serveur (voir fetchJobOffers) ;
-  // seul le tag de type de contrat reste filtré côté client sur les offres déjà chargées
+  // tag type de contrat reste filtré côté client sur les offres déjà chargées
   const filtered = useMemo(() => {
     return jobs.filter((job) => {
       const matchTags =
@@ -240,23 +251,23 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // ajuste la sélection quand les résultats affichés changent
   useEffect(() => {
     if (visibleJobs.length === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSelectedId(null);
+      if (selectedId !== null) {
+        queueMicrotask(() => setSelectedId(null));
+      }
       return;
     }
 
     const stillVisible = visibleJobs.some((job) => job.PK_id === selectedId);
 
     if (!stillVisible) {
-      setSelectedId(visibleJobs[0].PK_id);
+      queueMicrotask(() => setSelectedId(visibleJobs[0].PK_id));
     }
   }, [visibleJobs, selectedId]);
 
-  // récupère le détail de l'offre sélectionnée
+  // recup detail offre ciblée
   useEffect(() => {
     if (selectedId == null) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSelectedDetail(null);
+      queueMicrotask(() => setSelectedDetail(null));
       return;
     }
 
@@ -289,13 +300,13 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     };
   }, [selectedId, fetchJobOfferDetail]);
 
-  // sélectionne une offre depuis la liste et ouvre la modal mobile
+  // cible une offre sur la liste & ouvre modale
   function handleSelectJob(id) {
     setSelectedId(id);
     setIsMobileDetailOpen(true);
   }
 
-  // charge la page suivante d'offres, en conservant les mêmes filtres actifs
+  // charge la page suivante d'offres avec filtres actifs
   function loadMore() {
     const nextPage = page + 1;
     setIsLoadingList(true);

@@ -25,6 +25,7 @@ export default function PostJobForm({ onSubmitJob }) {
     });
 
     // Pour check si le contrat a besoin d'une durée ou non (genre si c'est un CDI, pas de durée définie)
+    // eslint-disable-next-line react-hooks/incompatible-library
     const contractType = watch("contractType");
     const showDuration = contractType !== "CDI";
 
@@ -52,8 +53,8 @@ export default function PostJobForm({ onSubmitJob }) {
                     </label>
                     <input
                         className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.title
-                                ? "border-accent-dark focus:ring-accent-dark"
-                                : "border-primary-light focus:ring-primary"
+                            ? "border-accent-dark focus:ring-accent-dark"
+                            : "border-primary-light focus:ring-primary"
                             }`}
                         id="title"
                         type="text"
@@ -79,8 +80,8 @@ export default function PostJobForm({ onSubmitJob }) {
                     </label>
                     <select
                         className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.contractType
-                                ? "border-accent-dark focus:ring-accent-dark"
-                                : "border-primary-light focus:ring-primary"
+                            ? "border-accent-dark focus:ring-accent-dark"
+                            : "border-primary-light focus:ring-primary"
                             }`}
                         id="contractType"
                         {...register("contractType")}
@@ -111,8 +112,8 @@ export default function PostJobForm({ onSubmitJob }) {
                         </label>
                         <input
                             className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.city
-                                    ? "border-accent-dark focus:ring-accent-dark"
-                                    : "border-primary-light focus:ring-primary"
+                                ? "border-accent-dark focus:ring-accent-dark"
+                                : "border-primary-light focus:ring-primary"
                                 }`}
                             id="city"
                             type="text"
@@ -137,8 +138,8 @@ export default function PostJobForm({ onSubmitJob }) {
                         </label>
                         <input
                             className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.country
-                                    ? "border-accent-dark focus:ring-accent-dark"
-                                    : "border-primary-light focus:ring-primary"
+                                ? "border-accent-dark focus:ring-accent-dark"
+                                : "border-primary-light focus:ring-primary"
                                 }`}
                             id="country"
                             type="text"
@@ -186,8 +187,8 @@ export default function PostJobForm({ onSubmitJob }) {
                         </label>
                         <input
                             className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.startDate
-                                    ? "border-accent-dark focus:ring-accent-dark"
-                                    : "border-primary-light focus:ring-primary"
+                                ? "border-accent-dark focus:ring-accent-dark"
+                                : "border-primary-light focus:ring-primary"
                                 }`}
                             id="startDate"
                             type="date"
@@ -212,8 +213,8 @@ export default function PostJobForm({ onSubmitJob }) {
                             </label>
                             <input
                                 className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.duration
-                                        ? "border-accent-dark focus:ring-accent-dark"
-                                        : "border-primary-light focus:ring-primary"
+                                    ? "border-accent-dark focus:ring-accent-dark"
+                                    : "border-primary-light focus:ring-primary"
                                     }`}
                                 id="duration"
                                 type="text"
@@ -242,8 +243,8 @@ export default function PostJobForm({ onSubmitJob }) {
                         </label>
                         <input
                             className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.salaryMin
-                                    ? "border-accent-dark focus:ring-accent-dark"
-                                    : "border-primary-light focus:ring-primary"
+                                ? "border-accent-dark focus:ring-accent-dark"
+                                : "border-primary-light focus:ring-primary"
                                 }`}
                             id="salaryMin"
                             type="text"
@@ -269,8 +270,8 @@ export default function PostJobForm({ onSubmitJob }) {
                         </label>
                         <input
                             className={`w-full px-4 py-2 bg-bone-light border rounded-3xl focus:ring-2 focus:outline-none transition-colors ${errors.salaryMax
-                                    ? "border-accent-dark focus:ring-accent-dark"
-                                    : "border-primary-light focus:ring-primary"
+                                ? "border-accent-dark focus:ring-accent-dark"
+                                : "border-primary-light focus:ring-primary"
                                 }`}
                             id="salaryMax"
                             type="text"
@@ -298,8 +299,8 @@ export default function PostJobForm({ onSubmitJob }) {
                     </label>
                     <textarea
                         className={`w-full px-4 py-2 bg-bone-light border rounded-2xl focus:ring-2 focus:outline-none transition-colors resize-none ${errors.description
-                                ? "border-accent-dark focus:ring-accent-dark"
-                                : "border-primary-light focus:ring-primary"
+                            ? "border-accent-dark focus:ring-accent-dark"
+                            : "border-primary-light focus:ring-primary"
                             }`}
                         id="description"
                         rows={6}

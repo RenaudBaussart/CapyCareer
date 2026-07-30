@@ -4,7 +4,7 @@
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 // permet de communiquer avec linterface pour recup le token
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContextObject";
 
 // verifie si luser est co avant lacces a une page specifique
 export default function RequireAuth({ children, allowedRoles }) {

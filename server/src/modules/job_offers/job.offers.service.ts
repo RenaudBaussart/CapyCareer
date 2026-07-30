@@ -1,13 +1,17 @@
 import { z } from "zod";
-import { jobOfferFullSchema } from "./job.offers.schema";
+import { jobOfferFullSchema, updateJobOfferSchema } from "./job.offers.schema";
 
 export type fullJobOffer = z.infer<typeof jobOfferFullSchema>;
+export type updateJobOffer = z.infer<typeof updateJobOfferSchema>;
 
 export const createJobFullOffer = (payload: fullJobOffer) => {
     return jobOfferFullSchema.parse(payload);
-}
+};
 
-/* transforme la chaîne tag stockee en BDD en tableau de mots cles */
+export const updateJobFullOffer = (payload: updateJobOffer) => {
+    return updateJobOfferSchema.parse(payload);
+};
+
 export function parseTagString(raw: unknown): string[] {
     if (!raw || typeof raw !== 'string') return [];
 
@@ -18,6 +22,6 @@ export function parseTagString(raw: unknown): string[] {
     const segments = looksLikeDashList ? dashSegments : raw.split(',');
 
     return segments
-        .map((s) => s.trim().replace(/^[-(\[]+|[)\]]+$/g, '').trim())
+        .map((s) => s.trim().replace(/^[-([]+|[)\]]+$/g, '').trim())
         .filter((s) => s.length > 0 && s.length <= 60);
 }

@@ -19,8 +19,8 @@ import UserProfile from "./pages/candidate/UserProfile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminJobs from "./pages/admin/AdminJobs";
-import AdminDuplicates from "./pages/admin/AdminDuplicates";
-import AdminLogs from "./pages/admin/AdminLogs";
+// import AdminDuplicates from "./pages/admin/AdminDuplicates";
+// import AdminLogs from "./pages/admin/AdminLogs";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminCompanies from "./pages/admin/AdminCompanies"
 // pages Entreprise/Recruteur

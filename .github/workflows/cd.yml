@@ -5,13 +5,11 @@ on:
     workflows: ["CapyCareer CI Pipeline"]
     types:
       - completed
-    branches:
-      - main
 
 jobs:
   push-to-registry:
     runs-on: self-hosted
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
 
     permissions:
       contents: read
@@ -31,16 +29,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Convert repository owner to lowercase
+        run: echo "REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
       - name: Build and push Client image
         uses: docker/build-push-action@v5
         with:
           context: ./client
           push: true
-          tags: ghcr.io/vincentlesniak/capymock/capycareer-client:latest
+          tags: ghcr.io/${{ env.REPO_OWNER }}/capycareer-client:latest
 
       - name: Build and push Server image
         uses: docker/build-push-action@v5
         with:
           context: ./server
           push: true
-          tags: ghcr.io/vincentlesniak/capymock/capycareer-server:latest
+          tags: ghcr.io/${{ env.REPO_OWNER }}/capycareer-server:latest

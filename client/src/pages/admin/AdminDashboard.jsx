@@ -6,10 +6,10 @@ import { useState, useEffect } from "react";
 import MainNavbar from "../../components/layout/MainNavbar";
 import AdminStatCard from "../../components/admin/AdminStatCard";
 import N8nSyncCard from "../../components/admin/N8nSyncCard";
-import SearchBar from "../../components/admin/SearchBar";
+// import SearchBar from "../../components/admin/SearchBar";
 
 // icone
-import { Users, Briefcase, Copy, Terminal, Building } from "lucide-react";
+import { Users, Briefcase, Building } from "lucide-react";
 // navigation
 import { Link } from "react-router-dom";
 

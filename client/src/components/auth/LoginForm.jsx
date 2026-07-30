@@ -2,7 +2,7 @@
 
 // import
 import { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContextObject";
 // hook gere les formulaire react
 import { useForm } from "react-hook-form";
 // communique avec API
@@ -16,7 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 // lire jwt 
 import { jwtDecode } from "jwt-decode";
 // icone
-import { LogIn } from "lucide-react";
+// import { LogIn } from "lucide-react";
 // utilitaire d'erreurs
 import { getFriendlyErrorMessage } from "../../utils/errorHandler";
 // afficher/masquer mdp

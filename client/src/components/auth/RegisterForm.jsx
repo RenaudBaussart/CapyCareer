@@ -2,7 +2,7 @@
 
 // import
 import { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContextObject";
 // hook gere les formulaire react
 import { useForm } from "react-hook-form";
 // permet de co react hook form avec la validation zod
@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // schema zod
 import { registerSchema } from "../../schemas/auth.schema";
 // icone
-import { UserPlus } from "lucide-react";
+// import { UserPlus } from "lucide-react";
 // navigation
 import { Link, useNavigate } from "react-router-dom";
 // afficher/masquer mdp
@@ -43,23 +43,20 @@ export default function RegisterForm() {
     setApiError("");
 
     try {
-      // retire confirmation mdp & isole aux datas
-      const { confirmPassword, ...formData } = data;
 
-      // structure data pour back
       const registerData = {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        firstname: formData.firstName,
-        lastname: formData.lastName,
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        firstname: data.firstName,
+        lastname: data.lastName,
         role: "candidat"
       };
 
-      // call service externe inscription
+      // call service externe register
       const result = await registerUser(registerData);
 
-      // SI back renvoie bien token à l'inscription
+      // SI back return bien token à l'inscription
       if (result && result.token) {
 
         // co luser avec ses datas

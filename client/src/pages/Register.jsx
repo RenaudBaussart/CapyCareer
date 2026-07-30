@@ -6,7 +6,6 @@ import Footer from "../components/layout/Footer";
 import MainNavbar from "../components/layout/MainNavbar";
 import { Link } from "react-router-dom";
 import CapyWriteVideo from "../assets/images/CapyWrite.mp4"
-import BGLeaves from "../assets/images/BackgroundLeavesCream.png";
 
 export default function Register() {
   return (

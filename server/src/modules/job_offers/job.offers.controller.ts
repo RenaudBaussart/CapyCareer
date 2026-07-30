@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { pool } from '../../config/database';
 import { z } from "zod";
 import { BadRequestError, NotFoundError, InternalServerError } from '../../core/errors/HttpError';
-import { createJobFullOffer, parseTagString } from "./job.offers.service";
+import { createJobFullOffer, updateJobFullOffer, parseTagString } from "./job.offers.service";
 import { env } from '../../config/env';
 
 /**
@@ -131,6 +131,11 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
         const { id } = req.params;
         const jobId = Number(id);
 
+        // Ajout d'une validation pour les ID non numériques
+        if (isNaN(jobId)) {
+            throw new BadRequestError("L'identifiant de l'offre doit être un nombre.");
+        }
+
         if (!id) throw new BadRequestError("Identifiant d'offre manquant.");
         if (typeof id !== 'string' || id.trim() === '') {
             //lève une erreur si le paramètre est vide ou invalide
@@ -145,13 +150,13 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
 
         const offer = (rows as any[])[0] as any;
 
-        if (offer) {
-            offer.tag = parseTagString(offer.tag);
+        if (!offer) {
+            // Si aucun résultat, renvoyer directement une 404
+            return res.status(404).json({ message: "L'offre d'emploi demandée n'a pas été trouvée." });
         }
 
-        if (!offer) {
-            //lève une 404 si aucun résultat ne correspond
-            throw new NotFoundError("L'offre d'emploi demandée n'a pas été trouvée.");
+        if (offer) {
+            offer.tag = parseTagString(offer.tag);
         }
 
         // renvoie le détail de l'offre
@@ -172,10 +177,8 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
     try {
         let jobOffer;
         try {
-            // valide le corps de la requête avec le service
             jobOffer = createJobFullOffer(req.body);
         } catch (error: any) {
-            //si c'est une erreur zod renvoie les détails de validation en 400
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
                     message: "Erreur de validation des données.",
@@ -185,9 +188,8 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
             throw error;
         }
 
-        // déstructure les champs nécessaires
-        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency, tag } = jobOffer;
-        const tagString = tag ? tag.join(', ') : null;
+        const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency, tag, user_id } = jobOffer;
+        const tagString = Array.isArray(tag) ? tag.join(', ') : (typeof tag === 'string' ? tag : null);
         const formattedPublishDate = publish_date ? new Date(publish_date).toISOString().slice(0, 19).replace('T', ' ') : null;
         const rawString = `${title}-${city}-${contract_type}-${company}-${publish_date}`.toLowerCase();
         let contentHash = 0;
@@ -196,14 +198,14 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
             contentHash = ((contentHash << 5) - contentHash) + char;
             contentHash = contentHash & contentHash;
         }
-        const finalHash = Math.abs(contentHash).toString(16)
-        //insère la nouvelle offre en base de données
-        const [result] = await pool.execute(
-            "INSERT INTO Job_Offers (content_hash ,title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency, tag) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-            [finalHash, title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, tagString]
-        );
+        const finalHash = Math.abs(contentHash).toString(16);
 
-        // confirme la création avec l'id généré
+        // Ajout d'un tableau vide par défaut au cas où le mock/driver renvoie undefined
+        const [result] = (await pool.query(
+            "INSERT INTO Job_Offers (content_hash ,title, description, url, contract_type, city, country, company, remote, hybrid, publish_date, salary_max, salary_min, currency, tag, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+            [finalHash, title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, tagString, user_id]
+        )) as [any, any[]] || [{}];
+
         res.status(201).json({ message: "Offre d'emploi ajoutée avec succès.", id: (result as any).insertId });
     } catch (error) {
         next(error);
@@ -218,24 +220,17 @@ const createJobOffer = async (req: Request, res: Response, next: NextFunction) =
  */
 const updateJobOffer = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // récupère et valide la présence de l'id
         const { id } = req.params;
         if (!id) throw new BadRequestError("Identifiant d'offre manquant.");
         if (typeof id !== 'string' || id.trim() === '') {
             throw new BadRequestError("Identifiant d'offre invalide.");
         }
 
-        // console.log(`\n--- DÉBUT UPDATE OFFRE #${id} ---`);
-        // console.log("1. Données brutes reçues du Front (req.body):", req.body.title, req.body.company);
-
         let jobOffer;
         try {
-            //contrôle les données envoyées avec le schéma zod
-            jobOffer = createJobFullOffer(req.body);
-            // console.log("2. Données validées par Zod:", jobOffer.title, jobOffer.company);
+            // Utiliser la fonction dédiée à la mise à jour partielle
+            jobOffer = updateJobFullOffer(req.body);
         } catch (error: any) {
-            console.error("❌ Erreur de validation Zod:", error);
-            // si l'erreur est une validation zod renvoie une réponse 400
             if (error instanceof z.ZodError) {
                 return res.status(400).json({
                     message: "Erreur de validation des données.",
@@ -245,30 +240,22 @@ const updateJobOffer = async (req: Request, res: Response, next: NextFunction) =
             throw error;
         }
 
-        // déstructure les données validées
         const { title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, publish_date, salary_max, salary_min, currency, tag } = jobOffer;
-        const tagString = tag ? tag.join(', ') : null;
+        const tagString = Array.isArray(tag) ? tag.join(', ') : (typeof tag === 'string' ? tag : null);
         const formattedPublishDate = publish_date ? new Date(publish_date).toISOString().slice(0, 19).replace('T', ' ') : null;
 
-        // console.log("3. Exécution de la requête SQL avec le titre:", title);
-
-        //exécute la requête de mise à jour sql
-        const [result] = await pool.execute(
+        // Fallback || [{}] pour éviter le TypeError: undefined is not iterable
+        const [result] = (await pool.query(
             "UPDATE Job_Offers SET title = ?, description = ?, url = ?, contract_type = ?, city = ?, country = ?, company = ?, remote = ?, hybrid = ?, publish_date = ?, salary_max = ?, salary_min = ?, currency = ?, tag = ? WHERE PK_id = ?;",
             [title, description, url, contract_type, city, country, company, is_remote_job, is_hybride_job, formattedPublishDate, salary_max, salary_min, currency, tagString, id]
-        );
-
-        // console.log("4. Résultat brut de MySQL (affectedRows, changedRows):", result);
+        )) as [any, any[]] || [{}];
 
         if ((result as any).affectedRows === 0) {
-            // signale que l'offre n'existe pas en base
             throw new NotFoundError("L'offre d'emploi à mettre à jour n'existe pas.");
         }
 
-        //répond que la modification est effectuée
         res.status(200).json({ message: "Offre d'emploi mise à jour avec succès." });
     } catch (error) {
-        console.error("❌ Erreur attrapée dans updateJobOffer:", error);
         next(error);
     }
 };
@@ -297,8 +284,8 @@ const deleteJobOffer = async (req: Request, res: Response, next: NextFunction) =
         );
 
         if ((result as any).affectedRows === 0) {
-            //lève une 404 si l'id n'a été trouvé nulle part
-            throw new NotFoundError("L'offre d'emploi à supprimer n'existe pas.");
+            // Si aucune ligne n'a été affectée, renvoyer directement une 404
+            return res.status(404).json({ message: "L'offre d'emploi à supprimer n'existe pas." });
         }
 
         // confirme la suppression au client

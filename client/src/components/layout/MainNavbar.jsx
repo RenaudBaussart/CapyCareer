@@ -3,7 +3,7 @@
 // import
 // context
 import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContextObject";
 // component
 import Navbar from "./Navbar";
 import CompanyNavbar from "../companies/layout/CompanyNavbar";
@@ -20,8 +20,8 @@ export default function MainNavbar() {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
             userRole = payload.role || "candidat";
-        } catch (error) {
-            console.error("Impossible de lire le token");
+        } catch {
+            // console.error("Impossible de lire le token");
         }
     }
 

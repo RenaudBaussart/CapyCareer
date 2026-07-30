@@ -136,6 +136,7 @@ export default function AdminJobs() {
 
             {/* modal edition offre*/}
             <JobEditModal
+                key={jobToEdit?.PK_id}
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 job={jobToEdit}

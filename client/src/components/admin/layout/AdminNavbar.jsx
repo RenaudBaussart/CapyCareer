@@ -1,7 +1,7 @@
 // fichier gerant le component navbar admin
 
 // import
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 // component
 import ProfileMenu from "../../layout/ProfileMenu";
