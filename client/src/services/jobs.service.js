@@ -10,15 +10,16 @@ export async function fetchJobOffers({
   lieu,
   salaryMin,
   salaryMax,
+  tags,
 } = {}) {
   const params = new URLSearchParams({ page: page + 1 });
 
-  // recupere le param sil existe dans query
   if (search) params.set("search", search);
   if (q) params.set("q", q);
   if (lieu) params.set("lieu", lieu);
   if (salaryMin) params.set("salaryMin", salaryMin);
   if (salaryMax) params.set("salaryMax", salaryMax);
+  if (tags && tags.length > 0) params.set("tags", tags.join(","));
 
   const response = await fetch(`${API_URL}/jobs?${params.toString()}`);
 

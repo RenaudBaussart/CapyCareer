@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { pool } from '../../config/database';
 import { z } from "zod";
 import { BadRequestError, NotFoundError, InternalServerError } from '../../core/errors/HttpError';
-import { createJobFullOffer } from "./job.offers.service";
+import { createJobFullOffer, parseTagString } from "./job.offers.service";
 import { env } from '../../config/env';
 
 /**
@@ -27,7 +27,7 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
         const offset = (page - 1) * limit;
 
         // recupere filtre de recherche
-        const { q, lieu, salaryMin, salaryMax } = req.query;
+        const { q, lieu, salaryMin, salaryMax, tags } = req.query;
 
         let query = "SELECT PK_id, title, description, contract_type, city, country, company, url, remote, hybrid, publish_date, salary_max, salary_min, currency, tag FROM Job_Offers WHERE active = 1";
         const queryParams: any[] = [];
@@ -64,6 +64,23 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
             queryParams.push(Number(salaryMax), Number(salaryMax));
         }
 
+        // filtre mots-clés/tags : chaque mot-clé doit apparaître dans le titre OU dans la colonne tag
+        // tags peut arriver comme une chaîne unique ("React,TypeScript") ou un tableau (plusieurs query params identiques)
+        if (tags) {
+            const tagList = Array.isArray(tags)
+                ? tags as string[]
+                : (tags as string).split(",").map((t) => t.trim()).filter(Boolean);
+
+            if (tagList.length > 0) {
+                // chaque mot-clé doit matcher (titre OU tag) -> on ET-combine les mots-clés (tous doivent matcher)
+                const tagConditions = tagList.map(() => "(title LIKE ? OR tag LIKE ?)").join(" AND ");
+                query += ` AND (${tagConditions})`;
+                tagList.forEach((t) => {
+                    queryParams.push(`%${t}%`, `%${t}%`);
+                });
+            }
+        }
+
         // ajoute le tri & la limite pour la pagination
         query += " ORDER BY publish_date DESC LIMIT ? OFFSET ?;";
         queryParams.push(limit + 1, offset);
@@ -74,13 +91,8 @@ const getJobOffers = async (req: Request, res: Response, next: NextFunction) => 
         //typage du tableau de result
         const offers = rows as any[];
 
-        // Parse the 'tag' string into an array for each offer
         offers.forEach(offer => {
-            if (offer.tag && typeof offer.tag === 'string') {
-                offer.tag = offer.tag.split(',').map((s: string) => s.trim());
-            } else {
-                offer.tag = []; // Ensure it's an array even if null or not a string
-            }
+            offer.tag = parseTagString(offer.tag);
         });
 
         if (offers.length === 0 && page > 1) {
@@ -133,10 +145,8 @@ const getJobOfferById = async (req: Request, res: Response, next: NextFunction) 
 
         const offer = (rows as any[])[0] as any;
 
-        if (offer && offer.tag && typeof offer.tag === 'string') {
-            offer.tag = offer.tag.split(',').map((s: string) => s.trim());
-        } else if (offer) {
-            offer.tag = [];
+        if (offer) {
+            offer.tag = parseTagString(offer.tag);
         }
 
         if (!offer) {
@@ -310,12 +320,11 @@ const deleteJobOffer = async (req: Request, res: Response, next: NextFunction) =
 const totalJobOffersCount = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const search = req.query.search as string || "";
-        const { q, lieu, salaryMin, salaryMax } = req.query;
+        const { q, lieu, salaryMin, salaryMax, tags } = req.query;
 
         let query = "SELECT COUNT(*) as total FROM Job_Offers WHERE active = 1";
         const queryParams: any[] = [];
 
-        // si recherche id ou texte
         if (search) {
             if (!isNaN(Number(search))) {
                 query += " AND (PK_id = ? OR title LIKE ? OR company LIKE ?)";
@@ -344,6 +353,20 @@ const totalJobOffersCount = async (req: Request, res: Response, next: NextFuncti
         if (salaryMax && !isNaN(Number(salaryMax))) {
             query += " AND (salary_min <= ? OR (salary_min IS NULL AND salary_max <= ?))";
             queryParams.push(Number(salaryMax), Number(salaryMax));
+        }
+
+        if (tags) {
+            const tagList = Array.isArray(tags)
+                ? tags as string[]
+                : (tags as string).split(",").map((t) => t.trim()).filter(Boolean);
+
+            if (tagList.length > 0) {
+                const tagConditions = tagList.map(() => "(title LIKE ? OR tag LIKE ?)").join(" AND ");
+                query += ` AND (${tagConditions})`;
+                tagList.forEach((t) => {
+                    queryParams.push(`%${t}%`, `%${t}%`);
+                });
+            }
         }
 
         const [rows] = await pool.execute<any[]>(query, queryParams);

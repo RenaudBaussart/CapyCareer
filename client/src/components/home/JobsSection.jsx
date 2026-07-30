@@ -8,13 +8,14 @@ import { JobCard, JobDetail, KeywordTagInput } from "./JobsSection.parts";
 
 // section principale
 
-export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
+export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail, onRequireLogin }) {
     const {
         query, setQuery,
         lieu, setLieu,
         salaryMin, setSalaryMin,
         salaryMax, setSalaryMax,
         keywords, addKeyword, removeKeyword,
+        availableKeywordTags,
         isLoadingList, listError, isEnd, loadMore,
         visibleJobs,
         selectedId, selectedDetail, isLoadingDetail, detailError,
@@ -35,6 +36,10 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
             setMode("feed");
         }
     }, [isAuthenticated, mode, setMode]);
+
+    // si le parent ne fournit rien, on redirige simplement vers /login
+    const goToLogin = onRequireLogin || (() => { window.location.href = "/login"; });
+
 
     // nombre affiché sur l'onglet, fixé à 0 si déconnecté
     const savedCount = isAuthenticated ? saved.size : 0;
@@ -191,6 +196,7 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                             keywords={keywords}
                             onAddKeyword={addKeyword}
                             onRemoveKeyword={removeKeyword}
+                            suggestions={availableKeywordTags}
                         />
                     </div>
                 </>
@@ -297,11 +303,11 @@ export default function JobsSection({ fetchJobOffers, fetchJobOfferDetail }) {
                             isSaved={saved.has(selectedDetail.PK_id)}
                             isAuthenticated={isAuthenticated}
                             onToggleSave={() => {
-                                // bloque l'enregistrement si non connecté
                                 if (!isAuthenticated) return;
                                 toggleSave(selectedDetail.PK_id);
                             }}
                             onClose={() => setIsMobileDetailOpen(false)}
+                            onRequireLogin={goToLogin}
                         />
                     )}
 
