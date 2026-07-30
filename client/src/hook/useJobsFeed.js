@@ -19,6 +19,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   const [debouncedLieu, setDebouncedLieu] = useState("");
   const [debouncedSalaryMin, setDebouncedSalaryMin] = useState("");
   const [debouncedSalaryMax, setDebouncedSalaryMax] = useState("");
+  const [debouncedKeywords, setDebouncedKeywords] = useState([]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -26,10 +27,11 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
       setDebouncedLieu(lieu);
       setDebouncedSalaryMin(salaryMin);
       setDebouncedSalaryMax(salaryMax);
+      setDebouncedKeywords(keywords);
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [query, lieu, salaryMin, salaryMax]);
+  }, [query, lieu, salaryMin, salaryMax, keywords]);
 
   // liste légère des offres
   const [jobs, setJobs] = useState([]);
@@ -80,7 +82,6 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // récupère la première page d'offres au montage, et à chaque changement de filtre (débouncé)
   useEffect(() => {
     let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoadingList(true);
     setListError(null);
 
@@ -90,6 +91,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
       lieu: debouncedLieu,
       salaryMin: debouncedSalaryMin,
       salaryMax: debouncedSalaryMax,
+      tags: debouncedKeywords,
     })
       .then((data) => {
         if (cancelled) return;
@@ -114,6 +116,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     debouncedLieu,
     debouncedSalaryMin,
     debouncedSalaryMax,
+    debouncedKeywords,
   ]);
 
   // charge le détail de chaque offre sauvegardée si luser ouvre longlet "saved"
@@ -152,10 +155,8 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
           if (result.status === "fulfilled") {
             ok.push(result.value);
           } else if (result.reason?.message === "Offre introuvable") {
-            // l'offre a été supprimée côté serveur : on la retire des sauvegardes
             deletedIds.push(ids[index]);
           } else {
-            // autre erreur (réseau, serveur...) : on ne désenregistre pas, juste un message d'erreur
             otherFailuresCount += 1;
           }
         });
@@ -188,6 +189,14 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     );
   }, [jobs]);
 
+  // liste de tous les tags techniques présents dans les offres chargées, pour l'autocomplétion
+  const availableKeywordTags = useMemo(() => {
+    const allTags = jobs.flatMap((job) =>
+      Array.isArray(job.tag) ? job.tag : [],
+    );
+    return Array.from(new Set(allTags)).sort();
+  }, [jobs]);
+
   // ajoute/retire un tag de la sélection
   function toggleTag(tag) {
     setSelectedTags((prev) => {
@@ -213,19 +222,16 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     setKeywords((prev) => prev.filter((k) => k !== keyword));
   }
 
+  // keywords/tags sont désormais filtrés côté serveur (voir fetchJobOffers) ;
+  // seul le tag de type de contrat reste filtré côté client sur les offres déjà chargées
   const filtered = useMemo(() => {
     return jobs.filter((job) => {
       const matchTags =
         selectedTags.size === 0 || selectedTags.has(job.contract_type);
-      const matchKeywords =
-        keywords.length === 0 ||
-        keywords.some((keyword) =>
-          job.title.toLowerCase().includes(keyword.toLowerCase()),
-        );
 
-      return matchTags && matchKeywords;
+      return matchTags;
     });
-  }, [jobs, selectedTags, keywords]);
+  }, [jobs, selectedTags]);
 
   // liste affichée selon l'onglet actif
   const visibleJobs = mode === "feed" ? filtered : savedDetails;
@@ -233,7 +239,6 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // ajuste la sélection quand les résultats affichés changent
   useEffect(() => {
     if (visibleJobs.length === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedId(null);
       return;
     }
@@ -248,7 +253,6 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
   // récupère le détail de l'offre sélectionnée
   useEffect(() => {
     if (selectedId == null) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedDetail(null);
       return;
     }
@@ -298,6 +302,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
       lieu: debouncedLieu,
       salaryMin: debouncedSalaryMin,
       salaryMax: debouncedSalaryMax,
+      tags: debouncedKeywords,
     })
       .then((data) => {
         setJobs((prev) => [...prev, ...data.job_offers]);
@@ -324,6 +329,7 @@ export function useJobsFeed({ fetchJobOffers, fetchJobOfferDetail }) {
     addKeyword,
     removeKeyword,
     availableTags,
+    availableKeywordTags,
 
     // liste
     isLoadingList,

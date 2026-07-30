@@ -96,10 +96,25 @@ export function KeywordChip({ label, onRemove }) {
     );
 }
 
-// champs libre pour ajouter des mots-clés
+// champs libre pour ajouter des mots-clés, avec suggestions issues des tags réels des offres
 
-export function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
+export function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword, suggestions = [] }) {
     const [inputValue, setInputValue] = useState("");
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
+    // filtre les suggestions selon la saisie, exclut celles déjà sélectionnées
+    const filteredSuggestions = inputValue.trim()
+        ? suggestions
+            .filter((s) => s.toLowerCase().includes(inputValue.trim().toLowerCase()))
+            .filter((s) => !keywords.some((k) => k.toLowerCase() === s.toLowerCase()))
+            .slice(0, 8)
+        : [];
+
+    function selectSuggestion(suggestion) {
+        onAddKeyword(suggestion);
+        setInputValue("");
+        setShowSuggestions(false);
+    }
 
     function handleKeyDown(e) {
         if (e.key === "Enter" || e.key === ",") {
@@ -108,36 +123,69 @@ export function KeywordTagInput({ keywords, onAddKeyword, onRemoveKeyword }) {
             if (trimmed) {
                 onAddKeyword(trimmed);
                 setInputValue("");
+                setShowSuggestions(false);
             }
         }
         // permet de supprimer le dernier tag avec Backspace si le champ est vide
         if (e.key === "Backspace" && inputValue === "" && keywords.length > 0) {
             onRemoveKeyword(keywords[keywords.length - 1]);
         }
+        if (e.key === "Escape") {
+            setShowSuggestions(false);
+        }
     }
 
     return (
-        <div className="flex flex-wrap items-center gap-2 bg-bone-light rounded-2xl border border-primary-light px-4 py-2.5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-colors">
-            <Tag size={16} className="text-font-primary-dark/50 shrink-0" aria-hidden="true" />
+        <div className="relative">
+            <div className="flex flex-wrap items-center gap-2 bg-bone-light rounded-2xl border border-primary-light px-4 py-2.5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-colors">
+                <Tag size={16} className="text-font-primary-dark/50 shrink-0" aria-hidden="true" />
 
-            {keywords.map((keyword) => (
-                <KeywordChip
-                    key={keyword}
-                    label={keyword}
-                    onRemove={() => onRemoveKeyword(keyword)}
+                {keywords.map((keyword) => (
+                    <KeywordChip
+                        key={keyword}
+                        label={keyword}
+                        onRemove={() => onRemoveKeyword(keyword)}
+                    />
+                ))}
+
+                <label htmlFor="job-keywords" className="sr-only">Ajouter un mot-clé ou une compétence (React, TypeScript...)</label>
+                <input
+                    id="job-keywords"
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => {
+                        setInputValue(e.target.value);
+                        setShowSuggestions(true);
+                    }}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => {
+                        // délai pour laisser le temps au clic sur une suggestion de s'exécuter
+                        setTimeout(() => setShowSuggestions(false), 150);
+                    }}
+                    onKeyDown={handleKeyDown}
+                    placeholder={keywords.length === 0 ? "Ajouter une compétence (React, TypeScript...)" : "Ajouter..."}
+                    className="flex-1 min-w-32 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
                 />
-            ))}
+            </div>
 
-            <label htmlFor="job-keywords" className="sr-only">Ajouter un mot-clé (front-end, back-end...)</label>
-            <input
-                id="job-keywords"
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={keywords.length === 0 ? "Ajouter un mot-clé (front-end, back-end...)" : "Ajouter..."}
-                className="flex-1 min-w-32 bg-transparent outline-none text-sm placeholder:text-font-primary-dark/40"
-            />
+            {showSuggestions && filteredSuggestions.length > 0 && (
+                <ul className="absolute z-10 mt-1 w-full max-h-56 overflow-auto bg-bone-light border border-primary-light/40 rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.1)] py-1">
+                    {filteredSuggestions.map((suggestion) => (
+                        <li key={suggestion}>
+                            <button
+                                type="button"
+                                onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    selectSuggestion(suggestion);
+                                }}
+                                className="w-full text-left px-4 py-2 text-sm text-font-primary-dark hover:bg-primary-light/10 transition-colors"
+                            >
+                                {suggestion}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }
@@ -211,7 +259,7 @@ export function JobCard({ job, isSelected, isSaved, isAuthenticated, onSelect, o
 // detail offre selectionnée
 
 // onClose n'est utilisé que sur mobile 
-export function JobDetail({ job, isSaved, isAuthenticated, onToggleSave, onClose }) {
+export function JobDetail({ job, isSaved, isAuthenticated, onToggleSave, onClose, onRequireLogin }) {
     // etat pour afficher un feedback juste après la copie du lien
     const [isCopied, setIsCopied] = useState(false);
 
@@ -290,41 +338,43 @@ export function JobDetail({ job, isSaved, isAuthenticated, onToggleSave, onClose
             </div>
 
             <a
-            href={job.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => {
-                // empêche l'ouverture de l'offre si non connecté
-                if (!isAuthenticated) e.preventDefault();
-            }}
-            aria-disabled={!isAuthenticated}
-            className={`inline-block text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark ${isAuthenticated ? "bg-primary text-light hover:bg-primary-dark" : "bg-primary/40 text-light/80 cursor-not-allowed"}`}
+                href={job.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                    if (!isAuthenticated) {
+                        e.preventDefault();
+                        onRequireLogin?.();
+                    }
+                }}
+                aria-disabled={!isAuthenticated}
+                className={`inline-block text-sm font-semibold px-5 py-2.5 rounded-xl mt-5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-dark ${isAuthenticated ? "bg-primary text-light hover:bg-primary-dark" : "bg-primary/40 text-light/80 hover:bg-primary/50"}`}
             >
-            Postuler — Voir l'offre
-        </a>
+                Postuler — Voir l'offre
+            </a>
             {
-        !isAuthenticated && (
-            <p className="text-xs text-font-primary-dark/50 mt-2">Connectez-vous pour postuler à cette offre.</p>
-        )
-    }
+                !isAuthenticated && (
+                    <p className="text-xs text-font-primary-dark/50 mt-2">Connectez-vous pour postuler à cette offre.</p>
+                )
+            }
 
-    <div className="mt-7 pt-6 border-t border-primary-light/30">
-        <h3 className="flex items-center gap-2 font-semibold text-font-primary-dark mb-2">
-            <Briefcase size={16} aria-hidden="true" /> Détails de l'emploi
-        </h3>
-        <dl className="grid grid-cols-2 gap-y-2 text-sm mb-5">
-            <dt className="text-font-primary-dark/60">Entreprise</dt>
-            <dd className="font-medium text-font-primary-dark">{job.company}</dd>
-            <dt className="text-font-primary-dark/60">Lieu</dt>
-            <dd className="font-medium text-font-primary-dark">{formatLocation(job)}</dd>
-            <dt className="text-font-primary-dark/60">Salaire</dt>
-            <dd className="font-medium text-font-primary-dark">{formatSalary(job) || "Non précisé"}</dd>
-        </dl>
-        <h3 className="font-semibold text-font-primary-dark mb-2">Description du poste</h3>
-        <p className="text-sm leading-relaxed text-font-primary-dark/70 whitespace-pre-line">
-            {truncate(job.description, 500)}
-        </p>
-    </div>
+            <div className="mt-7 pt-6 border-t border-primary-light/30">
+                <h3 className="flex items-center gap-2 font-semibold text-font-primary-dark mb-2">
+                    <Briefcase size={16} aria-hidden="true" /> Détails de l'emploi
+                </h3>
+                <dl className="grid grid-cols-2 gap-y-2 text-sm mb-5">
+                    <dt className="text-font-primary-dark/60">Entreprise</dt>
+                    <dd className="font-medium text-font-primary-dark">{job.company}</dd>
+                    <dt className="text-font-primary-dark/60">Lieu</dt>
+                    <dd className="font-medium text-font-primary-dark">{formatLocation(job)}</dd>
+                    <dt className="text-font-primary-dark/60">Salaire</dt>
+                    <dd className="font-medium text-font-primary-dark">{formatSalary(job) || "Non précisé"}</dd>
+                </dl>
+                <h3 className="font-semibold text-font-primary-dark mb-2">Description du poste</h3>
+                <p className="text-sm leading-relaxed text-font-primary-dark/70 whitespace-pre-line">
+                    {truncate(job.description, 500)}
+                </p>
+            </div>
         </article >
     );
 }
