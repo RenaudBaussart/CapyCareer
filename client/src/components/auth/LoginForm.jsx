@@ -139,11 +139,7 @@ export default function LoginForm() {
 
         {/* mdp */}
         <div>
-          <div className="flex justify-end mb-1">
-            <Link to="/forgot-password" className="text-xs text-accent font-medium hover:text-accent-dark hover:underline">
-              {/* Mot de passe oublié ? */}
-            </Link>
-          </div>
+        
 
           <PasswordInput
             label="Mot de passe *"
