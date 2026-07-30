@@ -1,0 +1,85 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploiement sur le serveur et creation du .env
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          CLIENT_PORT: ${{ secrets.CLIENT_PORT }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          OVH_DB_HOST: ${{ secrets.OVH_DB_HOST }}
+          OVH_DB_USER: ${{ secrets.OVH_DB_USER }}
+          OVH_DB_PASSWORD: ${{ secrets.OVH_DB_PASSWORD }}
+          OVH_DB_NAME: ${{ secrets.OVH_DB_NAME }}
+          OVH_DB_PORT: ${{ secrets.OVH_DB_PORT }}
+          ATTACK_DB_HOST: ${{ secrets.ATTACK_DB_HOST }}
+          ATTACK_DB_USER: ${{ secrets.ATTACK_DB_USER }}
+          ATTACK_DB_PASSWORD: ${{ secrets.ATTACK_DB_PASSWORD }}
+          ATTACK_DB_NAME: ${{ secrets.ATTACK_DB_NAME }}
+          ATTACK_DB_PORT: ${{ secrets.ATTACK_DB_PORT }}
+          WLD_API_KEY: ${{ secrets.WLD_API_KEY }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
+          JWT_LONG_EXPIRATION: ${{ secrets.JWT_LONG_EXPIRATION }}
+          SALTROUNDS: ${{ secrets.SALTROUNDS }}
+          N8N_APP_PORT: ${{ secrets.N8N_APP_PORT }}
+          N8N_APP_HOST: ${{ secrets.N8N_APP_HOST }}
+          N8N_APP_PROTOCOL: ${{ secrets.N8N_APP_PROTOCOL }}
+          N8N_APP_NODE_ENV: ${{ secrets.N8N_APP_NODE_ENV }}
+          N8N_BASIC_AUTH_ACTIVE: ${{ secrets.N8N_BASIC_AUTH_ACTIVE }}
+          N8N_BASIC_AUTH_USER: ${{ secrets.N8N_BASIC_AUTH_USER }}
+          N8N_BASIC_AUTH_PASSWORD: ${{ secrets.N8N_BASIC_AUTH_PASSWORD }}
+          N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL: ${{ secrets.N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL }}
+          N8N_RUNNERS_TASK_REQUEST_TIMEOUT: ${{ secrets.N8N_RUNNERS_TASK_REQUEST_TIMEOUT }}
+          N8N_RUNNERS_TASK_BROKER_URI: ${{ secrets.N8N_RUNNERS_TASK_BROKER_URI }}
+          N8N_RUNNERS_AUTH_TOKEN: ${{ secrets.N8N_RUNNERS_AUTH_TOKEN }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          envs: CLIENT_PORT,SERVER_PORT,VITE_API_URL,OVH_DB_HOST,OVH_DB_USER,OVH_DB_PASSWORD,OVH_DB_NAME,OVH_DB_PORT,ATTACK_DB_HOST,ATTACK_DB_USER,ATTACK_DB_PASSWORD,ATTACK_DB_NAME,ATTACK_DB_PORT,WLD_API_KEY,JWT_SECRET,JWT_EXPIRATION,JWT_LONG_EXPIRATION,SALTROUNDS,N8N_APP_PORT,N8N_APP_HOST,N8N_APP_PROTOCOL,N8N_APP_NODE_ENV,N8N_BASIC_AUTH_ACTIVE,N8N_BASIC_AUTH_USER,N8N_BASIC_AUTH_PASSWORD,N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL,N8N_RUNNERS_TASK_REQUEST_TIMEOUT,N8N_RUNNERS_TASK_BROKER_URI,N8N_RUNNERS_AUTH_TOKEN
+          script: |
+            cd /chemin/absolu/vers/JobAggregator/CapyCareer
+            
+            git pull origin main
+            
+            echo "CLIENT_PORT=$CLIENT_PORT" > .env
+            echo "SERVER_PORT=$SERVER_PORT" >> .env
+            echo "VITE_API_URL=$VITE_API_URL" >> .env
+            echo "OVH_DB_HOST=$OVH_DB_HOST" >> .env
+            echo "OVH_DB_USER=$OVH_DB_USER" >> .env
+            echo "OVH_DB_PASSWORD=$OVH_DB_PASSWORD" >> .env
+            echo "OVH_DB_NAME=$OVH_DB_NAME" >> .env
+            echo "OVH_DB_PORT=$OVH_DB_PORT" >> .env
+            echo "ATTACK_DB_HOST=$ATTACK_DB_HOST" >> .env
+            echo "ATTACK_DB_USER=$ATTACK_DB_USER" >> .env
+            echo "ATTACK_DB_PASSWORD=$ATTACK_DB_PASSWORD" >> .env
+            echo "ATTACK_DB_NAME=$ATTACK_DB_NAME" >> .env
+            echo "ATTACK_DB_PORT=$ATTACK_DB_PORT" >> .env
+            echo "WLD_API_KEY=$WLD_API_KEY" >> .env
+            echo "JWT_SECRET=$JWT_SECRET" >> .env
+            echo "JWT_EXPIRATION=$JWT_EXPIRATION" >> .env
+            echo "JWT_LONG_EXPIRATION=$JWT_LONG_EXPIRATION" >> .env
+            echo "SALTROUNDS=$SALTROUNDS" >> .env
+            echo "N8N_APP_PORT=$N8N_APP_PORT" >> .env
+            echo "N8N_APP_HOST=$N8N_APP_HOST" >> .env
+            echo "N8N_APP_PROTOCOL=$N8N_APP_PROTOCOL" >> .env
+            echo "N8N_APP_NODE_ENV=$N8N_APP_NODE_ENV" >> .env
+            echo "N8N_BASIC_AUTH_ACTIVE=$N8N_BASIC_AUTH_ACTIVE" >> .env
+            echo "N8N_BASIC_AUTH_USER=$N8N_BASIC_AUTH_USER" >> .env
+            echo "N8N_BASIC_AUTH_PASSWORD=$N8N_BASIC_AUTH_PASSWORD" >> .env
+            echo "N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL=$N8N_REFRESH_JOB_OFFERS_WEBHOOK_URL" >> .env
+            echo "N8N_RUNNERS_TASK_REQUEST_TIMEOUT=$N8N_RUNNERS_TASK_REQUEST_TIMEOUT" >> .env
+            echo "N8N_RUNNERS_TASK_BROKER_URI=$N8N_RUNNERS_TASK_BROKER_URI" >> .env
+            echo "N8N_RUNNERS_AUTH_TOKEN=$N8N_RUNNERS_AUTH_TOKEN" >> .env
+            
+            docker compose pull
+            docker compose up -d --build
