@@ -34,17 +34,13 @@ export default function CompanyRegisterForm() {
         setApiError("");
 
         try {
-            // retire confirmation mdp & structure pour le back
-            // eslint-disable-next-line no-unused-vars
-            const { confirmPassword, ...formData } = data;
-
             const registerData = {
-                username: formData.companyName,
-                email: formData.email,
-                password: formData.password,
-                firstname: formData.contactFirstName,
-                lastname: formData.contactLastName,
-                siret: formData.siret,
+                username: data.companyName,
+                email: data.email,
+                password: data.password,
+                firstname: data.contactFirstName,
+                lastname: data.contactLastName,
+                siret: data.siret,
                 role: "entreprise"
             };
 
@@ -55,8 +51,8 @@ export default function CompanyRegisterForm() {
             if (result && result.token) {
                 // prepare data user avec son role
                 const userInfos = result.user || {
-                    username: formData.companyName,
-                    email: formData.email,
+                    username: data.companyName,
+                    email: data.email,
                     role: "entreprise"
                 };
 
