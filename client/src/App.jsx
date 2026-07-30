@@ -150,14 +150,14 @@ export default function App() {
               /> */}
 
               {/* Pages Admin Logs */}
-              <Route
+              {/* <Route
                 path="/admin/logs"
                 element={
                   <RequireAuth allowedRoles={["admin"]}>
                     <AdminLogs />
                   </RequireAuth>
                 }
-              />
+              /> */}
 
               {/* Pages Admin Profile */}
               <Route
