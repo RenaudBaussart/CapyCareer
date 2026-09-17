@@ -1,5 +1,7 @@
 # CapyCareer - Job Aggregator
 
+![](./documentation/14_github_readme/job_agregator.png)
+
 ## Contexte du projet
 Bienvenue sur **CapyCareer** ! 
 CapyCareer est une plateforme d'agrégation d'offres d'emploi et de stages conçue pour simplifier la recherche des candidats. Notre solution collecte des annonces issues de sources externes, les standardise et les centralise pour offrir une véritable aide à la décision.  
